@@ -163,6 +163,16 @@ leaderboard API (`GET/POST /api/scores`), which stores entries in **Firestore** 
 using the Cloud Run service account. Entries are validated in `server/scores.mjs` (three-letter initials, a
 blocklist for slurs, 16 per-job bests each capped). `npm run dev` swaps in an in-memory stand-in.
 
+### CI/CD
+
+- **Pre-merge gates** (`.github/workflows/ci.yml`, every push and PR): `npm test`, `npm run build`, a server
+  syntax check, `npm audit` (high/critical) and GitHub's dependency review on PRs.
+- **Security:** CodeQL static analysis on pushes, PRs and weekly (`codeql.yml`); Dependabot keeps npm packages
+  and Actions current.
+- **Next (planned):** auto-deploy `main` to Cloud Run after the gates pass, using Workload Identity Federation
+  (no service-account keys in GitHub), and a manual "deploy preview" workflow button that ships any branch to a
+  tagged, zero-traffic Cloud Run URL for sharing (`gcloud run deploy --tag <branch> --no-traffic`).
+
 ## Credits & license
 
 Game by [Tim Knab](https://timknab.dev). G's Plumbing and The Homies are a real crew; Northwest is fictional.
