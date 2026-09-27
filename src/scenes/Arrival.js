@@ -58,7 +58,7 @@ export class Arrival extends Phaser.Scene {
     this.time.addEvent({ delay: 300, loop: true, callback: () => cust.active && cust.setFrame(cust.frame.name ? 0 : 1) });
     await this.wait(1000);
     const df = difficulty(ji);
-    await dialog(this, { portrait: portrait(this, 'job' + ji, job.look, 'worried'), name: job.who, text: pick(['THANK GOD! NOT THOSE NORTHWEST CREEPS AGAIN!', "OH THANK HEAVENS, IT'S THE COOL HOMIES!", 'FINALLY! THE NORTHWEST GUYS SCARE MY DOG.']) + ` IT'S IN THE ${WHERE[job.scene]}. HURRY!`, color: C.cyan, pitch: 1.1 });
+    await dialog(this, { portrait: portrait(this, 'job' + ji, job.look, 'worried'), name: job.who, text: pick(['THANK GOD! NOT THOSE NORTHWEST CREEPS AGAIN!', "OH THANK HEAVENS, IT'S THE HOMIES!", 'FINALLY! THE NORTHWEST GUYS SCARE MY DOG.']) + ` IT'S IN THE ${WHERE[job.scene]}. HURRY!`, color: C.cyan, pitch: 1.1 });
     // job ticket
     const secs = Math.round(job.steps.length * 11 * df.repairFactor * (hero.id === 'jared' ? 1.3 : 1));
     const py = 44; const c = this.add.container(0, 0).setDepth(50);

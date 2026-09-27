@@ -1,6 +1,6 @@
 # Plumber Wars — G's Plumbing vs Northwest
 
-A mobile-first, portrait, 16-bit-style arcade game built with Phaser 3. The Cool Homies of **G's Plumbing**
+A mobile-first, portrait, 16-bit-style arcade game built with Phaser 3. The Homies of **G's Plumbing**
 (Dalton, Milan, Jared) race the foul-mouthed **Northwest** crew across Seattle, then fix real plumbing
 problems before the customer loses it and calls the competition.
 

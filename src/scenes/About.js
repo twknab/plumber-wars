@@ -18,7 +18,7 @@ export class About extends Phaser.Scene {
 
     const y0 = 98;
     panel(this, 8, y0, W - 16, 132);
-    txt(this, 18, y0 + 10, "G'S PLUMBING - THE COOL HOMIES", { color: C.lime });
+    txt(this, 18, y0 + 10, "G'S PLUMBING - THE HOMIES", { color: C.lime });
     txt(this, 18, y0 + 24, "A LOVE LETTER TO SEATTLE'S HARDEST-WORKING (AND FUNNIEST) PLUMBING CREW. RACE NORTHWEST ACROSS TOWN, THEN FIX 15 REAL PUGET SOUND PLUMBING JOBS THE WAY A PRO WOULD - RIGHT TOOL, RIGHT ORDER, RIGHTY-TIGHTY.", { maxW: W - 36 });
     txt(this, 18, y0 + 100, 'NORTHWEST IS FICTIONAL. THEIR MOUTHS ARE FILTHY.', { color: C.pink, maxW: W - 36 });
 

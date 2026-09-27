@@ -62,7 +62,7 @@ function drawSideVan(p, f) {
   // lettering
   badge(p, 19, 25, 13);
   logoText(p, 38, 16, 'PLUMBING', 1, [C.brown, C.gold, C.yellow], { shadow: C.deep });
-  logoText(p, 36, 27, 'COOL HOMIES', 1, [C.silver, C.white], { shadow: C.deep });
+  logoText(p, 36, 27, 'THE HOMIES', 1, [C.silver, C.white], { shadow: C.deep });
   // door seam, handle
   p.rect(104, 32, 4, 2, C.silver);
   // wheels
@@ -102,42 +102,108 @@ export function buildBrand(scene) {
   const sub = new PX(200, 18); logoText(sub, Math.round((200 - logoWidth("G'S PLUMBING", 2)) / 2), 1, "G'S PLUMBING", 2, [C.deep, C.green, C.lime]); sub.toTexture(scene, 'logoSub');
 }
 
-// Title / map backdrop: dithered sunset, Rainier, skyline + Space Needle, Elliott Bay.
+// Title / finale backdrop: the Kerry Park view — Space Needle up front, downtown towers,
+// Mt. Rainier looming behind, Elliott Bay with a ferry. mood: 'sunset' | 'night'.
 export function skyline(scene, key, W, H, { mood = 'sunset' } = {}) {
-  const p = new PX(W, H);
-  const skies = { sunset: [C.night, C.plum, C.mauve, C.pink, C.flame, C.gold], night: [C.ink, C.night, C.storm, C.plum], day: [C.navy, C.blue, C.cyan, C.silver] };
+  const p = new PX(W, H); const night = mood === 'night';
   const hy = Math.round(H * 0.62);
-  p.vgrad(0, 0, W, hy, skies[mood]);
-  if (mood !== 'day') for (let i = 0; i < 60; i++) { const x = (i * 97) % W, y = (i * 53) % Math.round(hy * 0.45); p.px(x, y, i % 5 ? C.silver : C.white); }
-  // sun
-  if (mood === 'sunset') { p.ellipse(W * 0.28, hy - 18, 18, 18, C.gold); p.ellipse(W * 0.28, hy - 18, 14, 14, C.yellow); for (let j = hy - 26; j < hy; j += 4) p.hline(W * 0.28 - 20, j, 40, C.flame); }
-  // Mt Rainier
-  const mx = W * 0.72;
-  p.poly([[mx - 110, hy], [mx - 30, hy - 58], [mx - 12, hy - 72], [mx + 8, hy - 66], [mx + 34, hy - 50], [mx + 120, hy]], mood === 'night' ? C.storm : C.mauve);
-  p.poly([[mx - 30, hy - 58], [mx - 12, hy - 72], [mx + 8, hy - 66], [mx + 34, hy - 50], [mx + 20, hy - 44], [mx + 6, hy - 52], [mx - 6, hy - 46], [mx - 18, hy - 54]], mood === 'night' ? C.steel : C.pink);
-  p.line(mx - 12, hy - 71, mx - 22, hy - 58, C.white); p.line(mx - 10, hy - 70, mx - 4, hy - 50, C.white); p.line(mx + 6, hy - 65, mx + 18, hy - 50, C.white);
-  // Olympics silhouette (far left)
-  p.poly([[0, hy], [0, hy - 20], [22, hy - 32], [40, hy - 22], [62, hy - 36], [90, hy - 18], [110, hy]], C.plum);
-  // skyline
-  const R = (i) => ((i * 9301 + 49297) % 233280) / 233280;
-  const bx0 = W * 0.36;
-  for (let i = 0; i < 16; i++) {
-    const bw = 8 + Math.floor(R(i) * 12), bh = 16 + Math.floor(R(i + 40) * 52); const x = Math.round(bx0 + i * 9 - 10);
-    p.rect(x, hy - bh, bw, bh, C.ink); p.rect(x + 1, hy - bh + 1, bw - 2, bh - 1, C.night);
-    for (let yy = hy - bh + 4; yy < hy - 2; yy += 4) for (let xx = x + 2; xx < x + bw - 2; xx += 3) if (R(xx * 7 + yy) > 0.45) p.px(xx, yy, R(xx + yy) > 0.7 ? C.yellow : C.gold);
+  const sky = night ? [C.ink, C.ink, C.night, C.storm, C.plum] : [C.night, C.plum, C.mauve, C.pink, C.flame, C.gold];
+  p.vgrad(0, 0, W, hy, sky);
+  for (let i = 0; i < 70; i++) { const x = (i * 97 + 13) % W, y = (i * 53) % Math.round(hy * (night ? 0.7 : 0.35)); p.px(x, y, i % 6 ? C.steel : C.white); }
+  if (!night) { // low sun + wispy clouds catching light
+    const sx = Math.round(W * 0.12), sy = hy - 30; p.ellipse(sx, sy, 16, 16, C.gold); p.ellipse(sx, sy, 12, 12, C.yellow);
+    for (const [cx, cy, w] of [[40, hy - 70, 70], [190, hy - 150, 90], [120, hy - 110, 60], [230, hy - 95, 50]]) { p.hline(cx - w / 2, cy, w, C.pink); p.hline(cx - w / 2 + 8, cy + 1, w - 20, C.flame); p.hline(cx - w / 2 + 16, cy - 1, w - 40, C.peach); }
+  } else { p.ellipse(W * 0.85, hy - 170, 9, 9, C.sand); p.ellipse(W * 0.85 + 4, hy - 172, 8, 8, C.ink); }
+
+  // --- Mt. Rainier: huge, snow-covered, alpenglow on the left face, hazy base.
+  const mx = Math.round(W * 0.7), mt = hy - 112;
+  const ridge = [[mx - 150, hy], [mx - 96, hy - 40], [mx - 62, hy - 70], [mx - 38, hy - 92], [mx - 20, mt + 6], [mx - 8, mt], [mx + 10, mt + 2], [mx + 26, mt + 10], [mx + 50, hy - 84], [mx + 80, hy - 58], [mx + 118, hy - 30], [mx + 170, hy]];
+  const lit = night ? C.silver : C.sand, shade = night ? C.steel : C.pink, deep = night ? C.slate : C.mauve;
+  p.poly(ridge, shade);
+  p.poly([[mx - 150, hy], [mx - 96, hy - 40], [mx - 62, hy - 70], [mx - 38, hy - 92], [mx - 20, mt + 6], [mx - 8, mt], [mx - 2, mt + 20], [mx - 16, hy - 60], [mx - 30, hy - 34], [mx - 50, hy]], lit);
+  p.poly([[mx - 8, mt], [mx + 10, mt + 2], [mx + 4, mt + 14], [mx - 4, mt + 10]], C.white);
+  p.poly([[mx - 20, mt + 6], [mx - 8, mt], [mx - 2, mt + 20], [mx - 16, hy - 60], [mx - 38, hy - 92]], night ? C.white : C.peach);
+  // glaciers and ridgelines
+  for (const [x0, y0, x1, y1] of [[mx - 6, mt + 4, mx - 26, hy - 60], [mx + 4, mt + 6, mx + 22, hy - 62], [mx + 16, mt + 12, mx + 60, hy - 50], [mx - 14, mt + 10, mx - 56, hy - 44], [mx + 30, hy - 80, mx + 44, hy - 40]]) p.line(x0, y0, x1, y1, deep);
+  for (const [x0, y0, x1, y1] of [[mx - 10, mt + 2, mx - 40, hy - 70], [mx - 4, mt + 12, mx - 12, hy - 48]]) p.line(x0, y0, x1, y1, night ? C.silver : C.white);
+  // atmospheric haze over the lower slopes
+  for (let j = hy - 44; j < hy; j++) { const d = (j - (hy - 44)) / 44; for (let i = 0; i < W; i++) if (p.get(i, j) !== p.get(0, j) && bayer(i, j) < d * 0.8) p.px(i, j, night ? C.night : C.mauve); }
+  // distant hills (West Seattle / Beacon Hill) + Olympics hint on the far left
+  p.poly([[0, hy], [0, hy - 22], [18, hy - 30], [34, hy - 24], [52, hy - 36], [70, hy - 26], [96, hy - 16], [120, hy]], night ? C.night : C.plum);
+  p.poly([[120, hy], [150, hy - 10], [200, hy - 14], [250, hy - 9], [W, hy - 12], [W, hy]], night ? C.ink : C.plum);
+
+  // --- Downtown. Each tower: [x, width, height, style]. Blue-violet glass with lit windows + sunset rim light.
+  const glass = night ? [C.ink, C.night, C.storm] : [C.ink, C.night, C.storm];
+  const rim = night ? C.slate : C.flame;
+  const win = (x, y, w, h, dens = 0.35) => { for (let yy = y + 3; yy < y + h - 1; yy += 3) for (let xx = x + 2; xx < x + w - 1; xx += 2) if (bayer(xx * 3, yy * 5) < dens) p.px(xx, yy, bayer(xx, yy) < 0.4 ? C.yellow : C.gold); };
+  const box = (x, w, h, base = glass[1], dens) => { p.rect(x, hy - h, w, h, base); p.vline(x, hy - h, h, rim); p.vline(x + w - 1, hy - h, h, glass[0]); win(x, hy - h, w, h, dens); };
+  const bx = Math.round(W * 0.43);
+  // back row, hazier
+  for (const [dx, w, h] of [[-8, 12, 34], [4, 10, 46], [58, 12, 50], [70, 10, 38], [92, 14, 30], [104, 10, 24]]) { p.rect(bx + dx, hy - h, w, h, night ? C.night : C.storm); win(bx + dx, hy - h, w, h, 0.15); }
+  // Two Union Square (notched, curved crown)
+  box(bx + 2, 12, 70); p.rect(bx + 2, hy - 74, 8, 4, glass[1]); p.vline(bx + 2, hy - 74, 4, rim);
+  // Rainier Square Tower (tapered stilt base)
+  p.poly([[bx + 18, hy], [bx + 24, hy], [bx + 28, hy - 26], [bx + 28, hy - 92], [bx + 15, hy - 92], [bx + 15, hy - 26]], C.slate);
+  p.vline(bx + 15, hy - 92, 66, night ? C.steel : C.peach); win(bx + 15, hy - 90, 13, 62, 0.25);
+  // Columbia Center — tallest, dark, three stepped lobes
+  const cx = bx + 36;
+  box(cx - 4, 26, 84, glass[0], 0.2); box(cx, 18, 98, glass[1], 0.25); box(cx + 5, 8, 110, glass[1], 0.3);
+  p.vline(cx + 9, hy - 110, 110, glass[2]); p.vline(cx + 3, hy - 98, 98, glass[2]);
+  p.px(cx + 8, hy - 112, C.red); p.vline(cx + 8, hy - 114, 2, C.slate);
+  // Seattle Municipal Tower (sloped top)
+  p.poly([[cx + 26, hy], [cx + 26, hy - 76], [cx + 40, hy - 84], [cx + 40, hy]], glass[1]); p.vline(cx + 26, hy - 76, 76, rim); win(cx + 26, hy - 80, 14, 78, 0.3);
+  // 1201 Third Ave (pale stone, postmodern crown)
+  const tx = cx + 44; p.rect(tx, hy - 78, 14, 78, night ? C.storm : C.clay); p.vline(tx, hy - 78, 78, night ? C.slate : C.tan); win(tx, hy - 78, 14, 78, 0.4);
+  p.poly([[tx + 1, hy - 78], [tx + 13, hy - 78], [tx + 7, hy - 88]], night ? C.slate : C.tan); p.rect(tx + 5, hy - 86, 4, 4, C.gold);
+  // Wells Fargo Center + filler mid-rises
+  box(cx - 16, 12, 60); box(bx - 20, 14, 40); box(bx - 32, 12, 28); box(tx + 16, 12, 52); box(tx + 30, 10, 36);
+  // Smith Tower — little white classic with a pyramid top, down in Pioneer Square
+  const smx = tx + 44; p.rect(smx, hy - 40, 7, 40, C.silver); p.vline(smx, hy - 40, 40, C.white); win(smx, hy - 40, 7, 40, 0.25);
+  p.poly([[smx, hy - 40], [smx + 7, hy - 40], [smx + 3.5, hy - 52]], C.white); p.vline(smx + 3, hy - 56, 4, C.silver);
+  // Stadiums: Lumen Field's arches + T-Mobile's roof
+  p.rect(smx + 10, hy - 10, 26, 10, night ? C.night : C.storm); for (let i = 0; i < 26; i++) p.px(smx + 10 + i, hy - 12 - Math.round(Math.sin(i / 25 * Math.PI) * 5), C.silver);
+  p.poly([[smx + 38, hy], [smx + 40, hy - 14], [W, hy - 16], [W, hy]], night ? C.night : C.storm); p.hline(smx + 40, hy - 15, W - smx - 40, C.steel);
+  // Great Wheel on the waterfront
+  const gwx = bx - 44, gwy = hy - 16;
+  p.ring(gwx, gwy, 13, 13, C.silver); for (let a = 0; a < 12; a++) { const ang = a / 12 * Math.PI * 2; p.line(gwx, gwy, gwx + Math.cos(ang) * 12, gwy + Math.sin(ang) * 12, C.steel); p.px(gwx + Math.cos(ang) * 13, gwy + Math.sin(ang) * 13, a % 2 ? C.cyan : C.pink); }
+  p.line(gwx, gwy, gwx - 6, hy, C.slate); p.line(gwx, gwy, gwx + 6, hy, C.slate);
+  // waterfront pier line
+  p.rect(0, hy - 3, W, 3, C.ink); for (let i = 0; i < W; i += 7) p.px(i, hy - 4, C.gold);
+
+  // --- Space Needle, foreground on Queen Anne. Legs taper to an hourglass waist, flare to the saucer.
+  const nx = Math.round(W * 0.2), base = hy - 2, top = hy - 132;
+  const Hn = base - top; const dark = C.ink, edge = night ? C.slate : C.flame;
+  const legW = t => t < 0.58 ? 11 - t / 0.58 * 8.5 : 2.5 + (t - 0.58) / 0.22 * 7.5; // half-width by height fraction
+  for (let j = 0; j <= Math.round(Hn * 0.8); j++) {
+    const t = j / Hn, y = base - j, w = legW(t);
+    p.px(nx - w, y, edge); p.px(nx - w + 1, y, dark); p.px(nx + w, y, dark); p.px(nx + w - 1, y, dark); // outer legs
+    p.px(nx, y, dark); if (t < 0.5) p.px(nx + 1, y, dark); // centre leg
   }
-  // Space Needle
-  const nx = Math.round(W * 0.2), ny = hy;
-  p.poly([[nx - 6, ny], [nx - 2, ny - 50], [nx + 2, ny - 50], [nx + 6, ny]], C.ink); p.vline(nx, ny - 50, 50, C.night);
-  p.poly([[nx - 16, ny - 56], [nx + 16, ny - 56], [nx + 8, ny - 62], [nx - 8, ny - 62]], C.ink); p.hline(nx - 15, ny - 57, 30, C.gold);
-  p.poly([[nx - 8, ny - 62], [nx + 8, ny - 62], [nx + 2, ny - 70], [nx - 2, ny - 70]], C.ink); p.vline(nx, ny - 82, 12, C.ink); p.px(nx, ny - 83, C.red);
-  p.hline(nx - 4, ny - 30, 9, C.ink);
-  // water
-  p.vgrad(0, hy, W, H - hy, mood === 'night' ? [C.night, C.ink] : [C.plum, C.navy, C.night]);
-  for (let j = hy + 2; j < H; j += 3) for (let i = 0; i < W; i += 1) if (bayer(i, j) > 0.93) p.px(i, j, mood === 'sunset' ? C.gold : C.slate);
-  if (mood === 'sunset') for (let j = hy + 1; j < hy + 40; j += 2) p.hline(W * 0.28 - 18 + (j % 5) * 3, j, 36 - (j - hy) * 0.7, C.gold);
-  // ferry
-  p.rect(W * 0.55, hy + 12, 30, 5, C.white); p.rect(W * 0.55 + 4, hy + 8, 20, 4, C.silver); p.rect(W * 0.55 + 12, hy + 4, 4, 4, C.forest); p.hline(W * 0.55, hy + 17, 30, C.forest);
+  p.rect(nx - 4, base - Math.round(Hn * 0.58) - 1, 9, 2, dark); // waist ring
+  p.rect(nx + 3, base - Math.round(Hn * 0.45), 3, 10, dark); // elevator wing hint
+  // saucer (the "halo" + restaurant disc)
+  const sy = base - Math.round(Hn * 0.8);
+  p.poly([[nx - 11, sy], [nx + 11, sy], [nx + 18, sy - 4], [nx - 18, sy - 4]], dark); p.hline(nx - 18, sy - 4, 37, edge);
+  p.rect(nx - 13, sy - 9, 27, 5, dark); for (let i = nx - 12; i < nx + 13; i += 2) p.px(i, sy - 7, i % 4 ? C.gold : C.yellow);
+  p.poly([[nx - 20, sy - 10], [nx + 20, sy - 10], [nx + 13, sy - 13], [nx - 13, sy - 13]], dark); p.hline(nx - 20, sy - 10, 41, edge);
+  // roof, cap and spire
+  p.poly([[nx - 10, sy - 13], [nx + 10, sy - 13], [nx + 4, sy - 19], [nx - 4, sy - 19]], dark);
+  p.rect(nx - 2, sy - 23, 5, 4, dark); p.vline(nx, top, sy - 23 - top, dark); p.px(nx, top - 1, C.red); p.px(nx, top, C.hot);
+  // Queen Anne hilltop trees in front of the Needle's base
+  for (let i = 0; i < 9; i++) { const tx0 = nx - 40 + i * 10 + (i % 2) * 3, th = 12 + (i * 7) % 10; p.poly([[tx0 - 6, base + 2], [tx0 + 6, base + 2], [tx0, base - th]], C.ink); }
+
+  // --- Elliott Bay
+  p.vgrad(0, hy, W, H - hy, night ? [C.night, C.ink] : [C.plum, C.navy, C.night]);
+  for (let j = hy + 2; j < H; j += 2) for (let i = 0; i < W; i++) if (bayer(i * 2, j) > 0.94) p.px(i, j, night ? C.storm : C.mauve);
+  // tower light reflections
+  for (let i = Math.round(W * 0.4); i < W - 20; i += 3) if (bayer(i, 1) > 0.4) for (let j = hy + 3; j < hy + 40; j += 2) if (bayer(i, j) > (j - hy) / 44) p.px(i, j, j % 4 ? C.gold : C.flame);
+  if (!night) for (let j = hy + 2; j < hy + 50; j += 2) { const w = 30 - (j - hy) * 0.45; p.hline(W * 0.12 - w / 2 + ((j * 7) % 5), j, w, j % 4 ? C.gold : C.yellow); }
+  // Washington State-style ferry: white hull, green stripe, stacked decks
+  const fx = Math.round(W * 0.52), fy = hy + 18;
+  p.poly([[fx, fy], [fx + 46, fy], [fx + 42, fy + 6], [fx + 4, fy + 6]], C.white); p.hline(fx + 3, fy + 4, 40, C.forest);
+  p.rect(fx + 6, fy - 5, 34, 5, C.silver); for (let i = fx + 8; i < fx + 38; i += 3) p.px(i, fy - 3, C.gold);
+  p.rect(fx + 12, fy - 9, 22, 4, C.white); p.rect(fx + 21, fy - 14, 4, 5, C.forest); p.hline(fx + 21, fy - 14, 4, C.ink);
+  p.hline(fx - 6, fy + 7, 56, C.silver); // wake
   p.toTexture(scene, key);
   return key;
 }

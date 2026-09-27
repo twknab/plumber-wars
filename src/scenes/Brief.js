@@ -38,7 +38,7 @@ export class Brief extends Phaser.Scene {
     const dy = cy + 170;
     await dialog(this, { portrait: portrait(this, 'job' + ji, job.look, 'worried'), name: job.who, text: job.call, color: C.cyan, pitch: 1.1, y: dy });
     if (this.left) return;
-    await dialog(this, { portrait: portrait(this, hero.id, hero.look, 'smug'), name: hero.name, text: pick(["SAY LESS. THE COOL HOMIES ARE ON THE WAY.", "G'S PLUMBING, WE'RE ROLLING. KEEP IT CALM, WE GOT YOU.", "FIFTEEN MINUTES. PUT THE KETTLE ON."]), color: hero.color, pitch: hero.pitch, y: dy });
+    await dialog(this, { portrait: portrait(this, hero.id, hero.look, 'smug'), name: hero.name, text: pick(["SAY LESS. THE HOMIES ARE ON THE WAY.", "G'S PLUMBING, WE'RE ROLLING. KEEP IT CALM, WE GOT YOU.", "FIFTEEN MINUTES. PUT THE KETTLE ON."]), color: hero.color, pitch: hero.pitch, y: dy });
     if (this.left) return;
     audio.sfx('buzz');
     const line = pick(TRASH.steal);

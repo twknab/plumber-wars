@@ -25,7 +25,7 @@ export class Title extends Phaser.Scene {
     this.add.image(W / 2, 86, 'logoSub');
     const logo = this.add.image(W / 2, 98, 'logo').setOrigin(0.5, 0);
     logo.y = -120; this.tweens.add({ targets: logo, y: 98, duration: 700, ease: 'Bounce.out', delay: 200 });
-    const vs = txt(this, W / 2, 190, "THE COOL HOMIES  VS  NORTHWEST", { ox: 0.5, color: C.yellow });
+    const vs = txt(this, W / 2, 190, "THE HOMIES  VS  NORTHWEST", { ox: 0.5, color: C.yellow });
     this.tweens.add({ targets: vs, alpha: 0.4, yoyo: true, repeat: -1, duration: 500 });
     txt(this, W / 2, 202, 'A PUGET SOUND PLUMBING TURF WAR', { ox: 0.5, color: C.silver });
 
