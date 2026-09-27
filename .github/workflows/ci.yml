@@ -1,0 +1,36 @@
+# Pre-merge gates: every push and pull request must pass tests, build and a dependency audit.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    name: Test, build, audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tests (content, docs sync, voices, leaderboard rules)
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Server syntax
+        run: node --check server/server.mjs
+      - name: Dependency audit (high and critical)
+        run: npm audit --audit-level=high
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
