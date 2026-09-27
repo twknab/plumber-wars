@@ -76,3 +76,6 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).has('assets')) {
 if (import.meta.env.DEV && new URLSearchParams(location.search).has('racebot')) {
   import('./dev/racebot.js').then(m => setTimeout(() => m.runRaceBot(game), 1500));
 }
+if (import.meta.env.DEV && new URLSearchParams(location.search).has('music')) {
+  import('./dev/musicpreview.js').then(m => m.renderAll());
+}

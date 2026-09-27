@@ -74,7 +74,11 @@ Everything is generated in code at boot — there are no image or audio asset fi
   ENDESGA-32 palette.
 - `src/art/*` — vehicles, roadside scenery, Seattle houses, repair close-ups, tools, portraits with moods, the
   G's badge, logo lettering, the Kerry Park skyline (and an orca).
-- `src/core/audio.js` — chiptune synth (pulse/triangle/noise), 7 music tracks, ~40 SFX, engine drone.
+- `src/core/music.js` — electronic soundtrack engine: progressive house (title), psytrance (race), tech house
+  (repairs), deep house (map), big-room finale. Sine kicks with sidechain pump, noise claps/hats, detuned
+  supersaw stabs and pads, resonant acid lines, rolling basslines, arps. `/?music=1` renders every track to
+  `preview/*.wav` (dev server) with peak/RMS levels.
+- `src/core/audio.js` — chiptune SFX (~40), engine drone, recorded voices.
 - **Voices** — every spoken line is pre-recorded with Google Cloud Text-to-Speech (Chirp 3 HD voices: Big Randy,
   Skeeter and each Homie get their own) into `public/voice/`. Render new/changed lines with
   `node scripts/voices.mjs twk-experiments`; the browser's built-in speech is only a fallback.

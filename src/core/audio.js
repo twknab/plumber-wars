@@ -1,59 +1,13 @@
-// Chiptune synth: pulse/triangle/noise channels, a lookahead tracker for music, procedural SFX,
-// an engine drone, and (optional) speech-synth yelling for the Northwest crew.
+// Audio: procedural chiptune SFX, the engine drone, recorded voice clips, and the electronic
+// soundtrack (see music.js).
 import { store } from './save.js';
 import { voiceKey } from './voicekey.js';
+import { DJ } from './music.js';
 
 const NOTE = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
 const freq = n => { const m = /^([A-G]#?)(\d)$/.exec(n); return 440 * Math.pow(2, (NOTE[m[1]] + (+m[2] + 1) * 12 - 69) / 12); };
 
-// --- Music ---------------------------------------------------------------------------------
-// Each channel is bars of 16 steps. Tokens: note (C4, F#5), '-' hold, '.' rest. Drums: k s h o(open hat) c(crash).
-const bar = s => s.trim().split(/\s+/);
-const rep = (arr, n) => Array.from({ length: n }, () => arr).flat();
-const arp = (notes, n = 4) => rep(notes, n).slice(0, 16);
-const pump = (lo, hi) => [lo, '.', hi, '.', lo, '.', hi, '.', lo, '.', hi, '.', lo, '.', hi, '.'];
-
-const TRACKS = {
-  title: { bpm: 132, bars: 8,
-    lead: [...bar('A4 - . C5 . E5 - . A5 - - . G5 . E5 .'), ...bar('F5 - - . E5 . C5 . A4 - - - . . C5 .'), ...bar('D5 - - . C5 . B4 . G4 - . B4 . D5 - .'), ...bar('E5 - - - - - - - G#4 - - - B4 - - -'),
-      ...bar('A4 - . C5 . E5 - . A5 - - . B5 . C6 .'), ...bar('B5 - - . A5 . F5 . C5 - - - A4 . C5 .'), ...bar('D5 - . E5 . F5 - . G5 - . F5 . E5 .'), ...bar('E5 - - - - - - - . . . . . . . .')],
-    harm: [...arp(['A3', 'C4', 'E4', 'C4']), ...arp(['F3', 'A3', 'C4', 'A3']), ...arp(['G3', 'B3', 'D4', 'B3']), ...arp(['E3', 'G#3', 'B3', 'G#3']),
-      ...arp(['A3', 'C4', 'E4', 'C4']), ...arp(['F3', 'A3', 'C4', 'A3']), ...arp(['G3', 'B3', 'D4', 'B3']), ...arp(['E3', 'G#3', 'B3', 'D4'])],
-    bass: [...pump('A2', 'A3'), ...pump('F2', 'F3'), ...pump('G2', 'G3'), ...pump('E2', 'E3'), ...pump('A2', 'A3'), ...pump('F2', 'F3'), ...pump('G2', 'G3'), ...pump('E2', 'E3')],
-    drums: rep(bar('k . h . s . h . k k h . s . h o'), 7).concat(bar('k . s . s . s s k . s s c . . .')) },
-  drive: { bpm: 164, bars: 8,
-    lead: [...bar('B4 - - . G4 . B4 . E5 - - . D5 . B4 .'), ...bar('C5 - - . B4 . G4 . E4 - - - - - . .'), ...bar('D5 - - . C5 . B4 . A4 - - . B4 . C5 .'), ...bar('B4 - - - - - D#5 - - - F#5 - - - . .'),
-      ...bar('E5 . E5 . G5 - E5 . B5 - - . A5 . G5 .'), ...bar('G5 - - . F#5 . E5 . C5 - - - E5 - G5 -'), ...bar('F#5 - - . E5 . D5 . A4 - - . D5 . F#5 .'), ...bar('D#5 - - - F#5 - - - B5 - - - A5 . F#5 .')],
-    harm: [...arp(['E4', 'G4', 'B4', 'G4']), ...arp(['C4', 'E4', 'G4', 'E4']), ...arp(['D4', 'F#4', 'A4', 'F#4']), ...arp(['B3', 'D#4', 'F#4', 'D#4']),
-      ...arp(['E4', 'G4', 'B4', 'E5']), ...arp(['C4', 'E4', 'G4', 'C5']), ...arp(['D4', 'F#4', 'A4', 'D5']), ...arp(['B3', 'D#4', 'F#4', 'B4'])],
-    bass: [...pump('E2', 'E3'), ...pump('C2', 'C3'), ...pump('D2', 'D3'), ...pump('B1', 'B2'), ...pump('E2', 'E3'), ...pump('C2', 'C3'), ...pump('D2', 'D3'), ...pump('B1', 'B2')],
-    drums: rep(bar('k . h k s . h . k k h . s . h h'), 3).concat(bar('k . h k s . h . k . s s s s s s')) },
-  repair: { bpm: 116, bars: 4,
-    lead: [...bar('. . . . D5 . F5 . . A5 . G5 - F5 D5 .'), ...bar('. . . . C5 . D5 . . F5 - D5 . C5 A4 .'), ...bar('. . . . D5 . F5 . . A5 . C6 - A5 G5 .'), ...bar('F5 - E5 - D5 - C5 - D5 - - - . . . .')],
-    harm: [...bar('. . D4 . . . F4 . . . D4 . F4 . A4 .'), ...bar('. . C4 . . . E4 . . . C4 . E4 . G4 .'), ...bar('. . D4 . . . F4 . . . D4 . F4 . A4 .'), ...bar('. . A3 . . . C4 . . . E4 . G4 . A4 .')],
-    bass: [...bar('D2 . . D3 . . C3 . D2 . . F2 . G2 . A2'), ...bar('C2 . . C3 . . A2 . C2 . . E2 . G2 . A2'), ...bar('D2 . . D3 . . C3 . D2 . . F2 . G2 . A2'), ...bar('A1 . . A2 . . G2 . A1 . . C2 . E2 . G2')],
-    drums: rep(bar('k . h . s . h k . k h . s . h h'), 3).concat(bar('k . h . s . h k . k s . s s s s')) },
-  map: { bpm: 104, bars: 4,
-    lead: [...bar('B4 - - - D5 - - - G5 - - - F#5 - E5 -'), ...bar('D5 - - - B4 - - - G4 - - - A4 - B4 -'), ...bar('C5 - - - E5 - - - G5 - - - A5 - G5 -'), ...bar('F#5 - - - E5 - D5 - A4 - - - - - - -')],
-    harm: [...arp(['G3', 'B3', 'D4', 'B3']), ...arp(['E3', 'G3', 'B3', 'G3']), ...arp(['C4', 'E4', 'G4', 'E4']), ...arp(['D4', 'F#4', 'A4', 'F#4'])],
-    bass: [...bar('G2 - - - . . G2 . D2 - - - . . D2 .'), ...bar('E2 - - - . . E2 . B1 - - - . . B1 .'), ...bar('C2 - - - . . C2 . G2 - - - . . G2 .'), ...bar('D2 - - - . . D2 . A2 - - - F#2 - - -')],
-    drums: rep(bar('k . . h s . . h k . k h s . . h'), 4) },
-  win: { bpm: 180, bars: 2, once: true,
-    lead: bar('C5 E5 G5 C6 - - G5 C6 - - - - . . . . D6 - E6 - - - G6 - - - - - - - . .'),
-    harm: bar('E4 G4 C5 E5 - - C5 E5 - - - - . . . . F5 - G5 - - - B5 - - - - - - - . .'),
-    bass: bar('C3 . C3 . C3 . G2 . C3 . . . . . . . G2 - A2 - - - B2 - - - C3 - - - . .'),
-    drums: bar('k . h . k . h . k . . . . . . . s s s s k . . . c . . . . . . .') },
-  lose: { bpm: 120, bars: 2, once: true,
-    lead: bar('G4 - F#4 - F4 - E4 - - - - - . . . . D#4 - - - D4 - - - C#4 - - - - - - -'),
-    harm: bar('. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .'),
-    bass: bar('C3 - B2 - A#2 - A2 - - - - - . . . . G#2 - - - G2 - - - F#2 - - - - - - -'),
-    drums: bar('k . . . . . . . k . . . . . . . s . . . . . . . s . . . . . . .') },
-  finale: { bpm: 150, bars: 4,
-    lead: [...bar('C5 - E5 - G5 - C6 - B5 - G5 - E5 - G5 -'), ...bar('A5 - - - F5 - A5 - C6 - - - A5 - F5 -'), ...bar('G5 - - - E5 - G5 - B5 - - - D6 - B5 -'), ...bar('C6 - - - - - - - G5 - E5 - C5 - - -')],
-    harm: [...arp(['C4', 'E4', 'G4', 'E4']), ...arp(['F4', 'A4', 'C5', 'A4']), ...arp(['G4', 'B4', 'D5', 'B4']), ...arp(['C4', 'E4', 'G4', 'C5'])],
-    bass: [...pump('C2', 'C3'), ...pump('F2', 'F3'), ...pump('G2', 'G3'), ...pump('C2', 'C3')],
-    drums: rep(bar('k . h . s . h . k k h . s . h o'), 3).concat(bar('k . s . s . s s k s s s c . . .')) },
-};
+// Music lives in ./music.js (electronic tracks); this file keeps SFX, the engine drone and voices.
 
 class Chip {
   constructor() {
@@ -67,7 +21,7 @@ class Chip {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       this.ctx = new AC();
       this.master = this.ctx.createGain(); this.master.gain.value = this.enabled ? 0.55 : 0; this.master.connect(this.ctx.destination);
-      this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = 0.42; this.musicBus.connect(this.master);
+      this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = 0.5; this.musicBus.connect(this.master);
       this.sfxBus = this.ctx.createGain(); this.sfxBus.gain.value = 0.8; this.sfxBus.connect(this.master);
       this.voiceBus = this.ctx.createGain(); this.voiceBus.gain.value = 1.6; this.voiceBus.connect(this.master);
       const len = this.ctx.sampleRate; const b = this.ctx.createBuffer(1, len, len); const d = b.getChannelData(0);
@@ -105,39 +59,9 @@ class Chip {
     s.connect(fl); fl.connect(g); g.connect(bus || this.sfxBus); s.start(at, Math.random()); s.stop(at + dur + 0.02);
   }
 
-  // --- music -------------------------------------------------------------------------------
-  music(name) {
-    if (!this.ctx) { this.pending = name; return; }
-    if (this.track && this.track.name === name) return;
-    this.stopMusic();
-    const tr = TRACKS[name]; if (!tr) return;
-    const stepDur = 60 / tr.bpm / 4; const len = Math.max(tr.lead.length, tr.bass.length, tr.drums.length);
-    this.track = { name, tr, step: 0, next: this.now + 0.06, stepDur, len };
-    this.timer = setInterval(() => this.pump(), 25);
-  }
-  stopMusic() { clearInterval(this.timer); this.timer = null; this.track = null; }
-  pump() {
-    const T = this.track; if (!T || !this.ctx) return;
-    while (T.next < this.now + 0.12) {
-      const i = T.step % T.len; const at = T.next - this.now;
-      if (T.tr.once && T.step >= T.len) { this.stopMusic(); return; }
-      this.chan(T.tr.lead, i, at, T.stepDur, { duty: 0.25, vol: 0.11 });
-      this.chan(T.tr.harm, i, at, T.stepDur, { duty: 0.125, vol: 0.05 });
-      this.chan(T.tr.bass, i, at, T.stepDur, { type: 'triangle', vol: 0.22 });
-      const d = T.tr.drums[i % T.tr.drums.length];
-      if (d === 'k') this.tone({ type: 'sine', f: 150, f2: 38, t: at, dur: 0.14, vol: 0.5, bus: this.musicBus });
-      if (d === 's') { this.hiss({ t: at, dur: 0.12, vol: 0.22, filter: 'bandpass', fq: 1800, q: 0.7, bus: this.musicBus }); this.tone({ type: 'triangle', f: 220, f2: 120, t: at, dur: 0.06, vol: 0.18, bus: this.musicBus }); }
-      if (d === 'h') this.hiss({ t: at, dur: 0.03, vol: 0.08, fq: 7000, bus: this.musicBus });
-      if (d === 'o') this.hiss({ t: at, dur: 0.14, vol: 0.07, fq: 6000, bus: this.musicBus });
-      if (d === 'c') this.hiss({ t: at, dur: 0.7, vol: 0.12, fq: 4000, bus: this.musicBus });
-      T.step++; T.next += T.stepDur;
-    }
-  }
-  chan(pat, i, at, sd, v) {
-    const n = pat[i % pat.length]; if (!n || n === '.' || n === '-') return;
-    let hold = 1; while (pat[(i + hold) % pat.length] === '-' && hold < 16) hold++;
-    this.tone({ ...v, f: freq(n), t: at, dur: hold * sd * 0.95, release: Math.min(0.08, hold * sd * 0.4), bus: this.musicBus });
-  }
+  // --- music (electronic soundtrack, see music.js) -----------------------------------------
+  music(name) { if (!this.ctx) return; (this.dj = this.dj || new DJ(this)).play(name); }
+  stopMusic() { if (this.dj) this.dj.stop(); }
 
   // --- engine ------------------------------------------------------------------------------
   engineOn() {
@@ -216,7 +140,7 @@ class Chip {
     if (!this.clips.has(key)) this.clips.set(key, this.bytes(key).then(b => (b ? new Promise((ok, no) => this.ctx.decodeAudioData(b.slice(0), ok, no)) : null)).catch(() => null));
     return this.clips.get(key);
   }
-  duck(on) { if (this.musicBus) this.musicBus.gain.setTargetAtTime(on ? 0.12 : 0.42, this.now, on ? 0.05 : 0.3); }
+  duck(on) { if (this.musicBus) this.musicBus.gain.setTargetAtTime(on ? 0.14 : 0.5, this.now, on ? 0.05 : 0.3); }
   // say(text) or say([line1, line2]) - plays the recorded clip for each line in order.
   say(text, opts = {}) {
     if (!this.enabled || !this.voices) { this.sfx('grunt'); return; }
