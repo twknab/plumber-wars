@@ -17,10 +17,10 @@ export class About extends Phaser.Scene {
     txt(this, W / 2, 70, 'ABOUT', { ox: 0.5, size: 3, color: C.gold });
 
     const y0 = 98;
-    panel(this, 8, y0, W - 16, 132);
+    panel(this, 8, y0, W - 16, 138);
     txt(this, 18, y0 + 10, "G'S PLUMBING - THE HOMIES", { color: C.lime });
-    txt(this, 18, y0 + 24, "A LOVE LETTER TO SEATTLE'S HARDEST-WORKING (AND FUNNIEST) PLUMBING CREW. RACE NORTHWEST ACROSS TOWN, THEN FIX 15 REAL PUGET SOUND PLUMBING JOBS THE WAY A PRO WOULD - RIGHT TOOL, RIGHT ORDER, RIGHTY-TIGHTY.", { maxW: W - 36 });
-    txt(this, 18, y0 + 100, 'NORTHWEST IS FICTIONAL. THEIR MOUTHS ARE FILTHY.', { color: C.pink, maxW: W - 36 });
+    txt(this, 18, y0 + 24, "A LOVE LETTER TO SEATTLE'S HARDEST-WORKING (AND FUNNIEST) PLUMBING CREW. RACE NORTHWEST ACROSS TOWN, THEN FIX 16 REAL PUGET SOUND PLUMBING JOBS THE WAY A PRO WOULD - RIGHT TOOL, RIGHT ORDER, RIGHTY-TIGHTY. 5 DISTRICTS + AN ALKI BEACH BONUS AT JIMMY'S.", { maxW: W - 36 });
+    txt(this, 18, y0 + 108, 'NORTHWEST IS FICTIONAL. THEIR MOUTHS ARE FILTHY.', { color: C.pink, maxW: W - 36 });
 
     // the crew
     const cy = y0 + 142;

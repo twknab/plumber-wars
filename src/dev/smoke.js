@@ -1,7 +1,7 @@
 // Dev-only: auto-plays every repair job step-by-step to catch broken anchors/gestures.
 // Open /?smoke=1 then read window.__smoke.
 const sleep = ms => new Promise(res => setTimeout(res, ms));
-export async function runSmoke(g, from = 0, to = 14) {
+export async function runSmoke(g, from = 0, to = 15) {
   const out = window.__smoke = [];
   window.addEventListener('error', e => out.push('WINDOW ERROR ' + e.message));
   for (let i = from; i <= to; i++) {

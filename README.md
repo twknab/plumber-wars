@@ -21,11 +21,12 @@ problems before the customer loses it and calls the competition.
   truck tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm,
   hold for torque, drag parts, pull, scrub, tap leaks). Wrong tools and wrong order cost time and make the
   customer madder. A pro tip explains each real step.
-- **15 jobs / 5 districts** — Ballard, Fremont, Capitol Hill, West Seattle, Queen Anne — with rising difficulty:
+- **16 jobs** — a 15-job campaign across 5 districts (Ballard, Fremont, Capitol Hill, West Seattle, Queen Anne) plus an
+  **Alki Beach bonus** at Jimmy's (unlocks with West Seattle). Rising difficulty:
   longer, faster races; a meaner, faster rival; tighter repair clocks and timing windows; tool hints only in
   Ballard; from Capitol Hill on you must pick the next step yourself.
 
-### The 15 jobs (common Seattle-area calls)
+### The 16 jobs (common Seattle-area calls)
 
 | District | Jobs |
 |---|---|
@@ -34,6 +35,7 @@ problems before the customer loses it and calls the competition.
 | Capitol Hill | Low water pressure (PRV) · Leaky supply line · Rocking toilet / wax ring |
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
+| Alki Beach (bonus) | Hair-clogged bathroom sink at Jimmy's: pivot nut, pop-up stopper, zip-it (plus one squirrel acorn) |
 
 ## Controls (touch or keyboard)
 
@@ -77,7 +79,11 @@ npm run build
 ```
 
 Dev helpers: `/?scene=Gallery` (sprite sheets, tap to page), `/?scene=Drive&job=6`, `/?scene=Repair&job=9`,
-`/?smoke=1` (auto-plays every repair step of all 15 jobs; results in `window.__smoke`).
+`/?smoke=1` (auto-plays every repair step of all 16 jobs; results in `window.__smoke`).
+
+### Link preview card
+
+`public/og.png` (1200x630) is generated from in-game art: run the dev server and open `/?og=1` to regenerate it.
 
 ## Deploy (Google Cloud Run, project `twk-experiments`)
 
