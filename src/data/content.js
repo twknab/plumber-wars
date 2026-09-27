@@ -93,6 +93,41 @@ export const TRASH = {
     'SIT BACK, SUCKERS. DADDY RANDY IS ON THE CASE!'],
 };
 
+// The crew answering the customer's call on the job briefing. Speakers rotate Dalton -> Milan -> Jared
+// call to call; {WHO} is the customer, {HOOD} the neighborhood. Shown as text (not recorded).
+export const CALL_REPLIES = {
+  dalton: [
+    "SAY LESS. THE HOMIES ARE ON THE WAY.",
+    "{HOOD}? I KNOW A SHORTCUT. SEE YOU IN TEN.",
+    "KEYS IN HAND, VAN'S WARM. HANG TIGHT, {WHO}.",
+    'SHUT THE MAIN VALVE IF YOU CAN FIND IT. I AM ALREADY IN THE VAN.',
+    'TOWELS DOWN, WATER OFF, DALTON INBOUND.',
+    'GIVE ME FIFTEEN MINUTES AND ONE GREEN LIGHT.',
+    'IF A RED TRUCK SHOWS UP FIRST, DO NOT OPEN THE DOOR.',
+    "DON'T TOUCH ANYTHING. I'M DRIVING LIKE IT'S THE LAST LAP.",
+  ],
+  milan: [
+    "SOUNDS LIKE A CLOG PAST THE TRAP. I'VE GOT THE RIGHT SNAKE.",
+    "DON'T POUR ANYTHING IN IT. CHEMICALS JUST MAKE IT ANGRY.",
+    'I CAN HEAR THE PROBLEM FROM HERE. BE RIGHT OVER.',
+    "WATER ALWAYS SHOWS YOU WHERE IT WANTS TO GO. I'LL LISTEN.",
+    "{WHO}, BREATHE. PIPES ARE JUST PHYSICS. I'M GOOD AT PHYSICS.",
+    "IT'S NOT A DISASTER, IT'S A PUZZLE. ROLLING OUT.",
+    'NO GUESSWORK. WE FIND THE CAUSE, THEN WE FIX IT FOR GOOD.',
+    'PACKING THE GOOD WRENCH. THE PIPES KNOW WHICH ONE.',
+  ],
+  jared: [
+    'FIFTEEN MINUTES. PUT THE KETTLE ON.',
+    "G'S PLUMBING, WE'RE ROLLING. KEEP IT CALM, WE GOT YOU.",
+    "{WHO}! YOU DID THE RIGHT THING CALLING US. WE'RE ON THE WAY.",
+    "HEY, DEEP BREATH. YOU'RE IN GOOD HANDS NOW.",
+    "I'LL EXPLAIN EVERYTHING WHEN I GET THERE. NO SURPRISES ON THE BILL.",
+    'HOLD TIGHT, {WHO}. HELP IS ON THE WAY, AND IT BRINGS SNACKS.',
+    "WE'VE SEEN WORSE. WAY WORSE. YOU'RE GONNA BE FINE.",
+    'BEST CALL YOU WILL MAKE ALL WEEK. SEE YOU IN {HOOD}.',
+  ],
+};
+
 // One-off spoken lines (title, finale) that also get recorded by scripts/voices.mjs.
 // Big Randy welcomes you to each district (shown on the district intro).
 export const DISTRICT_WELCOME = [

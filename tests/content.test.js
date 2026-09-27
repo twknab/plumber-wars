@@ -68,3 +68,13 @@ test('campaign progress: Alki gates Queen Anne, old saves migrate', async () => 
   assert.ok(progress.isOpen(14), 'jobs the old save already starred are skipped');
   progress.reset();
 });
+
+test('every homie has plenty of ways to answer the call', async () => {
+  const { CALL_REPLIES } = await import('../src/data/content.js');
+  for (const h of HEROES) {
+    const lines = CALL_REPLIES[h.id];
+    assert.ok(lines && lines.length >= 6, `${h.name} needs call replies`);
+    assert.equal(new Set(lines).size, lines.length, `${h.name} has duplicate replies`);
+    for (const l of lines) assert.ok(!/\{(?!WHO\}|HOOD\})/.test(l), `unknown placeholder in "${l}"`);
+  }
+});
