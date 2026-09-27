@@ -59,6 +59,8 @@ class Chip {
   constructor() {
     this.ctx = null; this.enabled = store.get('sound', true); this.voices = store.get('voicesOn', true); // new key: resets any old 'off' so voices start on
     this.track = null; this.timer = null; this.engine = null;
+    this.clips = new Map(); this.raw = new Map();
+    this.voiceReady = this.loadVoices();
   }
   unlock() {
     if (!this.ctx) {
@@ -68,7 +70,6 @@ class Chip {
       this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = 0.42; this.musicBus.connect(this.master);
       this.sfxBus = this.ctx.createGain(); this.sfxBus.gain.value = 0.8; this.sfxBus.connect(this.master);
       this.voiceBus = this.ctx.createGain(); this.voiceBus.gain.value = 1.6; this.voiceBus.connect(this.master);
-      this.loadVoices();
       const len = this.ctx.sampleRate; const b = this.ctx.createBuffer(1, len, len); const d = b.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; this.noise = b;
       this.pulse = {};
@@ -80,7 +81,6 @@ class Chip {
       }
     }
     if (this.ctx.state === 'suspended') this.ctx.resume();
-    if (this.voices && window.speechSynthesis && !this._spoke) { try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); this._spoke = true; } catch (e) { /* no speech */ } }
   }
   get now() { return this.ctx ? this.ctx.currentTime : 0; }
   setSound(on) { this.enabled = on; store.set('sound', on); if (this.master) this.master.gain.setTargetAtTime(on ? 0.55 : 0, this.now, 0.02); }
@@ -198,18 +198,22 @@ class Chip {
 
   // Speech synthesis "yelling". Falls back to grunts.
   // --- voices: pre-rendered Chirp 3 HD clips (public/voice), browser speech only as a fallback ---
+  // Voice list + clip bytes download at page load; decoding waits for the AudioContext (first tap).
   loadVoices() {
-    this.clips = new Map();
-    fetch('/voice/manifest.json').then(r => r.ok ? r.json() : {}).then(m => {
+    return fetch('/voice/manifest.json').then(r => (r.ok ? r.json() : {})).then(m => {
       this.voiceMan = m;
-      // warm the cache quietly, a few at a time
       const keys = Object.keys(m); let i = 0;
-      const next = () => { if (i >= keys.length) return; const k = keys[i++]; this.clip(k).finally(() => setTimeout(next, 60)); };
-      for (let n = 0; n < 3; n++) next();
-    }).catch(() => { this.voiceMan = {}; });
+      const next = () => { if (i >= keys.length) return; const k = keys[i++]; this.bytes(k).finally(() => setTimeout(next, 30)); };
+      for (let n = 0; n < 4; n++) next();
+      return m;
+    }).catch(() => (this.voiceMan = {}));
+  }
+  bytes(key) {
+    if (!this.raw.has(key)) this.raw.set(key, fetch('/voice/' + this.voiceMan[key].f).then(r => r.arrayBuffer()).catch(() => null));
+    return this.raw.get(key);
   }
   clip(key) {
-    if (!this.clips.has(key)) this.clips.set(key, fetch('/voice/' + this.voiceMan[key].f).then(r => r.arrayBuffer()).then(b => new Promise((ok, no) => this.ctx.decodeAudioData(b, ok, no))).catch(() => null));
+    if (!this.clips.has(key)) this.clips.set(key, this.bytes(key).then(b => (b ? new Promise((ok, no) => this.ctx.decodeAudioData(b.slice(0), ok, no)) : null)).catch(() => null));
     return this.clips.get(key);
   }
   duck(on) { if (this.musicBus) this.musicBus.gain.setTargetAtTime(on ? 0.12 : 0.42, this.now, on ? 0.05 : 0.3); }
@@ -221,6 +225,8 @@ class Chip {
     const playNext = async (i) => {
       if (i >= lines.length || token !== this.sayToken) { this.duck(false); return; }
       const key = voiceKey(lines[i]);
+      if (!this.voiceMan) await this.voiceReady;
+      if (token !== this.sayToken) return;
       if (this.ctx && this.voiceMan && this.voiceMan[key]) {
         const buf = await this.clip(key);
         if (token !== this.sayToken) return;
