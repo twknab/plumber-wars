@@ -10,7 +10,7 @@ const PAGES = [
     lines: [
       ['RACE', 'NORTHWEST TO THE HOUSE.'],
       ['FIX', 'THE JOB BEFORE THE CUSTOMER SNAPS.'],
-      ['WIN', 'SEATTLE, ONE TOILET AT A TIME.'],
+      ['WIN', 'SEATTLE, WINNING OVER ONE CUSTOMER AT A TIME.'],
     ] },
   { title: 'THE RACE', art: [['coffee'], ['cone'], ['turd'], ['cyclist', 0]],
     lines: [
