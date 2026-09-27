@@ -44,6 +44,31 @@ export function button(scene, x, y, w, h, label, onTap, { color = 'btnGold', tex
   return c;
 }
 
+// "Ask your homies": when the player is struggling, make the unused help buttons pulse with a gold glow and
+// a bouncing arrow, plus a speech bubble. Stops by itself on each button once it's used (setEnabled(false)).
+export function nudgeHelp(scene, buttons, text) {
+  const live = buttons.filter(b => b && b.active && b.enabled && !b.nudging);
+  if (!live.length) return false;
+  for (const b of live) {
+    b.nudging = true;
+    const w = b.bg.width, h = b.bg.height;
+    const glow = scene.add.rectangle(b.x, b.y, w + 8, h + 8).setStrokeStyle(3, hex(C.yellow)).setDepth(b.depth - 1);
+    const arrow = scene.add.triangle(b.x, b.y - h / 2 - 12, 0, 0, 12, 0, 6, 8, hex(C.yellow)).setDepth(b.depth + 1);
+    const tw = [
+      scene.tweens.add({ targets: glow, alpha: 0.15, scaleX: 1.06, scaleY: 1.2, yoyo: true, repeat: -1, duration: 380 }),
+      scene.tweens.add({ targets: arrow, y: arrow.y - 6, yoyo: true, repeat: -1, duration: 300, ease: 'Sine.inOut' }),
+      scene.tweens.add({ targets: b, scale: 1.06, yoyo: true, repeat: -1, duration: 380 }),
+    ];
+    const stop = () => { tw.forEach(t => t.remove()); glow.destroy(); arrow.destroy(); if (b.active) b.setScale(1); b.nudging = false; };
+    const setEnabled = b.setEnabled; b.setEnabled = on => { if (!on) stop(); b.setEnabled = setEnabled; return setEnabled(on); };
+    b.once('destroy', stop);
+  }
+  const top = Math.min(...live.map(b => b.y - b.bg.height / 2));
+  bubble(scene, W / 2, top - 26, text, { dur: 3200, maxW: 200, depth: 120 });
+  audio.sfx('ding');
+  return true;
+}
+
 // Speech/dialog box with portrait and typewriter text. Resolves when dismissed.
 export function dialog(scene, { portrait, name, text, color = C.gold, side = 'left', pitch = 1, y, depth = 80, auto } = {}) {
   return new Promise(resolve => {

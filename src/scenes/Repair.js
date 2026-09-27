@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, setTxt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
+import { W, H, txt, setTxt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch, nudgeHelp } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -166,6 +166,8 @@ export class Repair extends Phaser.Scene {
     this.time.delayedCall(big ? 1900 : 1300, () => { m.destroy(); bgm.destroy(); });
     if (big && this.job.leak == null) this.splash(W / 2, SY + SH / 2, 14);
     this.gripe();
+    // struggling? point at the homies (after 3 mistakes, and again after 6 if they still haven't asked)
+    if ((this.mistakes === 3 || this.mistakes === 6) && !this.over) this.time.delayedCall(big ? 1900 : 1300, () => { if (!this.over) nudgeHelp(this, this.assists, pick(['STUCK? ASK YOUR HOMIES FOR HELP!', 'NO SHAME IN IT. CALL IN A HOMIE!', 'ROUGH ONE? THE HOMIES GOT YOUR BACK!'])); });
   }
   gripe() { bubble(this, W - 60, SY + 60, pick(GRIPES), { dur: 1600, tail: 'up', maxW: 150 }); this.setMood('angry', 1200); }
   setMood(m, revert) { this.cust.setTexture(portrait(this, 'job' + this.ji, this.job.look, m)); if (revert) this.time.delayedCall(revert, () => this.updateMood(true)); }

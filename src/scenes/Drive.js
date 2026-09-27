@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
+import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch, nudgeHelp } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress, store } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -56,7 +56,7 @@ export class Drive extends Phaser.Scene {
     this.hp = this.maxHp = (this.dalton ? 5 : 4) + (this.job.district >= 3 ? 1 : 0) + (this.job.district === 4 ? 1 : 0); this.coffee = 1; this.cash = 0; // +1 armor from West Seattle on
     this.px = LANES[2]; this.vx = 0; this.targetX = this.px; this.inv = 0; this.boost = 0; this.slide = 0; this.spin = 0; this.splat = 0;
     this.leaving = false; this.paused = false; this.clashCd = 0; this.commsTimer = null; this.result = null; // scenes are reused between jobs
-    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false; this.centerT = 0; this.nextCenter = 900;
+    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false; this.hitsTaken = 0; this.nudged = false; this.goAt = 0; this.centerT = 0; this.nextCenter = 900;
     this.t = 0;
     // road
     this.road = this.add.tileSprite(0, 0, W, H, roadTexture(this, this.job.district)).setOrigin(0).setDepth(0);
@@ -141,7 +141,7 @@ export class Drive extends Phaser.Scene {
     const tick = () => {
       if (n > 0) { banner(this, String(n), { size: 5, dur: 500, color: C.gold }); audio.sfx('tick'); n--; this.time.delayedCall(650, tick); }
       else {
-        banner(this, 'GO!', { size: 5, dur: 600, color: C.lime }); audio.sfx('go'); this.state = 'race'; audio.music('drive'); this.say(pick(TRASH.taunt), 'randy');
+        banner(this, 'GO!', { size: 5, dur: 600, color: C.lime }); audio.sfx('go'); this.state = 'race'; this.goAt = this.time.now; audio.music('drive'); this.say(pick(TRASH.taunt), 'randy');
         // explain the assist the first few times it shows up
         const seen = store.get('assistHintSeen', 0);
         if (this.assistBtn && seen < 3) { store.set('assistHintSeen', seen + 1); this.time.delayedCall(900, () => bubble(this, W / 2, H - 58, 'DALTON CAN CLEAR THE ROAD ONCE PER RACE. TAP IT WHEN TRAFFIC BOXES YOU IN!', { dur: 4200, maxW: 190, color: C.brown })); }
@@ -368,7 +368,9 @@ export class Drive extends Phaser.Scene {
   knock(o) { o.dead = false; o.vx = (o.x < this.px ? -1 : 1) * 160; o.vd = (o.vd || 0) + this.speed * 0.5; this.tweens.add({ targets: o.spr, angle: 200, duration: 600 }); this.sparks(o.x, this.PY - 10); }
   damage(n, label) {
     if (n <= 0) { if (label) floatText(this, this.px, this.PY - 30, label, C.silver); return; }
-    this.hp -= n; this.inv = 1.3; this.cameras.main.shake(260, 0.018); this.cameras.main.flash(90, 255, 60, 60);
+    this.hp -= n; this.inv = 1.3; this.hitsTaken++;
+    // struggling? point at Dalton (after the first-race tip bubble has cleared)
+    if (this.hitsTaken >= 3 && !this.nudged && this.assistBtn && !this.assistUsed && this.state === 'race' && this.time.now - (this.goAt || 0) > 6000) this.nudged = nudgeHelp(this, [this.assistBtn], 'BOXED IN? ASK DALTON TO CLEAR THE ROAD!'); this.cameras.main.shake(260, 0.018); this.cameras.main.flash(90, 255, 60, 60);
     floatText(this, this.px, this.PY - 30, label || '-1 ARMOR', C.red);
     if (this.hp <= 0) this.lose('wreck');
   }

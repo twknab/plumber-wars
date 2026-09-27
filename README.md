@@ -39,7 +39,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   actual house at the end.
 - **The repair.** Each job is the real sequence a plumber follows. Every step: grab the right tool from the truck
   tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm, hold for torque,
-  drag parts, pull, scrub, tap leaks, sweep a sewer camera). Wrong tools and wrong order cost time and make the customer madder.
+  drag parts, pull, scrub, tap leaks, sweep a sewer camera). Wrong tools and wrong order cost time and make the customer madder. Rack up mistakes (or dents in the race)
+  and your homies' help buttons light up.
   A pro tip explains each real step.
 - **16 jobs** across 6 neighborhoods: Ballard, Fremont, Capitol Hill, West Seattle, then **Alki Beach** (Timmy's
   clogged tub, required) before the Queen Anne showdown. Rising difficulty: longer, faster races; a meaner,

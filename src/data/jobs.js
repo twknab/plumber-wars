@@ -239,7 +239,7 @@ export const JOBS = [
   { title: 'SEIZED MAIN SHUTOFF', scene: 'basement', variant: 'main', address: '1 KERRY PARK PL (THE GALA)',
     who: 'THE GALA HOST', look: { skin: 'brown', hair: 'black', style: 'slick', beard: 'goatee', shirt: '#181425', glasses: false, bowtie: true },
     house: { style: 'mansion', body: '#ffffff', trim: '#124e89', roof: '#262b44', door: '#feae34', extra: 'gala' },
-    call: 'NORTHWEST SNAPPED MY MAIN VALVE HANDLE OFF AND LEFT. 300 GUESTS. ONE HOUR. SAVE US, THE HOMIES!', decoys: ['ducttape', 'hammer', 'beer'],
+    call: 'NORTHWEST SNAPPED MY MAIN VALVE HANDLE OFF AND LEFT. 300 GUESTS. ONE HOUR. SAVE US, HOMIES!', decoys: ['ducttape', 'hammer', 'beer'],
     steps: [
       { t: 'STREET SHUTOFF: METER KEY', tool: 'meterkey', type: 'turn', target: 'curb', dir: 1, turns: 0.5, tip: 'THE CURB STOP IN THE METER BOX. A QUARTER TO HALF TURN, NO MUSCLE NEEDED.', early: 'YOU CUT A LIVE MAIN. THE GALA NOW HAS AN INDOOR FOUNTAIN.' },
       { t: 'DRAIN THE LINES', tool: 'hand', type: 'tap', target: 'lowtap', tip: 'OPEN THE LOWEST FAUCET IN THE HOUSE TO DRAIN THE PIPES.' },

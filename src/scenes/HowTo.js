@@ -26,7 +26,7 @@ const PAGES = [
     ] },
   { title: 'THE HOMIES', art: [['badge'], ['iStar'], ['iStar'], ['iStar']],
     lines: [
-      ['GOLD', 'BUTTONS = A HOMIE HELPS, ONCE PER JOB.'],
+      ['GOLD', 'BUTTONS = A HOMIE HELPS, ONCE PER JOB. STRUGGLING? THEY LIGHT UP.'],
       ['STARS', 'FOR SPEED, FEW MISTAKES, NO DENTS.'],
       ['SAVES', 'AUTOMATICALLY AFTER EVERY JOB.'],
     ] },
