@@ -56,7 +56,7 @@ export class Drive extends Phaser.Scene {
     this.hp = this.maxHp = this.dalton ? 5 : 4; this.coffee = 1; this.cash = 0;
     this.px = LANES[2]; this.vx = 0; this.targetX = this.px; this.inv = 0; this.boost = 0; this.slide = 0; this.spin = 0; this.splat = 0;
     this.leaving = false; this.paused = false; this.clashCd = 0; this.commsTimer = null; this.result = null; // scenes are reused between jobs
-    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false;
+    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false; this.centerT = 0; this.nextCenter = 900;
     this.t = 0;
     // road
     this.road = this.add.tileSprite(0, 0, W, H, roadTexture(this, this.job.district)).setOrigin(0).setDepth(0);
@@ -230,9 +230,29 @@ export class Drive extends Phaser.Scene {
     }
     if (R() < 0.18 + df.t * 0.2) add(this.mkObj('cyclist', 3, ahead + 140, { kind: 'cyclist', vd: 80, w: 8, h: 16, xo: 12, anim: true }));
     if (R() < 0.08 + df.t * 0.08) { const o = add(this.mkObj('raccoon', 0, ahead + 180, { kind: 'raccoon', vd: 0, w: 12, h: 8, anim: true })); o.x = ROAD_L - 10; o.vx = 55; }
+    // the double yellow isn't a free lane
+    if (R() < 0.22 + df.t * 0.3) this.spawnCenter(ahead + 220 + R() * 120);
     // pickups
     if (R() < 0.22) { const lane = lanePick([0, 1, 2, 3]); if (lane != null) { const k = R() < 0.6 ? 'coffee' : R() < 0.5 ? 'kit' : 'cash'; add(this.mkObj(k, lane, ahead + 60, { kind: k, pickup: true, vd: 0, w: 12, h: 12 })); } }
     this.nextSpawn = this.dist + (150 + R() * 130) / df.traffic;
+  }
+  // Hazards that sit on the centre line, so straddling the double yellow isn't a safe exploit.
+  spawnCenter(d) {
+    const R = Math.random, CX = 135, xo = CX - LANES[1];
+    const roll = R();
+    if (roll < 0.35) { // a run of median cones
+      const n = 3 + Math.floor(R() * 3);
+      for (let i = 0; i < n; i++) this.objs.push(this.mkObj('cone', 1, d + i * 30, { kind: 'cone', vd: 0, w: 8, h: 8, xo }));
+    } else if (roll < 0.55) { // road work right on the line
+      this.objs.push(this.mkObj('barrier', 1, d, { kind: 'barrier', vd: 0, w: 40, h: 8, xo }));
+      for (let c = 1; c <= 2; c++) this.objs.push(this.mkObj('cone', 1, d - c * 26, { kind: 'cone', vd: 0, w: 8, h: 8, xo: xo + (c % 2 ? -8 : 8) }));
+    } else if (roll < 0.75) { // pothole / manhole in the middle
+      const k = R() < 0.6 ? 'pothole' : 'manhole';
+      this.objs.push(this.mkObj(k, 1, d, { kind: k, vd: 0, w: 16, h: 10, flat: true, xo }));
+    } else { // a car making a left turn across the line
+      const o = this.mkObj('car' + Math.floor(R() * 7), 1, d, { kind: 'car', vd: 60 + R() * 40, w: 18, h: 30, xo });
+      o.spr.setAngle(R() < 0.5 ? -28 : 28); this.objs.push(o);
+    }
   }
   mkObj(key, lane, d, o = {}) {
     const x = LANES[lane] + (o.xo || 0);
@@ -282,6 +302,9 @@ export class Drive extends Phaser.Scene {
     if (this.px <= ROAD_L + 8 || this.px >= ROAD_R - 8) { if (this.speed > 150 && Math.random() < 0.1) { audio.sfx('skid'); } this.speed *= 1 - 1.5 * dt; }
     // spawn
     if (this.dist > this.nextSpawn && this.dist < this.L - 500) this.spawnRow();
+    // anti-camping: sit on the centre line for ~2s and something appears ahead of you
+    this.centerT = Math.abs(this.px - 135) < 16 ? this.centerT + dt : Math.max(0, this.centerT - dt);
+    if (this.centerT > 2 && this.dist > this.nextCenter && this.dist < this.L - 600) { this.spawnCenter(this.dist + H * 0.9); this.centerT = 0; this.nextCenter = this.dist + 500; }
     if (this.dist > this.nextDecorL) this.nextDecorL = this.dist + this.spawnDecor(-1);
     if (this.dist > this.nextDecorR) this.nextDecorR = this.dist + this.spawnDecor(1);
     // objects

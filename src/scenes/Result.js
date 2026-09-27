@@ -8,16 +8,8 @@ import { JOBS } from '../data/jobs.js';
 import { portrait } from '../art/people.js';
 import { skyTex } from './Arrival.js';
 import { houseTextures } from '../art/houses.js';
+import { pickReview, pickBuzz } from '../data/reviews.js';
 
-const REVIEWS = [
-  'SHOWED UP BEFORE NORTHWEST, FIXED IT, DIDN\'T JUDGE MY BATHROOM. 10/10.',
-  'THESE GUYS ARE LEGENDS. ALSO THEY SWEAR A LOT. LOVED IT.',
-  'EXPLAINED EVERYTHING. NOW I KNOW WHAT A P-TRAP IS. I CANNOT UNKNOW IT.',
-  'THE HOMIES ARE, IN FACT, THE HOMIES. TRUST.',
-  'FAST, FAIR, AND THEY WIPED THEIR BOOTS. MARRY ME, G\'S.',
-  'NORTHWEST SHOWED UP AFTER AND I TURNED THE HOSE ON THEM. THANK YOU G\'S!',
-  'WOULD CLOG AGAIN.',
-];
 
 export class Result extends Phaser.Scene {
   constructor() { super('Result'); }
@@ -42,9 +34,19 @@ export class Result extends Phaser.Scene {
     this.add.image(40, cy + 34, portrait(this, 'job' + ji, job.look, 'happy'));
     txt(this, 72, cy + 8, job.who, { outline: false, color: C.ink });
     for (let i = 0; i < 5; i++) this.add.image(76 + i * 10, cy + 22, 'iStar');
-    txt(this, 72, cy + 32, '"' + pick(REVIEWS) + '"', { outline: false, color: C.storm, maxW: W - 92 });
-    const rows = [['TIME LEFT', secsLeft + ' SEC'], ['MISTAKES', mistakes], ['SCORE', score + (best ? '  NEW BEST!' : '')]];
-    rows.forEach(([k, v], i) => { txt(this, 20, cy + 114 + i * 12, k, { color: C.silver }); txt(this, W - 20, cy + 114 + i * 12, String(v), { color: i === 2 && best ? C.gold : C.white, ox: 1 }); });
+    txt(this, 72, cy + 32, '"' + pickReview(ji) + '"', { outline: false, color: C.storm, maxW: W - 92 });
+    // one compact stats line
+    txt(this, W / 2, cy + 110, `${secsLeft}S LEFT | ${mistakes} MISTAKES | ${best ? 'NEW BEST ' : 'SCORE '}${score}`, { ox: 0.5, color: best ? C.gold : C.silver });
+    // community buzz: the neighborhood is noticing
+    const buzz = pickBuzz(D.name, D.road);
+    const bzY = cy + 126, bzH = Math.min(96, H - 92 - bzY);
+    if (bzH > 54) {
+      panel(this, 10, bzY, W - 20, bzH);
+      txt(this, 20, bzY + 8, 'COMMUNITY BUZZ', { color: C.lime });
+      txt(this, W - 20, bzY + 8, `\` ${buzz.count} FIVE-STAR REVIEWS`, { color: C.gold, ox: 1 });
+      txt(this, 20, bzY + 22, buzz.who, { color: C.cyan });
+      txt(this, 20, bzY + 34, buzz.text, { color: C.white, maxW: W - 40 });
+    }
     // district conquered?
     const districtDone = (ji + 1) % 3 === 0 && first;
     if (districtDone) {

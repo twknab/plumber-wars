@@ -42,3 +42,11 @@ test('difficulty ramps up', () => {
 test('three heroes with unique ids', () => {
   assert.deepEqual(HEROES.map(h => h.id).sort(), ['dalton', 'jared', 'milan']);
 });
+
+test('every job has its own customer reviews', async () => {
+  const { JOB_REVIEWS, REVIEWS } = await import('../src/data/reviews.js');
+  assert.equal(JOB_REVIEWS.length, JOBS.length, 'add JOB_REVIEWS for each job in src/data/reviews.js');
+  JOB_REVIEWS.forEach((r, i) => assert.ok(r.length >= 2, `job ${i} needs at least two reviews`));
+  assert.ok(REVIEWS.length >= 20);
+  assert.equal(new Set([...REVIEWS, ...JOB_REVIEWS.flat()]).size, REVIEWS.length + JOB_REVIEWS.flat().length, 'no duplicate reviews');
+});
