@@ -164,7 +164,8 @@ export class Repair extends Phaser.Scene {
     floatText(this, W / 2, SY + 60, `-${Math.round(pen)} SEC`, C.red, 160);
     const m = txt(this, W / 2, SY + SH / 2, msg, { ox: 0.5, oy: 0.5, maxW: W - 30, color: C.white, depth: 170, align: 1 });
     const bgm = this.add.rectangle(W / 2, SY + SH / 2, W - 16, m.height + 16, hex(C.crimson), 0.95).setStrokeStyle(2, hex(C.ink)).setDepth(169);
-    this.time.delayedCall(big ? 1900 : 1300, () => { m.destroy(); bgm.destroy(); });
+    // readable, then fades (it used to vanish after 1.3s)
+    this.time.delayedCall(Math.max(big ? 2200 : 1700, 900 + msg.length * 40), () => this.tweens.add({ targets: [m, bgm], alpha: 0, duration: 500, onComplete: () => { m.destroy(); bgm.destroy(); } }));
     if (big && this.job.leak == null) this.splash(W / 2, SY + SH / 2, 14);
     this.gripe();
     // struggling? point at the homies (after 3 mistakes, and again after 6 if they still haven't asked)

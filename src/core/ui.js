@@ -117,7 +117,9 @@ export function bubble(scene, x, y, s, { dur = 2200, color = C.ink, depth = 60, 
   tl.x = Math.max(4, Math.min(w - 12, x - bx - 4)); tl.y = tail === 'down' ? h - 1 : -6; if (tail !== 'down') tl.setAngle(180).setPosition(tl.x + 8, 1);
   t.setPosition(5, 4); c.add([bg, tl, t]);
   c.setScale(0.2); scene.tweens.add({ targets: c, scale: 1, duration: 140, ease: 'Back.out' });
-  scene.time.delayedCall(dur, () => scene.tweens.add({ targets: c, alpha: 0, duration: 200, onComplete: () => c.destroy() }));
+  // stay up long enough to read (never shorter than asked), then drift up and fade instead of snapping away
+  const hold = Math.min(5000, Math.max(dur, 900 + String(s).length * 45));
+  scene.time.delayedCall(hold, () => c.active && scene.tweens.add({ targets: c, alpha: 0, y: c.y - 8, duration: 600, ease: 'Sine.in', onComplete: () => c.destroy() }));
   return c;
 }
 
@@ -132,7 +134,8 @@ export function banner(scene, s, { color = C.yellow, size = 3, y = H * 0.4, dur 
 
 export function floatText(scene, x, y, s, color = C.white, depth = 70) {
   const t = txt(scene, x, y, s, { color, ox: 0.5, oy: 0.5, depth });
-  scene.tweens.add({ targets: t, y: y - 22, alpha: 0, duration: 900, ease: 'Quad.out', onComplete: () => t.destroy() });
+  // hold for a beat, then drift up and fade
+  scene.tweens.add({ targets: t, y: y - 26, alpha: 0, delay: 500, duration: 1100, ease: 'Sine.in', onComplete: () => t.destroy() });
   return t;
 }
 
