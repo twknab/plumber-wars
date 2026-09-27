@@ -56,7 +56,7 @@ const TRACKS = {
 
 class Chip {
   constructor() {
-    this.ctx = null; this.enabled = store.get('sound', true); this.voices = store.get('voices', true);
+    this.ctx = null; this.enabled = store.get('sound', true); this.voices = store.get('voicesOn', true); // new key: resets any old 'off' so voices start on
     this.track = null; this.timer = null; this.engine = null;
   }
   unlock() {
@@ -81,7 +81,7 @@ class Chip {
   }
   get now() { return this.ctx ? this.ctx.currentTime : 0; }
   setSound(on) { this.enabled = on; store.set('sound', on); if (this.master) this.master.gain.setTargetAtTime(on ? 0.55 : 0, this.now, 0.02); }
-  setVoices(on) { this.voices = on; store.set('voices', on); if (!on && window.speechSynthesis) speechSynthesis.cancel(); }
+  setVoices(on) { this.voices = on; store.set('voicesOn', on); if (!on && window.speechSynthesis) speechSynthesis.cancel(); }
 
   tone({ type = 'square', duty, f = 440, f2, t = 0, dur = 0.1, vol = 0.2, attack = 0.002, release = 0.05, bus, slide = 'exp' }) {
     if (!this.ctx) return;

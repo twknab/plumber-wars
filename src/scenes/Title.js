@@ -38,7 +38,7 @@ export class Title extends Phaser.Scene {
     this.time.addEvent({ delay: 5200, loop: true, callback: () => {
       truck.x = -100; this.tweens.add({ targets: truck, x: W + 120, duration: 1500, ease: 'Linear' });
       audio.sfx('nwhonk');
-      this.time.delayedCall(550, () => bubble(this, W / 2 + 20, roadY - 70, pick(TRASH.taunt), { dur: 1800, maxW: 160 }));
+      this.time.delayedCall(550, () => { const line = pick(TRASH.taunt); bubble(this, W / 2 + 20, roadY - 70, line, { dur: 1800, maxW: 160 }); if (audio.ctx) audio.say(line.replace(/#2/g, 'number two'), { pitch: 0.5 }); });
     } });
     // puffs from van exhaust
     this.time.addEvent({ delay: 260, loop: true, callback: () => { const p = this.add.image(van.x - 62, van.y - 10, 'puff', 0).setAlpha(0.7); this.tweens.add({ targets: p, x: p.x - 16, y: p.y - 6, alpha: 0, scale: 2, duration: 700, onComplete: () => p.destroy() }); } });
