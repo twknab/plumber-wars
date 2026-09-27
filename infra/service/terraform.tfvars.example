@@ -1,0 +1,5 @@
+project_id    = "your-gcp-project-id"
+region        = "us-west1"
+max_instances = 3
+# Replace this placeholder with the actual digest returned after pushing your image.
+image = "us-west1-docker.pkg.dev/your-gcp-project-id/plumber-wars/game@sha256:REPLACE_WITH_ACTUAL_IMAGE_DIGEST"

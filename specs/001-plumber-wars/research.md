@@ -1,0 +1,5 @@
+# Research and decisions
+Spec Kit initialized using installed specify CLI with Codex integration. Official guide: https://github.github.com/spec-kit/installation.html
+Phaser 3.90 pinned; FIT scaling preserves game coordinates. https://docs.phaser.io/phaser/concepts/scale-manager and https://docs.phaser.io/phaser/concepts/input
+Seattle Utilities identifies roots and side-sewer defects: https://seattle.gov/utilities/your-services/sewer-and-drainage/side-sewers/defects-and-issues . Grease issues: https://www.seattle.gov/utilities/protecting-our-environment . Frozen pipes/drainage: https://www.seattle.gov/utilities/your-services/sewer-and-drainage/drainage-issues . These support local themes, not a prevalence ranking. Other jobs are generic residential archetypes chosen for varied arcade activities.
+G’s Plumbing / COOL HOMIES branding; cheerful green and yellow. Northwest explicitly fictional. Map is Seattle-inspired, not navigational. Provisional ability assignments until user customizes.
