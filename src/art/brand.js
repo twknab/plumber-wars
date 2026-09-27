@@ -91,18 +91,22 @@ function drawSideTruck(p, f) {
 
 export function buildBrand(scene) {
   mk(scene, 'badge', 36, 36, p => badge(p, 18, 18, 17), { outline: null });
-  // Orca (side view, facing right): black body, white belly + eye patch, grey saddle, tall dorsal fin.
-  mk(scene, 'orca', 34, 20, p => {
-    p.ellipse(18, 12, 13, 5.5, C.ink);                       // body
-    p.poly([[6, 12], [0, 7], [2, 12], [0, 17]], C.ink);       // tail flukes
-    p.poly([[15, 8], [18, 0], [21, 8]], C.ink);               // dorsal fin
-    p.ellipse(19, 15, 9, 2.2, C.white);                       // belly
-    p.ellipse(25, 10, 2.5, 1.2, C.white);                     // eye patch
-    p.hline(12, 9, 6, C.slate);                               // saddle patch
-    p.poly([[20, 15], [24, 15], [19, 19]], C.ink);            // pectoral fin
-    p.px(30, 12, C.night); p.hline(15, 7, 3, C.night);        // snout, fin shading
+  // Orca (side view, facing right), drawn at 2x detail: black body, white belly + eye patch,
+  // grey saddle, tall dorsal fin, flukes and a pectoral fin.
+  mk(scene, 'orca', 70, 42, p => {
+    p.ellipse(37, 25, 26, 11, C.ink);                                   // body
+    p.ellipse(58, 26, 8, 7, C.ink);                                     // rounded head
+    p.poly([[14, 25], [2, 13], [0, 16], [6, 25], [0, 34], [2, 37]], C.ink); // tail flukes
+    p.poly([[30, 16], [36, 0], [39, 1], [44, 16]], C.ink);              // dorsal fin
+    p.line(37, 2, 34, 14, C.night);
+    p.poly([[20, 30], [40, 34], [62, 31], [58, 35], [40, 37], [24, 34]], C.white); // belly sweep
+    p.ellipse(52, 20, 5, 2.2, C.white);                                 // eye patch
+    p.poly([[24, 17], [34, 16], [44, 17], [40, 20], [28, 20]], C.slate); // saddle patch
+    p.poly([[42, 31], [50, 32], [40, 41], [38, 40]], C.ink);            // pectoral fin
+    p.hline(58, 29, 6, C.night); p.px(64, 28, C.night);                 // mouth line
+    p.hline(26, 18, 6, C.storm); p.px(45, 21, C.storm);                 // sheen
   }, { outline: null });
-  mk(scene, 'fin', 10, 9, p => { p.poly([[2, 9], [5, 0], [8, 9]], C.ink); p.hline(0, 8, 10, C.silver); }, { outline: null });
+  mk(scene, 'fin', 16, 16, p => { p.poly([[3, 15], [8, 0], [10, 1], [13, 15]], C.ink); p.line(9, 2, 7, 12, C.night); p.hline(0, 14, 16, C.silver); p.px(1, 13, C.white); p.px(14, 13, C.white); }, { outline: null });
   mk(scene, 'badgeBig', 72, 72, p => badge(p, 36, 36, 34), { outline: null });
   mk(scene, 'sideVan', 128, 62, drawSideVan, { frames: 2 });
   mk(scene, 'sideTruck', 152, 72, drawSideTruck, { frames: 2 });

@@ -45,20 +45,20 @@ export class Title extends Phaser.Scene {
     const fin = this.add.image(-20, wy, 'fin').setOrigin(0.5, 1);
     const orca = this.add.image(0, wy, 'orca').setVisible(false);
     const cruise = () => {
-      const x0 = Phaser.Math.Between(20, 70), x1 = Phaser.Math.Between(170, 240);
+      const x0 = Phaser.Math.Between(20, 60), x1 = Phaser.Math.Between(150, 200);
       fin.setPosition(x0, wy).setVisible(true).setAlpha(1);
-      this.tweens.add({ targets: fin, x: (x0 + x1) / 2, duration: 2600, ease: 'Linear', onComplete: () => breach((x0 + x1) / 2, x1) });
+      this.tweens.add({ targets: fin, x: (x0 + x1) / 2, duration: 2000, ease: 'Linear', onComplete: () => breach((x0 + x1) / 2, x1) });
     };
-    const splash = (x) => { for (let i = 0; i < 10; i++) { const d = this.add.image(x, wy, 'drop'); this.tweens.add({ targets: d, x: x + Phaser.Math.Between(-16, 16), y: wy - Phaser.Math.Between(6, 20), alpha: 0, duration: 450, yoyo: false, onComplete: () => d.destroy() }); } };
+    const splash = (x) => { for (let i = 0; i < 10; i++) { const d = this.add.image(x, wy, 'drop').setScale(1.5); this.tweens.add({ targets: d, x: x + Phaser.Math.Between(-16, 16), y: wy - Phaser.Math.Between(6, 20), alpha: 0, duration: 450, yoyo: false, onComplete: () => d.destroy() }); } };
     const breach = (xa, xb) => {
       fin.setVisible(false); splash(xa);
       orca.setPosition(xa, wy).setVisible(true).setAngle(-35);
-      this.tweens.add({ targets: orca, x: xa + 44, duration: 1000, ease: 'Linear' });
-      this.tweens.add({ targets: orca, y: wy - 30, duration: 500, ease: 'Quad.out', yoyo: true, onComplete: () => { orca.setVisible(false); splash(orca.x); audio.sfx('splash'); } });
-      this.tweens.add({ targets: orca, angle: 40, duration: 1000 });
+      this.tweens.add({ targets: orca, x: xa + 70, duration: 1200, ease: 'Linear' });
+      this.tweens.add({ targets: orca, y: wy - 44, duration: 600, ease: 'Quad.out', yoyo: true, onComplete: () => { orca.setVisible(false); splash(orca.x); audio.sfx('splash'); } });
+      this.tweens.add({ targets: orca, angle: 40, duration: 1200 });
       this.time.delayedCall(Phaser.Math.Between(3500, 6500), cruise);
     };
-    this.time.delayedCall(1800, cruise);
+    this.time.delayedCall(800, cruise);
     // puffs from van exhaust
     this.time.addEvent({ delay: 260, loop: true, callback: () => { const p = this.add.image(van.x - 62, van.y - 10, 'puff', 0).setAlpha(0.7); this.tweens.add({ targets: p, x: p.x - 16, y: p.y - 6, alpha: 0, scale: 2, duration: 700, onComplete: () => p.destroy() }); } });
 
