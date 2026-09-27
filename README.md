@@ -17,11 +17,13 @@ then fix real plumbing problems before the customer loses it and calls the compe
 
 ## The game
 
+<p align="center"><img src="docs/homies.png" width="640" alt="Character sheet: Dalton, Milan and Jared in every mood, full-body sprites, stats, perks and assists"></p>
+
 - **Pick a lead homie.** Dalton (wheelman: sharper handling, +1 armor), Milan (pipe whisperer: wider timing
   windows, fewer turns), Jared (people person: 30% more customer patience). The other two ride along as
   one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
 - **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard Locks,
-  the Fremont Troll, Capitol Hill's rainbow crosswalk, downtown from West Seattle, the Kerry Park view, Alki Beach).
+  the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
   Progress **saves automatically** after every finished job (lead homie, unlocked jobs, stars) in your browser;
   hit **CONTINUE** to pick up where you left off.
@@ -92,6 +94,8 @@ Everything is generated in code at boot — there are no image or audio asset fi
 
 ### District intros
 
+<p align="center"><img src="docs/district-intros.png" width="640" alt="All six Welcome-to-the-neighborhood intro screens in play order: Ballard, Fremont, Capitol Hill, West Seattle, Alki Beach, Queen Anne"></p>
+
 Starting each district shows a "Welcome to …" screen with pixel art of the neighborhood, Big Randy's welcome
 and a Northwest-turf stamp. The art is made from openly licensed Wikimedia Commons photos: `node scripts/districts.mjs`
 downloads them (and records credits in `public/districts/credits.json`), then `/?districts=1` on the dev server
@@ -103,7 +107,7 @@ versions are adaptations and keep the source licenses:
 | Ballard | [Chittenden Locks overview 01.jpg](https://commons.wikimedia.org/wiki/File:Chittenden_Locks_overview_01.jpg) | Joe Mabel | CC BY-SA 3.0 |
 | Fremont | [Fremont troll.jpg](https://commons.wikimedia.org/wiki/File:Fremont_troll.jpg) | Sambusak74 | CC BY-SA 4.0 |
 | Capitol Hill | [Rainbow crosswalk Capitol Hill, Seattle.jpg](https://commons.wikimedia.org/wiki/File:Rainbow_crosswalk_Capitol_Hill,_Seattle.jpg) | Ntowle98 | CC BY-SA 4.0 |
-| West Seattle | [Seattle Skyline from Alki (4230478801).jpg](https://commons.wikimedia.org/wiki/File:Seattle_Skyline_from_Alki_(4230478801).jpg) | DearEdward from New York, NY, USA | CC BY 2.0 |
+| West Seattle | [West Seattle - west side of California Ave looking north from The Junction 01.jpg](https://commons.wikimedia.org/wiki/File:West_Seattle_-_west_side_of_California_Ave_looking_north_from_The_Junction_01.jpg) | Joe Mabel | CC BY-SA 4.0 |
 | Queen Anne | [Seattle Kerry Park Skyline.jpg](https://commons.wikimedia.org/wiki/File:Seattle_Kerry_Park_Skyline.jpg) | CommunistSquared | CC0 |
 | Alki Beach | [Alki Beach, Seattle, April 2012.JPG](https://commons.wikimedia.org/wiki/File:Alki_Beach,_Seattle,_April_2012.JPG) | Another Believer | CC BY-SA 3.0 |
 

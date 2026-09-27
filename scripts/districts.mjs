@@ -7,7 +7,8 @@ export const SOURCES = {
   ballard: { title: 'File:Chittenden Locks overview 01.jpg', crop: [0, 0, 1, 1] },                 // the Locks from the park lawn
   fremont: { title: 'File:Fremont troll.jpg', crop: [0.08, 0, 0.84, 1] },                           // the Troll
   capitolhill: { title: 'File:Rainbow crosswalk Capitol Hill, Seattle.jpg', crop: [0, 0.08, 0.82, 0.84] }, // rainbow crosswalk
-  westseattle: { title: 'File:Seattle Skyline from Alki (4230478801).jpg', crop: [0, 0.12, 1, 0.84] }, // downtown from Alki, Space Needle included
+  westseattle: { title: 'File:West Seattle - west side of California Ave looking north from The Junction 01.jpg', crop: [0, 0, 1, 1] }, // The Junction, California Ave
+  // (backup: 'File:Seattle Skyline from Alki (4230478801).jpg', crop [0, 0.12, 1, 0.84] - downtown across the water)
   queenanne: { title: 'File:Seattle Kerry Park Skyline.jpg', crop: [0, 0, 1, 1] },                   // Kerry Park view
   alki: { title: 'File:Alki Beach, Seattle, April 2012.JPG', crop: [0, 0.14, 1, 0.42] },             // the beach itself
 };

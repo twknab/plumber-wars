@@ -39,16 +39,16 @@
     ]
   },
   "westseattle": {
-    "title": "Seattle Skyline from Alki (4230478801).jpg",
-    "artist": "DearEdward from New York, NY, USA",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Seattle_Skyline_from_Alki_(4230478801).jpg",
+    "title": "West Seattle - west side of California Ave looking north from The Junction 01.jpg",
+    "artist": "Joe Mabel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:West_Seattle_-_west_side_of_California_Ave_looking_north_from_The_Junction_01.jpg",
     "crop": [
       0,
-      0.12,
+      0,
       1,
-      0.84
+      1
     ]
   },
   "queenanne": {

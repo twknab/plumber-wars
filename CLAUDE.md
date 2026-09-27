@@ -15,7 +15,8 @@ art or deploy — update these in the same change:
 3. **Generated images** — if anything visual or any character changed, regenerate them on the dev server in a
    phone-sized window (375×812):
    - `/?docs=1` → `docs/logo.png`, `docs/sprites.png` (sprite sheet of every character, vehicle, tool, house),
-     `docs/shot-*.png`, and `docs/sprites.hash`.
+     `docs/homies.png` (crew character sheet), `docs/district-intros.png` (every intro screen), `docs/shot-*.png`,
+     and `docs/sprites.hash`.
    - `/?og=1` → `public/og.png` (link-preview card).
    New characters/sprites must also be added to the sprite sheet in `src/dev/docs.js`.
 

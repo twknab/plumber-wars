@@ -14,7 +14,7 @@ const nearest = (r, g, b) => { // "redmean" perceptual distance
 };
 
 // Per-photo color grading on top of the default (an overcast photo needs more push to read as sunny).
-const GRADE = { ballard: 'hue-rotate(22deg) saturate(1.7) contrast(1.12) brightness(1.04)' };
+const GRADE = { ballard: 'hue-rotate(22deg) saturate(1.7) contrast(1.12) brightness(1.04)', westseattle: 'saturate(1.5) contrast(1.12) brightness(1.05)' };
 
 async function convert(key, crop) {
   const img = new Image(); await new Promise((ok, no) => { img.onload = ok; img.onerror = no; img.src = `/tools/district-src/${key}.jpg`; }); // (decode() stalls in hidden tabs)

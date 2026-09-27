@@ -27,7 +27,7 @@ test('About screen job count matches the game', () => {
 });
 
 test('README images exist', () => {
-  for (const f of ['docs/logo.png', 'docs/sprites.png', 'docs/shot-title.png', 'docs/shot-drive.png', 'docs/shot-repair.png', 'docs/shot-alki.png', 'public/og.png']) assert.ok(existsSync(f), f + ' missing');
+  for (const f of ['docs/logo.png', 'docs/sprites.png', 'docs/shot-title.png', 'docs/shot-drive.png', 'docs/shot-repair.png', 'docs/shot-alki.png', 'docs/homies.png', 'docs/district-intros.png', 'public/og.png']) assert.ok(existsSync(f), f + ' missing');
 });
 
 test('sprite sheet is regenerated whenever art or characters change', () => {
