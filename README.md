@@ -57,7 +57,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
 | Steer | Drag anywhere | Arrows or A / D |
 | Boost | BOOST | Space, W or Up |
 | Honk | HONK | H, Shift, S or Down |
-| Dalton assist | CLEAR | C |
+| Dalton assist (clear the road, once per race) | CLEAR ROAD | C |
 | Pick tool | Tap tray | 1–0 |
 | Pick next step | Tap card | 1–3 |
 | Milan / Jared assist | Buttons | Q / E |

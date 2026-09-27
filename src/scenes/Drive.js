@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
-import { progress } from '../core/save.js';
+import { progress, store } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { PX } from '../core/pixel.js';
 import { HEROES, RIVALS, DISTRICTS, TRASH, difficulty, pick } from '../data/content.js';
@@ -121,9 +121,13 @@ export class Drive extends Phaser.Scene {
     this.hornBtn = button(this, 36, by, 60, 34, isTouch ? 'HONK' : 'HONK [H]', () => this.honk(), { color: 'btnBlue', textColor: C.white, depth: 101, sound: null });
     this.boostBtn = button(this, W - 38, by, 64, 34, isTouch ? 'BOOST' : 'BOOST [SPC]', () => this.useBoost(), { color: 'btnRed', textColor: C.white, depth: 101, sound: null });
     this.boostCount = txt(this, W - 12, by - 20, '', { color: C.yellow, depth: 102, ox: 1 });
-    if (!this.dalton) this.assistBtn = button(this, W / 2, by + 4, 74, 22, isTouch ? 'DALTON:CLEAR' : 'CLEAR [C]', () => this.assist(), { color: 'btnGold', depth: 101, sound: null });
+    // Dalton's one-time assist (only when he isn't the lead): wipes the traffic ahead + brief invincibility.
+    if (!this.dalton) {
+      this.assistBtn = button(this, W / 2, by + 4, 116, 26, isTouch ? 'CLEAR ROAD x1' : 'CLEAR ROAD [C]', () => this.assist(), { color: 'btnGold', depth: 101, sound: null });
+      this.assistTag = txt(this, W / 2, by - 13, "DALTON'S ASSIST", { ox: 0.5, color: C.gold, depth: 101 });
+    }
     // steering: relative drag anywhere else
-    this.input.on('pointerdown', p => { if (p.y > H - 46 && (p.x < 70 || p.x > W - 74 || (this.assistBtn && Math.abs(p.x - W / 2) < 40))) return; this.drag = { id: p.id, x0: p.x, v0: this.targetX }; });
+    this.input.on('pointerdown', p => { if (p.y > H - 52 && (p.x < 70 || p.x > W - 74 || (this.assistBtn && Math.abs(p.x - W / 2) < 60))) return; this.drag = { id: p.id, x0: p.x, v0: this.targetX }; });
     this.input.on('pointermove', p => { if (this.drag && this.drag.id === p.id && p.isDown) this.targetX = Phaser.Math.Clamp(this.drag.v0 + (p.x - this.drag.x0) * 1.35, ROAD_L + 10, ROAD_R - 10); });
     this.input.on('pointerup', p => { if (this.drag && this.drag.id === p.id) this.drag = null; });
     this.keys = this.input.keyboard.addKeys('LEFT,RIGHT,A,D,SPACE,H,SHIFT,DOWN,S,C,UP,W,ESC,P');
@@ -136,7 +140,12 @@ export class Drive extends Phaser.Scene {
     let n = 3; audio.engineOn();
     const tick = () => {
       if (n > 0) { banner(this, String(n), { size: 5, dur: 500, color: C.gold }); audio.sfx('tick'); n--; this.time.delayedCall(650, tick); }
-      else { banner(this, 'GO!', { size: 5, dur: 600, color: C.lime }); audio.sfx('go'); this.state = 'race'; audio.music('drive'); this.say(pick(TRASH.taunt), 'randy'); }
+      else {
+        banner(this, 'GO!', { size: 5, dur: 600, color: C.lime }); audio.sfx('go'); this.state = 'race'; audio.music('drive'); this.say(pick(TRASH.taunt), 'randy');
+        // explain the assist the first few times it shows up
+        const seen = store.get('assistHintSeen', 0);
+        if (this.assistBtn && seen < 3) { store.set('assistHintSeen', seen + 1); this.time.delayedCall(900, () => bubble(this, W / 2, H - 58, 'DALTON CAN CLEAR THE ROAD ONCE PER RACE. TAP IT WHEN TRAFFIC BOXES YOU IN!', { dur: 4200, maxW: 190, color: C.brown })); }
+      }
     };
     this.time.delayedCall(400, tick);
   }
@@ -161,7 +170,7 @@ export class Drive extends Phaser.Scene {
   }
   assist() {
     if (!this.assistBtn || this.assistUsed || this.state !== 'race') return;
-    this.assistUsed = true; this.assistBtn.setEnabled(false); audio.sfx('honk');
+    this.assistUsed = true; this.assistBtn.setEnabled(false); this.assistBtn.label.setText('ROAD CLEARED'); audio.sfx('honk');
     const d = HEROES[0];
     bubble(this, W / 2, this.PY - 40, "DALTON: MOVE IT OR LOSE IT!", { dur: 1500, color: C.flame });
     for (const o of this.objs) if (o.d > this.dist - 40 && o.d - this.dist < H && !o.pickup) { this.tweens.add({ targets: o.spr, alpha: 0, x: o.x < 135 ? -40 : W + 40, duration: 500 }); o.dead = true; }

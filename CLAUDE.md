@@ -26,7 +26,8 @@ art or deploy — update these in the same change:
 
 `npm test` enforces this (`tests/docs-sync.test.js`): it fails if the README/About job counts or job table drift
 from `JOBS`, if art/character sources changed since `docs/sprites.png` was last generated, or if any spoken line
-has no recorded clip.
+has no recorded clip. `tests/voice.test.js` guards that voices play on the very first tap (no browser-speech
+fallback while the voice list is still loading).
 
 ## Other conventions
 
