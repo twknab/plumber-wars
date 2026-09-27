@@ -32,6 +32,10 @@ export const progress = {
     if (ORDER.indexOf(i) === u) { u++; while (u < ORDER.length && this.stars(ORDER[u]) > 0) u++; store.set('cleared', u); } // skip jobs an old save already starred
   },
   best(i) { return (store.get('best', {}))[i] || 0; },
+  // Leaderboard total: your best score on every job, added up (replay a job to raise it).
+  bests() { return ORDER.map((_, i) => this.best(i)); },
+  totalScore() { return this.bests().reduce((a, b) => a + b, 0); },
+  jobsCleared() { return this.bests().filter(n => n > 0).length; },
   setBest(i, score) { const b = { ...store.get('best', {}) }; if (score > (b[i] || 0)) { b[i] = score; store.set('best', b); return true; } return false; },
   reset() { store.set('cleared', 0); store.set('unlocked', 0); store.set('stars', {}); store.set('best', {}); store.set('hero', null); },
 };

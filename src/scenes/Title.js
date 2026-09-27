@@ -71,13 +71,15 @@ export class Title extends Phaser.Scene {
       txt(this, W / 2, by - 22, `AUTO-SAVED: JOB ${Math.min(ORDER.length, progress.unlocked + 1)} OF ${ORDER.length}`, { ox: 0.5, color: C.lime });
       button(this, W / 2 - 40, by + 32, 76, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
       button(this, W / 2 + 40, by + 32, 76, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
-      button(this, W / 2, by + 60, 156, 22, 'HOW TO PLAY' + k, () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
+      button(this, W / 2 - 40, by + 60, 76, 22, 'HOW TO PLAY', () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
+      button(this, W / 2 + 40, by + 60, 76, 22, 'HIGH SCORES', () => this.go('Scores'), { color: 'btnGold', key: 'S' });
     } else {
       // brand-new players get the primer first, then crew select
       const b = button(this, W / 2, by + 6, 170, 30, isTouch ? 'TAP TO START' : 'PRESS ENTER', () => { audio.unlock(); wipeTo(this, 'HowTo', { next: 'Crew' }); }, { size: 1, key: ['ENTER', 'SPACE'] });
       this.tweens.add({ targets: b, scale: 1.06, yoyo: true, repeat: -1, duration: 500 });
       button(this, W / 2 - 40, by + 44, 76, 22, 'HOW TO PLAY', () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
       button(this, W / 2 + 40, by + 44, 76, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
+      button(this, W / 2, by + 72, 156, 22, 'HIGH SCORES', () => this.go('Scores'), { color: 'btnGold', key: 'S' });
     }
     soundToggle(this);
     const vo = txt(this, 10, 10, '', { color: C.white });

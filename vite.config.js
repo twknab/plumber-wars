@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { artHash } from './art-hash.js';
 import { execSync } from 'node:child_process';
+import { validateEntry, TOP_N } from './server/scores.mjs';
 
 import { readFileSync as readIfAny } from 'node:fs';
 // Cloud Build has no .git, so deploy.sh writes the commit to .build-id first.
@@ -30,4 +31,24 @@ const saveImages = {
   },
 };
 
-export default defineConfig({ plugins: [saveImages], define: { __BUILD__: JSON.stringify(BUILD) } });
+// Dev-only stand-in for the Firestore leaderboard (server/server.mjs in production): same API, kept in memory.
+const devScores = {
+  name: 'dev-scores',
+  apply: 'serve',
+  configureServer(server) {
+    const rows = [{ initials: 'GGG', score: 41000, hero: 'dalton', cleared: 16, at: '2026-01-01' }, { initials: 'NWR', score: 9000, hero: '', cleared: 5, at: '2026-01-02' }];
+    const top = () => [...rows].sort((a, b) => b.score - a.score || a.at.localeCompare(b.at)).slice(0, TOP_N);
+    server.middlewares.use('/api/scores', (req, res) => {
+      res.setHeader('Content-Type', 'application/json');
+      if (req.method === 'GET') return res.end(JSON.stringify({ top: top() }));
+      let raw = ''; req.on('data', c => { raw += c; }); req.on('end', () => {
+        let v; try { v = validateEntry(JSON.parse(raw)); } catch { v = { error: 'bad json' }; }
+        if (v.error) { res.statusCode = 400; return res.end(JSON.stringify(v)); }
+        rows.push({ ...v, at: new Date().toISOString() });
+        res.end(JSON.stringify({ rank: rows.filter(r => r.score > v.score).length + 1, top: top() }));
+      });
+    });
+  },
+};
+
+export default defineConfig({ plugins: [saveImages, devScores], define: { __BUILD__: JSON.stringify(BUILD) } });

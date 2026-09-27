@@ -30,7 +30,7 @@ export class Finale extends Phaser.Scene {
     HEROES.forEach((h, i) => {
       const x = W / 2 + (i - 1) * 70;
       this.add.image(x, gy - 30, portrait(this, h.id, h.look, 'happy'));
-      txt(this, x, gy, h.name, { ox: 0.5, color: h.color });
+      txt(this, x, gy - 62, h.name, { ox: 0.5, color: h.color });
       const b = this.add.sprite(x, gy + 40, body(this, h.id, h.look), 1).setOrigin(0.5, 1).setScale(1.5);
       this.tweens.add({ targets: b, y: gy + 30, yoyo: true, repeat: -1, duration: 260 + i * 40 });
     });
@@ -40,9 +40,11 @@ export class Finale extends Phaser.Scene {
     this.add.image(40, H - 110, portrait(this, 'randy', RIVALS.randy.look, 'worried')).setScale(0.8);
     this.time.delayedCall(2200, () => bubble(this, 70, H - 136, 'FINE! WE\'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!', { dur: 3500, maxW: 170 }));
     this.time.delayedCall(2600, () => audio.say("FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!"));
-    const total = progress.totalStars();
-    txt(this, W / 2, H - 48, `TOTAL STARS: ${total}/45`, { ox: 0.5, color: C.yellow });
-    button(this, W / 2, H - 22, 170, 26, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    txt(this, W / 2, 128, `TOTAL SCORE ${progress.totalScore().toLocaleString('en-US')}   \` ${progress.totalStars()}/48`, { ox: 0.5, color: C.yellow });
+    // champions go on the board
+    const post = button(this, W / 2, H - 62, 190, 28, 'POST YOUR SCORE!', () => wipeTo(this, 'Scores', { enter: true, from: 'Finale' }), { color: 'btnGold', key: 'ENTER' });
+    this.tweens.add({ targets: post, scale: 1.06, yoyo: true, repeat: -1, duration: 450 });
+    button(this, W / 2, H - 26, 170, 24, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'M' });
     // credits crawl
     const cr = txt(this, W / 2, H + 10, "G'S PLUMBING PRESENTS\nPLUMBER WARS\n\nSTARRING\nDALTON - MILAN - JARED\n\nAND BIG RANDY AS HIMSELF\n\nNO TOILETS WERE HARMED\n(SOME WERE HARMED)", { ox: 0.5, align: 1, color: C.silver, depth: 5 });
     cr.setAlpha(0.8); this.tweens.add({ targets: cr, y: H * 0.42, duration: 9000, delay: 1000, onComplete: () => this.tweens.add({ targets: cr, alpha: 0, duration: 800 }) });

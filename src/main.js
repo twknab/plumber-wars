@@ -16,6 +16,7 @@ import { About } from './scenes/About.js';
 import { Splash } from './scenes/Splash.js';
 import { HowTo } from './scenes/HowTo.js';
 import { District } from './scenes/District.js';
+import { Scores } from './scenes/Scores.js';
 
 // Portrait, mobile-first: fixed 270px-wide pixel canvas; height stretches to fill tall phones.
 const aspect = Math.max(1.5, Math.min(2.2, window.innerHeight / Math.max(1, window.innerWidth)));
@@ -26,7 +27,7 @@ const MIN_H = 560;
 const H = Math.max(MIN_H, window.innerWidth > window.innerHeight ? (touchLandscape ? Math.round(W * Math.min(2.2, window.innerWidth / Math.max(1, window.innerHeight))) : MIN_H) : Math.round(W * aspect));
 setH(H);
 
-const scenes = [Boot, Splash, Title, Crew, MapScene, Brief, Drive, Arrival, Repair, Result, Finale, Pause, About, HowTo, District];
+const scenes = [Boot, Splash, Title, Crew, MapScene, Brief, Drive, Arrival, Repair, Result, Finale, Pause, About, HowTo, District, Scores];
 if (import.meta.env.DEV) scenes.push(Gallery);
 const game = new Phaser.Game({
   type: Phaser.AUTO,
