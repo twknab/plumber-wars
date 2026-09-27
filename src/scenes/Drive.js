@@ -56,7 +56,7 @@ export class Drive extends Phaser.Scene {
     this.hp = this.maxHp = (this.dalton ? 5 : 4) + (this.job.district >= 3 ? 1 : 0) + (this.job.district === 4 ? 1 : 0); this.coffee = 1; this.cash = 0; // +1 armor from West Seattle on
     this.px = LANES[2]; this.vx = 0; this.targetX = this.px; this.inv = 0; this.boost = 0; this.slide = 0; this.spin = 0; this.splat = 0;
     this.leaving = false; this.paused = false; this.clashCd = 0; this.commsTimer = null; this.result = null; // scenes are reused between jobs
-    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false; this.hitsTaken = 0; this.nudged = false; this.goAt = 0; this.centerT = 0; this.nextCenter = 900;
+    this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = {}; this.stall = 0; this.hitsTaken = 0; this.nudged = false; this.goAt = 0; this.centerT = 0; this.nextCenter = 900;
     this.t = 0;
     // road
     this.road = this.add.tileSprite(0, 0, W, H, roadTexture(this, this.job.district)).setOrigin(0).setDepth(0);
@@ -121,17 +121,16 @@ export class Drive extends Phaser.Scene {
     this.hornBtn = button(this, 36, by, 60, 34, isTouch ? 'HONK' : 'HONK [H]', () => this.honk(), { color: 'btnBlue', textColor: C.white, depth: 101, sound: null });
     this.boostBtn = button(this, W - 38, by, 64, 34, isTouch ? 'BOOST' : 'BOOST [SPC]', () => this.useBoost(), { color: 'btnRed', textColor: C.white, depth: 101, sound: null });
     this.boostCount = txt(this, W - 12, by - 20, '', { color: C.yellow, depth: 102, ox: 1 });
-    // Dalton's one-time assist (only when he isn't the lead): wipes the traffic ahead + brief invincibility.
-    if (!this.dalton) {
-      this.assistBtn = button(this, W / 2, by + 4, 116, 26, isTouch ? 'CLEAR ROAD x1' : 'CLEAR ROAD [C]', () => this.assist(), { color: 'btnGold', depth: 101, sound: null });
-      this.assistTag = txt(this, W / 2, by - 13, "DALTON'S ASSIST", { ox: 0.5, color: C.gold, depth: 101 });
-    }
+    // the two homies who aren't lead ride along, each with a one-time race power
+    this.assistBtns = HEROES.filter(h => h.id !== this.hero.id).map((h, i) => Object.assign(
+      button(this, W / 2 + (i ? 33 : -33), by + 4, 64, 26, h.assists.race, () => this.assist(h.id), { color: 'btnGold', depth: 101, sound: null }), { who: h.id }));
+    this.assistTag = txt(this, W / 2, by - 13, isTouch ? 'HOMIES (ONCE EACH)' : 'HOMIES [Q] [E]', { ox: 0.5, color: C.gold, depth: 101 });
     // steering: relative drag anywhere else
-    this.input.on('pointerdown', p => { if (p.y > H - 52 && (p.x < 70 || p.x > W - 74 || (this.assistBtn && Math.abs(p.x - W / 2) < 60))) return; this.drag = { id: p.id, x0: p.x, v0: this.targetX }; });
+    this.input.on('pointerdown', p => { if (p.y > H - 52 && (p.x < 70 || p.x > W - 74 || Math.abs(p.x - W / 2) < 66)) return; this.drag = { id: p.id, x0: p.x, v0: this.targetX }; });
     this.input.on('pointermove', p => { if (this.drag && this.drag.id === p.id && p.isDown) this.targetX = Phaser.Math.Clamp(this.drag.v0 + (p.x - this.drag.x0) * 1.35, ROAD_L + 10, ROAD_R - 10); });
     this.input.on('pointerup', p => { if (this.drag && this.drag.id === p.id) this.drag = null; });
-    this.keys = this.input.keyboard.addKeys('LEFT,RIGHT,A,D,SPACE,H,SHIFT,DOWN,S,C,UP,W,ESC,P');
-    this.keys.SPACE.on('down', () => this.useBoost()); this.keys.UP.on('down', () => this.useBoost()); this.keys.H.on('down', () => this.honk()); this.keys.SHIFT.on('down', () => this.honk()); this.keys.DOWN.on('down', () => this.honk()); this.keys.S.on('down', () => this.honk()); this.keys.W.on('down', () => this.useBoost()); this.keys.C.on('down', () => this.assist());
+    this.keys = this.input.keyboard.addKeys('LEFT,RIGHT,A,D,SPACE,H,SHIFT,DOWN,S,C,Q,E,UP,W,ESC,P');
+    this.keys.SPACE.on('down', () => this.useBoost()); this.keys.UP.on('down', () => this.useBoost()); this.keys.H.on('down', () => this.honk()); this.keys.SHIFT.on('down', () => this.honk()); this.keys.DOWN.on('down', () => this.honk()); this.keys.S.on('down', () => this.honk()); this.keys.W.on('down', () => this.useBoost()); this.keys.C.on('down', () => this.assist('dalton')); this.keys.Q.on('down', () => this.assist(this.assistBtns[0].who)); this.keys.E.on('down', () => this.assist(this.assistBtns[1].who));
     this.keys.ESC.on('down', () => this.pause(true)); this.keys.P.on('down', () => this.pause(true));
     const hint = txt(this, W / 2, this.PY + 34, isTouch ? 'DRAG ANYWHERE TO STEER' : 'ARROWS/A-D STEER  SPACE BOOST  H HONK', { ox: 0.5, color: C.white, depth: 97 });
     this.tweens.add({ targets: hint, alpha: 0, delay: 3500, duration: 800 });
@@ -144,7 +143,7 @@ export class Drive extends Phaser.Scene {
         banner(this, 'GO!', { size: 5, dur: 600, color: C.lime }); audio.sfx('go'); this.state = 'race'; this.goAt = this.time.now; audio.music('drive'); this.say(pick(TRASH.taunt), 'randy');
         // explain the assist the first few times it shows up
         const seen = store.get('assistHintSeen', 0);
-        if (this.assistBtn && seen < 3) { store.set('assistHintSeen', seen + 1); this.time.delayedCall(900, () => bubble(this, W / 2, H - 58, 'DALTON CAN CLEAR THE ROAD ONCE PER RACE. TAP IT WHEN TRAFFIC BOXES YOU IN!', { dur: 4200, maxW: 190, color: C.brown })); }
+        if (seen < 3) { store.set('assistHintSeen', seen + 1); this.time.delayedCall(900, () => bubble(this, W / 2, H - 58, 'YOUR HOMIES RIDE ALONG. EACH GOLD BUTTON IS A ONE-TIME ASSIST. USE THEM WHEN IT GETS HAIRY!', { dur: 4200, maxW: 190, color: C.brown })); }
       }
     };
     this.time.delayedCall(400, tick);
@@ -168,13 +167,26 @@ export class Drive extends Phaser.Scene {
     this.coffee--; this.boost = 2.4; audio.sfx('boost'); this.cameras.main.shake(200, 0.004);
     floatText(this, this.px, this.PY - 30, 'CAFFEINE!', C.gold);
   }
-  assist() {
-    if (!this.assistBtn || this.assistUsed || this.state !== 'race') return;
-    this.assistUsed = true; this.assistBtn.setEnabled(false); this.assistBtn.label.setText('ROAD CLEARED'); audio.sfx('honk');
-    const d = HEROES[0];
-    bubble(this, W / 2, this.PY - 40, "DALTON: MOVE IT OR LOSE IT!", { dur: 1500, color: C.flame });
-    for (const o of this.objs) if (o.d > this.dist - 40 && o.d - this.dist < H && !o.pickup) { this.tweens.add({ targets: o.spr, alpha: 0, x: o.x < 135 ? -40 : W + 40, duration: 500 }); o.dead = true; }
-    this.inv = Math.max(this.inv, 2.5);
+  // Homie race powers (once each per race, never the lead's own):
+  //   Dalton clears the road, Milan patches the van (+1 armor), Jared stalls Randy on the radio.
+  assist(who) {
+    const b = (this.assistBtns || []).find(x => x.who === who);
+    if (!b || this.assistUsed[who] || this.state !== 'race') return;
+    if (who === 'milan' && this.hp >= this.maxHp) { floatText(this, this.px, this.PY - 30, "MILAN: VAN'S FINE!", C.lime); return; }
+    this.assistUsed[who] = true; b.setEnabled(false); audio.sfx(who === 'dalton' ? 'honk' : 'coin');
+    if (who === 'dalton') {
+      bubble(this, W / 2, this.PY - 40, 'DALTON: MOVE IT OR LOSE IT!', { dur: 1500, color: C.flame });
+      for (const o of this.objs) if (o.d > this.dist - 40 && o.d - this.dist < H && !o.pickup) { this.tweens.add({ targets: o.spr, alpha: 0, x: o.x < 135 ? -40 : W + 40, duration: 500 }); o.dead = true; }
+      this.inv = Math.max(this.inv, 2.5);
+    } else if (who === 'milan') {
+      this.hp = Math.min(this.maxHp, this.hp + 1); this.sparks(this.px, this.PY);
+      bubble(this, W / 2, this.PY - 40, 'MILAN: HOLD STILL. DUCT TAPE IS A TOOL.', { dur: 1500, color: C.forest });
+      floatText(this, this.px, this.PY - 30, '+1 ARMOR', C.lime);
+    } else {
+      this.stall = 5;
+      this.say('JARED ON YOUR CHANNEL? THE JOB MOVED TO TACOMA?! SKEETER, TURN AROUND!', 'randy', 2600);
+      floatText(this, this.rival.x, this.PY - (this.rival.d - this.dist) - 20, 'STALLED!', C.cyan);
+    }
   }
   pause(on) {
     if (this.state === 'done' || this.paused === on) return;
@@ -370,7 +382,7 @@ export class Drive extends Phaser.Scene {
     if (n <= 0) { if (label) floatText(this, this.px, this.PY - 30, label, C.silver); return; }
     this.hp -= n; this.inv = 1.3; this.hitsTaken++;
     // struggling? point at Dalton (after the first-race tip bubble has cleared)
-    if (this.hitsTaken >= 3 && !this.nudged && this.assistBtn && !this.assistUsed && this.state === 'race' && this.time.now - (this.goAt || 0) > 6000) this.nudged = nudgeHelp(this, [this.assistBtn], 'BOXED IN? ASK DALTON TO CLEAR THE ROAD!'); this.cameras.main.shake(260, 0.018); this.cameras.main.flash(90, 255, 60, 60);
+    if (this.hitsTaken >= 3 && !this.nudged && this.state === 'race' && this.time.now - (this.goAt || 0) > 6000) this.nudged = nudgeHelp(this, this.assistBtns, 'ROUGH RIDE? CALL IN YOUR HOMIES!'); this.cameras.main.shake(260, 0.018); this.cameras.main.flash(90, 255, 60, 60);
     floatText(this, this.px, this.PY - 30, label || '-1 ARMOR', C.red);
     if (this.hp <= 0) this.lose('wreck');
   }
@@ -390,6 +402,7 @@ export class Drive extends Phaser.Scene {
     const gap = r.d - this.dist;
     let base = TOP_SPEED * df.rivalSpeed;
     if (gap < -350) base *= 1.18; else if (gap > 700) base *= 0.9; else if (gap > 350) base *= 0.96;
+    if (this.stall > 0) { this.stall -= dt; base *= 0.55; } // Jared's radio trick
     if (r.spin > 0) { r.spin -= dt; base *= 0.25; r.x += Math.sin(this.t * 25) * 40 * dt; }
     r.speed += (base - r.speed) * 1.2 * dt;
     r.d += r.speed * dt;

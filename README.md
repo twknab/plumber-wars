@@ -20,8 +20,10 @@ then fix real plumbing problems before the customer loses it and calls the compe
 <p align="center"><img src="docs/homies.png" width="640" alt="Character sheet: Dalton, Milan and Jared in every mood, full-body sprites, stats, perks and assists"></p>
 
 - **Pick a lead homie.** Dalton (wheelman: sharper handling, +1 armor), Milan (pipe whisperer: wider timing
-  windows, fewer turns), Jared (people person: 30% more customer patience). The other two ride along as
-  one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
+  windows, fewer turns), Jared (people person: 30% more customer patience). The other two always ride along,
+  each with a one-time assist in the race and in the repair: *Dalton* clears the road / shows you the right
+  tool, *Milan* patches the van (+1 armor) / auto-fixes a step, *Jared* stalls Randy on the radio / sweet-talks
+  +12s. Keys Q and E.
 - **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard Locks,
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
 - **Something to find in every room.** A lava lamp in Fremont, husky fur in the shower, a cat poster in the

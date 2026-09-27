@@ -134,7 +134,7 @@ function homiesSheet(scene) {
     x.fillStyle = C.gold; x.font = FONT.replace('{n}', 18); x.fillText('PERK', cx + 18, y); y += 24;
     x.fillStyle = C.white; x.font = FONT.replace('{n}', 17); y = wrap(x, h.perk, cx + 18, y, w - 36, 22) + 10;
     x.fillStyle = C.gold; x.font = FONT.replace('{n}', 18); x.fillText('ASSIST', cx + 18, y); y += 24;
-    x.fillStyle = C.white; x.font = FONT.replace('{n}', 17); y = wrap(x, h.assist, cx + 18, y, w - 36, 22);
+    x.fillStyle = C.white; x.font = FONT.replace('{n}', 17); y = wrap(x, `RACE: ${h.assists.race}   REPAIR: ${h.assists.repair}`, cx + 18, y, w - 36, 22);
   });
   return cv;
 }

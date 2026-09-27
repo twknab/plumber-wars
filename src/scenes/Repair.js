@@ -28,7 +28,7 @@ export class Repair extends Phaser.Scene {
     this.win = this.df.window * (this.milan ? 1.35 : 1);
     this.si = 0; this.mistakes = 0; this.phase = 'idle'; this.tool = null; this.over = false;
     // scenes are reused between jobs: clear everything left over from the last one
-    this.legend = null; this.used = {}; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
+    this.legend = null; this.used = {}; this.showMe = 0; this.choiceBtns = null; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
     this.act = null; this.ring = null; this.cursor = null; this.gauge = null; this.monitor = null; this.spots = []; this.dragging = false; this.lastTick = null; this.need = 0;
   }
   create() {
@@ -92,8 +92,8 @@ export class Repair extends Phaser.Scene {
     if (this.input.keyboard) this.input.keyboard.on('keydown', e => {
       const n = '1234567890'.indexOf(e.key); if (n >= 0 && this.slots[n]) this.pickTool(this.slots[n].k, this.slots[n].bg);
       if (this.phase === 'choose' && this.choiceKeys && '123'.includes(e.key)) this.choiceKeys[+e.key - 1]();
-      if (e.key === 'q' || e.key === 'Q') this.useAssist('milan');
-      if (e.key === 'e' || e.key === 'E') this.useAssist('jared');
+      if (e.key === 'q' || e.key === 'Q') this.assists[0] && this.useAssist(this.assists[0].who);
+      if (e.key === 'e' || e.key === 'E') this.assists[1] && this.useAssist(this.assists[1].who);
     });
     this.slots = items.map((k, i) => {
       const x = 4 + (i % 5) * sw + sw / 2, y = ty + 3 + Math.floor(i / 5) * sh + sh / 2;
@@ -103,11 +103,11 @@ export class Repair extends Phaser.Scene {
       if (!isTouch) txt(this, x - sw / 2 + 4, y - sh / 2 + 3, String((i + 1) % 10), { color: C.silver, depth: 73 });
       return { k, bg, ic };
     });
-    // homie assists (the two crew members who aren't lead)
+    // homie assists: the two crew members who aren't lead, each with his own repair power
     const ay = H - assistH / 2 - 2;
-    this.assists = [];
-    if (this.hero.id !== 'milan') this.assists.push(Object.assign(button(this, this.hero.id === 'jared' ? W / 2 : W / 4 + 2, ay, W / 2 - 12, assistH - 4, isTouch ? 'MILAN: AUTO-FIX' : 'MILAN: AUTO-FIX [Q]', () => this.useAssist('milan'), { color: 'btnGreen', textColor: C.white, depth: 90, sound: null }), { who: 'milan' }));
-    if (this.hero.id !== 'jared') this.assists.push(Object.assign(button(this, this.hero.id === 'milan' ? W / 2 : 3 * W / 4 - 2, ay, W / 2 - 12, assistH - 4, isTouch ? 'JARED: +12 SEC' : 'JARED: +12S [E]', () => this.useAssist('jared'), { color: 'btnBlue', textColor: C.white, depth: 90, sound: null }), { who: 'jared' }));
+    this.assists = HEROES.filter(h => h.id !== this.hero.id).map((h, i) => Object.assign(
+      button(this, i ? 3 * W / 4 - 2 : W / 4 + 2, ay, W / 2 - 12, assistH - 4, `${h.name}: ${h.assists.repair}` + (isTouch ? '' : i ? ' [E]' : ' [Q]'), () => this.useAssist(h.id),
+        { color: h.id === 'milan' ? 'btnGreen' : h.id === 'jared' ? 'btnBlue' : 'btnGold', textColor: h.id === 'dalton' ? C.ink : C.white, depth: 90, sound: null }), { who: h.id }));
   }
 
   // ------------------------------------------------------------------ flow
@@ -118,11 +118,17 @@ export class Repair extends Phaser.Scene {
     (s.pre || []).forEach(f => this.applyFx(f));
     this.stepTxt.setText(`STEP ${this.si + 1}/${this.job.steps.length}`);
     this.tool = null; this.slots.forEach(sl => sl.bg.setStrokeStyle(1, hex(C.ink)));
-    if (this.df.stepChoice) { this.phase = 'choose'; this.instr.setText('WHAT\'S THE NEXT STEP, BOSS?'); this.how.setText(''); this.showChoices(); return; }
-    this.phase = 'tool'; this.instr.setText(s.t); this.how.setText(isTouch ? 'GRAB THE RIGHT TOOL FROM THE TRUCK TRAY' : 'GRAB THE RIGHT TOOL (CLICK OR KEYS 1-0)'); this.hintTool();
+    if (this.df.stepChoice) { this.phase = 'choose'; this.instr.setText('WHAT\'S THE NEXT STEP, BOSS?'); this.how.setText(''); this.showChoices(); this.pointTheWay(); return; }
+    this.phase = 'tool'; this.instr.setText(s.t); this.how.setText(isTouch ? 'GRAB THE RIGHT TOOL FROM THE TRUCK TRAY' : 'GRAB THE RIGHT TOOL (CLICK OR KEYS 1-0)'); this.hintTool(); this.pointTheWay();
   }
-  hintTool() {
-    if (!this.df.toolHints) return;
+  // Dalton's assist: highlight the right step (when choosing) or the right tool.
+  pointTheWay() {
+    if (!(this.showMe > 0)) return;
+    if (this.phase === 'choose' && this.choiceBtns) { const c = this.choiceBtns.find(x => x.o === this.step.t); if (c) { c.b.bg.setTint(0xfee761); this.tweens.add({ targets: c.b, scale: 1.04, yoyo: true, repeat: 3, duration: 200 }); } }
+    if (this.phase === 'tool') { this.hintTool(true); this.showMe--; }
+  }
+  hintTool(force) {
+    if (!this.df.toolHints && !force) return;
     const sl = this.slots.find(x => x.k === this.step.tool);
     if (sl) { sl.bg.setStrokeStyle(2, hex(C.gold)); this.tweens.add({ targets: sl.ic, scale: sl.ic.scale * 1.15, yoyo: true, repeat: 3, duration: 200 }); }
   }
@@ -133,15 +139,15 @@ export class Repair extends Phaser.Scene {
     const c = this.choice = this.add.container(0, 0).setDepth(150);
     c.add(this.add.rectangle(0, SY, W, SH, hex(C.ink), 0.78).setOrigin(0).setInteractive());
     c.add(txt(this, W / 2, SY + 40, "WHAT'S NEXT?", { ox: 0.5, size: 2, color: C.gold }));
-    this.choiceKeys = opts.map(o => () => this.choose(o, later.includes(o)));
+    this.choiceKeys = opts.map(o => () => this.choose(o, later.includes(o))); this.choiceBtns = [];
     opts.forEach((o, i) => {
       const b = button(this, W / 2, SY + 90 + i * 50, W - 30, 40, (isTouch ? '' : `${i + 1}. `) + o, () => this.choose(o, later.includes(o)), { color: 'btnGrey', textColor: C.white, depth: 151 });
-      b.label.setMaxWidth((W - 44)); c.add(b);
+      b.label.setMaxWidth((W - 44)); c.add(b); this.choiceBtns.push({ o, b });
     });
   }
   choose(o, isLater) {
     const s = this.step;
-    if (o === s.t) { this.choice.destroy(); this.choice = null; audio.sfx('select'); this.phase = 'tool'; this.instr.setText(s.t); this.how.setText('GRAB THE RIGHT TOOL FROM THE TRUCK TRAY'); return; }
+    if (o === s.t) { this.choice.destroy(); this.choice = null; audio.sfx('select'); this.phase = 'tool'; this.instr.setText(s.t); this.how.setText('GRAB THE RIGHT TOOL FROM THE TRUCK TRAY'); this.pointTheWay(); return; }
     const msg = isLater && s.early ? s.early : isLater ? 'WRONG ORDER! THAT COMES LATER, ROOKIE.' : pick(['THAT IS... NOT PLUMBING.', 'THE CUSTOMER SAW THAT. THE CUSTOMER IS UPSET.', 'NORTHWEST ENERGY. DON\'T.']);
     this.oops(msg, true);
   }
@@ -214,13 +220,14 @@ export class Repair extends Phaser.Scene {
   }
   useAssist(who) {
     if (this.over || (this.used || {})[who]) return;
-    if (who === 'milan' && !['tool', 'act', 'choose'].includes(this.phase)) return;
+    if ((who === 'milan' || who === 'dalton') && !['tool', 'act', 'choose'].includes(this.phase)) return;
     this.used = { ...(this.used || {}), [who]: true };
     const b = this.assists.find(a => a.who === who); b && b.setEnabled(false);
     const h = HEROES.find(x => x.id === who);
     audio.sfx('coin');
-    bubble(this, W / 2, SY + 110, who === 'milan' ? 'MILAN: SCOOT OVER. I GOT THIS.' : `JARED: ${this.job.who.split(' ')[0]}, HAVE YOU BEEN WORKING OUT?`, { dur: 1600, maxW: 200 });
+    bubble(this, W / 2, SY + 110, who === 'milan' ? 'MILAN: SCOOT OVER. I GOT THIS.' : who === 'dalton' ? 'DALTON: HERE, USE THIS ONE. TRUST ME.' : `JARED: ${this.job.who.split(' ')[0]}, HAVE YOU BEEN WORKING OUT?`, { dur: 1600, maxW: 200 });
     if (who === 'jared') { this.left = Math.min(this.total + 12, this.left + 12); this.total = Math.max(this.total, this.left); this.setMood('happy', 2000); floatText(this, W - 30, SY + 70, '+12 SEC', C.cyan, 160); }
+    else if (who === 'dalton') { this.showMe = 3; this.pointTheWay(); } // points out the right move for the next 3 steps
     else { if (this.choice) { this.choice.destroy(); this.choice = null; } this.completeStep(true); }
   }
 

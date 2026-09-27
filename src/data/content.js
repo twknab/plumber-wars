@@ -2,18 +2,18 @@
 
 export const HEROES = [
   { id: 'dalton', name: 'DALTON', role: 'THE WHEELMAN', color: '#feae34', stats: { drive: 5, fix: 2, charm: 3 },
-    perk: 'VAN HANDLES 25% SHARPER. +1 ARMOR.', assist: 'DALTON: CLEAR THE ROAD', assistShort: 'CLEAR ROAD',
+    perk: 'VAN HANDLES 25% SHARPER. +1 ARMOR.', assists: { race: 'CLEAR ROAD', repair: 'SHOW ME' }, // one-time help when he isn't the lead
     // Caucasian, 6'0" 180 lb, strong. Short haircut + short beard, brown eyes, white tee, black cap forward, black pants.
     look: { skin: 'light', hair: 'brown', style: 'cap', hat: '#181425', beard: 'short', eyes: 'brown', shirt: '#ffffff', pants: '#181425', build: 'strong', patch: true }, pitch: 1.0,
     barks: ['SUCK IT, NORTHWEST!', 'EAT MY TAILPIPE, RANDY!', 'NICE MULLET, SKEETER!', 'I DRIVE LIKE I PLUNGE: HARD!', 'YOUR TRUCK SMELLS LIKE YOUR BREATH, RANDY!', 'GO FLUSH YOURSELF, SKEETER!'] },
   { id: 'milan', name: 'MILAN', role: 'THE PIPE WHISPERER', color: '#63c74d', stats: { drive: 2, fix: 5, charm: 3 },
-    perk: 'WIDER TIMING WINDOWS. FASTER WRENCHING.', assist: 'MILAN: FINISH THIS STEP', assistShort: 'AUTO-FIX',
+    perk: 'WIDER TIMING WINDOWS. FASTER WRENCHING.', assists: { race: 'PATCH VAN', repair: 'AUTO-FIX' },
     // Asian / Pacific Islander, 6'0" 180 lb, strong. Long black hair in a ponytail under a dark red stocking cap,
     // clean-shaven, brown eyes, light-brown skin, white tee, dark red pants.
     look: { skin: 'tan', hair: 'black', style: 'beaniepony', hat: '#a22633', beard: 'none', eyes: 'brown', shirt: '#ffffff', pants: '#a22633', build: 'strong', patch: true }, pitch: 0.85,
     barks: ['YOUR CRACK IS SHOWING, RANDY!', 'EAT A WET WIPE!', 'THE PIPES FEAR ME!', 'I SPEAK FLUENT DRAIN!', 'I\'VE SEEN SMARTER CLOGS THAN YOU, RANDY!', 'NICE PLUNGER, DID YOUR MOM BUY IT?'] },
   { id: 'jared', name: 'JARED', role: 'THE PEOPLE PERSON', color: '#0099db', stats: { drive: 3, fix: 3, charm: 5 },
-    perk: 'CUSTOMERS STAY PATIENT 30% LONGER.', assist: 'JARED: SWEET-TALK +12S', assistShort: '+12 SEC',
+    perk: 'CUSTOMERS STAY PATIENT 30% LONGER.', assists: { race: 'STALL RANDY', repair: '+12 SEC' },
     // Caucasian, 6'0" 200 lb, stockier build. Blue eyes, smoky blonde hair, white shirt, navy pants, navy cap forward.
     look: { skin: 'fair', hair: 'ash', style: 'cap', hat: '#124e89', beard: 'none', eyes: 'blue', shirt: '#ffffff', pants: '#124e89', build: 'stocky', patch: true }, pitch: 1.2,
     barks: ['BLESS YOUR HEART, DIPSHIT!', 'I WILL LITERALLY FIVE-STAR YOUR MOM!', 'SEE YOU NEVER, NORTHWEST!', 'HONK IF YOU SUCK!', 'YOUR REVIEWS ARE ONE STAR AND A POOP EMOJI!', 'KISS MY GLORIOUS ASS, NORTHWEST!'] },
