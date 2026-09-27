@@ -12,6 +12,7 @@ import { HEROES, RIVALS, DISTRICTS, ORDER, districtJobs } from '../data/content.
 import { JOBS, TOOL_INFO } from '../data/jobs.js';
 import { portrait, body } from '../art/people.js';
 import { houseTextures } from '../art/houses.js';
+import { HOMIE_TRIBUTES } from '../data/about.js';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function save(path, canvas) {
@@ -102,7 +103,7 @@ async function introSheet(game) {
 // Character sheet for The Homies: every mood, the full-body sprite, stats, perk and assist.
 function homiesSheet(scene) {
   const moods = ['happy', 'smug', 'neutral', 'worried', 'angry', 'yell'];
-  const colW = 420, pad = 30, W = HEROES.length * colW + pad * 2, H = 1070;
+  const colW = 420, pad = 30, W = HEROES.length * colW + pad * 2, H = 1140;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const x = cv.getContext('2d'); x.imageSmoothingEnabled = false; x.fillStyle = C.ink; x.fillRect(0, 0, W, H);
   const draw = (key, frame, dx, dy, k) => { const t = scene.textures.get(key); const fr = t.get(frame ?? '__BASE'); x.drawImage(t.getSourceImage(), fr.cutX, fr.cutY, fr.width, fr.height, dx, dy, fr.width * k, fr.height * k); return fr; };
@@ -113,7 +114,8 @@ function homiesSheet(scene) {
     x.fillStyle = C.night; x.fillRect(cx, y, w, H - y - pad); x.strokeStyle = h.color; x.lineWidth = 3; x.strokeRect(cx, y, w, H - y - pad);
     y += 16;
     const nm = new PX(120, 16); logoText(nm, 2, 2, h.name, 1, [C.brown, C.gold, C.yellow], { shadow: C.ink }); x.drawImage(nm.commit(), cx + 14, y, 360, 48); y += 58;
-    x.fillStyle = h.color; x.font = FONT.replace('{n}', 22); x.fillText(h.role, cx + 18, y); y += 22;
+    x.fillStyle = h.color; x.font = FONT.replace('{n}', 22); x.fillText(h.role, cx + 18, y); y += 26;
+    x.fillStyle = C.gold; x.font = 'italic ' + FONT.replace('{n}', 16); y = wrap(x, HOMIE_TRIBUTES[h.id], cx + 18, y, w - 36, 20) + 2;
     // six moods, 3 x 2
     moods.forEach((m, k) => { const px = cx + 18 + (k % 3) * 128, py = y + Math.floor(k / 3) * 150; draw(portrait(scene, h.id, h.look, m), undefined, px, py, 2.5); x.fillStyle = C.slate; x.font = FONT.replace('{n}', 15); x.fillText(m.toUpperCase(), px + 4, py + 136); });
     y += 310;

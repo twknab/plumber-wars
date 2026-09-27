@@ -3,7 +3,7 @@ import { W, H, txt, setTxt, button, wipeTo, wipeIn, panel, isTouch } from '../co
 import { audio } from '../core/audio.js';
 import { C, hex } from '../core/palette.js';
 import { HEROES, DISTRICTS, districtJobs, jobNo } from '../data/content.js';
-import { CREW_BLURB, HOMIE_BIOS, HOODS } from '../data/about.js';
+import { CREW_BLURB, HOMIE_BIOS, HOMIE_TRIBUTES, HOODS } from '../data/about.js';
 import { portrait } from '../art/people.js';
 
 const SITE = 'https://timknab.dev';
@@ -74,14 +74,15 @@ export class About extends Phaser.Scene {
     this.add2(txt(this, W / 2, 38, 'THE HOMIES', { ox: 0.5, size: 2, color: C.gold }));
     const intro = this.add2(txt(this, W / 2, 58, CREW_BLURB, { ox: 0.5, maxW: W - 40, align: 1, color: C.white }));
     let y = 58 + intro.height + 12;
-    const cardH = Math.min(86, Math.floor((H - 66 - y) / 3) - 6);
+    const cardH = Math.floor((H - 66 - y) / 3) - 6;
     HEROES.forEach(h => {
       this.add2(panel(this, 6, y, W - 12, cardH));
       this.add2(this.add.rectangle(34, y + 30, 52, 52, hex(C.storm)).setStrokeStyle(2, hex(h.color)));
       this.add2(this.add.image(34, y + 30, portrait(this, h.id, h.look, 'smug')));
       this.add2(txt(this, 66, y + 7, h.name, { color: h.color, size: 2 }));
       this.add2(txt(this, 66, y + 25, h.role, { color: C.gold }));
-      this.add2(txt(this, 66, y + 39, HOMIE_BIOS[h.id], { maxW: W - 80, color: C.white }));
+      const bio = this.add2(txt(this, 66, y + 39, HOMIE_BIOS[h.id], { maxW: W - 80, color: C.white }));
+      this.add2(txt(this, 66, y + 45 + bio.height, HOMIE_TRIBUTES[h.id], { maxW: W - 80, color: C.gold }));
       y += cardH + 6;
     });
   }

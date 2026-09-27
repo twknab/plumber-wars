@@ -20,6 +20,45 @@ function wheel(p, cx, cy, r, ramp = RAMP.red) { p.ring(cx, cy, r, r, ramp[1]); p
 function concrete(p, x, y, w, h) { p.rect(x, y, w, h, C.slate); p.dither(x, y, w, h, C.steel, 0.15); p.dither(x, y, w, h, C.storm, 0.12); }
 function blocks(p, x, y, w, h) { concrete(p, x, y, w, h); for (let j = y; j < y + h; j += 16) { p.hline(x, j, w, C.storm); for (let i = x + ((j - y) / 16 % 2) * 16; i < x + w; i += 32) p.vline(i, j, 16, C.storm); } }
 
+
+// ------------------------------------------------------------------ FUN PROPS
+// Little background jokes per room (like Timmy's kayak and Boy the squirrel). Pure decoration: kept clear of
+// every anchor the repair steps use and of the customer portrait (top right).
+const PROP = {
+  tp(bg, x, y) { bg.rect(x, y, 18, 3, C.silver); bg.rect(x + 1, y + 3, 16, 12, C.white); bg.rect(x + 1, y + 3, 16, 2, C.silver); bg.vline(x + 9, y + 3, 12, C.silver); bg.rect(x + 12, y + 15, 5, 10, C.white); },
+  fishPic(bg, x, y) { bg.rect(x, y, 44, 32, C.brown); bg.rect(x + 3, y + 3, 38, 14, C.cyan); bg.rect(x + 3, y + 17, 38, 12, C.blue); bg.poly([[x + 12, y + 17], [x + 32, y + 17], [x + 28, y + 23], [x + 15, y + 23]], C.red); bg.rect(x + 20, y + 8, 2, 9, C.white); bg.poly([[x + 22, y + 8], [x + 29, y + 14], [x + 22, y + 14]], C.white); bg.px(x + 36, y + 7, C.yellow); },
+  mags(bg, x, y) { [[C.red, 0], [C.cyan, 3], [C.gold, 6], [C.lime, 9]].forEach(([c, d]) => { bg.rect(x + (d % 4), y - d, 30, 3, c); bg.hline(x + (d % 4) + 2, y - d + 1, 20, C.white); }); },
+  lava(bg, x, y) { bg.poly([[x + 4, y], [x + 12, y], [x + 16, y + 30], [x, y + 30]], C.hot); bg.ellipse(x + 8, y + 10, 3, 4, C.yellow); bg.ellipse(x + 7, y + 21, 4, 3, C.yellow); bg.rect(x + 2, y - 5, 12, 5, C.silver); bg.poly([[x - 2, y + 30], [x + 18, y + 30], [x + 15, y + 42], [x + 1, y + 42]], C.silver); },
+  cactus(bg, x, y) { bg.rect(x, y + 18, 16, 12, C.clay); bg.rect(x + 5, y, 6, 20, C.green); bg.rect(x + 1, y + 6, 4, 3, C.green); bg.rect(x + 1, y + 3, 2, 5, C.green); bg.rect(x + 11, y + 9, 4, 3, C.green); bg.rect(x + 13, y + 5, 2, 6, C.green); bg.px(x + 8, y - 1, C.hot); },
+  plant(bg, x, y) { bg.poly([[x + 4, y + 30], [x + 26, y + 30], [x + 23, y + 46], [x + 7, y + 46]], C.clay); [[x + 6, y + 10, -1], [x + 24, y + 8, 1], [x + 15, y, 0], [x + 10, y + 20, -1], [x + 22, y + 20, 1]].forEach(([cx, cy]) => { bg.blob(cx, cy, 8, 6, RAMP.green); bg.line(cx, cy, x + 15, y + 30, C.forest); }); },
+  rainbowMat(bg, x, y) { [C.red, C.flame, C.yellow, C.lime, C.blue, C.plum].forEach((c, i) => bg.rect(x, y + i * 3, 46, 3, c)); },
+  mug(bg, x, y) { bg.rect(x, y, 10, 11, C.white); bg.ring(x + 11, y + 5, 3, 3, C.white); bg.rect(x + 2, y + 3, 6, 3, C.red); bg.px(x + 3, y - 3, C.silver); bg.px(x + 6, y - 5, C.silver); },
+  herbs(bg, x, y) { bg.rect(x, y + 8, 12, 8, C.clay); for (let i = 0; i < 5; i++) bg.blob(x + 2 + i * 2, y + 4 - (i % 2) * 3, 3, 3, RAMP.green); },
+  trap(bg, x, y) { bg.rect(x, y, 20, 6, C.tan); bg.box(x, y, 20, 6, C.brown); bg.line(x + 3, y, x + 14, y - 5, C.silver); bg.poly([[x + 12, y - 4], [x + 19, y - 1], [x + 12, y]], C.yellow); bg.px(x + 14, y - 2, C.gold); },
+  spray(bg, x, y) { bg.rect(x, y + 8, 12, 20, C.cyan); bg.rect(x + 2, y, 8, 8, C.white); bg.rect(x + 9, y + 1, 5, 3, C.white); bg.line(x + 3, y + 8, x + 1, y + 16, C.white); bg.rect(x + 2, y + 14, 8, 6, C.white); },
+  tpPyramid(bg, x, y) { for (let r = 0; r < 3; r++) for (let i = 0; i < 3 - r; i++) { const px = x + i * 11 + r * 5, py = y - r * 10; bg.rect(px, py, 10, 10, C.white); bg.ellipse(px + 5, py + 5, 2, 2, C.silver); } },
+  cup(bg, x, y) { bg.rect(x, y + 6, 9, 10, C.cyan); bg.line(x + 3, y + 6, x + 1, y - 2, C.red); bg.line(x + 6, y + 6, x + 8, y - 1, C.lime); bg.rect(x, y - 3, 3, 2, C.white); bg.rect(x + 7, y - 2, 3, 2, C.white); },
+  fur(bg, x, y) { bg.blob(x, y, 9, 6, [C.steel, C.silver, C.white]); for (let i = 0; i < 8; i++) bg.px(x - 10 + (i * 5) % 20, y - 5 + (i * 3) % 10, C.silver); },
+  loofah(bg, x, y) { bg.blob(x, y, 8, 7, [C.hot, C.pink, C.white]); bg.line(x + 6, y - 5, x + 12, y - 12, C.pink); },
+  poster(bg, x, y) { bg.rect(x, y, 30, 38, C.white); bg.box(x, y, 30, 38, C.steel); bg.rect(x + 3, y + 3, 24, 22, C.cyan); bg.hline(x + 3, y + 6, 24, C.brown); bg.blob(x + 15, y + 13, 5, 4, [C.clay, C.tan]); bg.rect(x + 12, y + 6, 2, 5, C.clay); bg.rect(x + 16, y + 6, 2, 5, C.clay); bg.px(x + 13, y + 12, C.ink); bg.px(x + 17, y + 12, C.ink);
+    bg.art(x + 3, y + 28, ['#.#.###.#..#', '###.#.#.##.#', '#.#.###.#.##'], { '#': C.ink }); },
+  tpPack(bg, x, y) { bg.rect(x, y, 40, 24, C.white); bg.box(x, y, 40, 24, C.silver); for (let i = 0; i < 4; i++) bg.ellipse(x + 5 + i * 10, y + 4, 4, 2, C.silver); bg.rect(x + 4, y + 11, 32, 7, C.red); bg.art(x + 7, y + 12, ['###.###.#.#.#.#', '#...#.#.##..##.', '###.###.#.#.#.#'], { '#': C.white }); },
+  wine(bg, x, y) { bg.rect(x, y, 40, 44, C.brown); bg.box(x, y, 40, 44, C.umber); for (let r = 0; r < 3; r++) for (let i = 0; i < 3; i++) { bg.ellipse(x + 7 + i * 13, y + 8 + r * 14, 5, 5, C.umber); bg.ellipse(x + 7 + i * 13, y + 8 + r * 14, 3, 3, [C.crimson, C.forest, C.plum][(r + i) % 3]); } },
+  surfboard(bg, x, y) { bg.poly([[x + 6, y], [x + 14, y + 12], [x + 14, y + 110], [x + 7, y + 124], [x, y + 110], [x, y + 12]], C.yellow); bg.vline(x + 7, y + 6, 114, C.flame); bg.rect(x + 1, y + 50, 12, 6, C.cyan); },
+  lights(bg, x0, x1, y) { for (let x = x0; x < x1; x += 2) bg.px(x, y + Math.round(Math.sin(x / 9) * 3), C.forest); for (let x = x0 + 4, i = 0; x < x1; x += 12, i++) bg.rect(x, y + Math.round(Math.sin(x / 9) * 3) + 1, 3, 4, [C.red, C.lime, C.gold, C.cyan][i % 4]); },
+  cooler(bg, x, y) { bg.rect(x, y, 40, 22, C.blue); bg.rect(x, y, 40, 6, C.white); bg.rect(x + 14, y - 3, 12, 3, C.white); bg.rect(x + 16, y + 10, 8, 4, C.navy); },
+  boots(bg, x, y) { for (const dx of [0, 14]) { bg.rect(x + dx, y, 10, 20, C.gold); bg.rect(x + dx, y + 14, 14, 6, C.gold); bg.hline(x + dx, y + 19, 14, C.brown); bg.hline(x + dx, y, 10, C.yellow); } },
+  umbrella(bg, x, y) { bg.poly([[x + 10, y], [x + 18, y + 14], [x + 13, y + 70], [x + 7, y + 70], [x + 2, y + 14]], C.red); bg.vline(x + 10, y + 70, 16, C.ink); bg.line(x + 10, y + 86, x + 14, y + 90, C.ink); bg.vline(x + 10, y + 4, 60, C.crimson); },
+  eyes(bg, x, y) { for (const dx of [0, 7]) { bg.rect(x + dx, y, 3, 2, C.yellow); bg.px(x + dx + 1, y, C.white); } },
+  web(bg, x, y) { for (let a = 0; a < 5; a++) bg.line(x, y, x + Math.cos(a * 0.35) * 28, y + Math.sin(a * 0.35) * 28, C.steel); for (let r = 8; r < 28; r += 7) for (let a = 0; a < 4; a++) bg.line(x + Math.cos(a * 0.35) * r, y + Math.sin(a * 0.35) * r, x + Math.cos((a + 1) * 0.35) * r, y + Math.sin((a + 1) * 0.35) * r, C.steel); bg.rect(x + 18, y + 14, 3, 3, C.ink); },
+  frisbee(bg, x, y) { bg.ellipse(x, y, 11, 4, C.hot); bg.ellipse(x, y - 1, 7, 2, C.pink); },
+  gnome(bg, x, y) { bg.poly([[x + 8, y], [x + 15, y + 16], [x + 1, y + 16]], C.red); bg.rect(x + 3, y + 16, 10, 5, C.sand); bg.poly([[x + 3, y + 20], [x + 13, y + 20], [x + 8, y + 30]], C.white); bg.rect(x + 2, y + 24, 12, 14, C.blue); bg.rect(x + 2, y + 38, 5, 3, C.brown); bg.rect(x + 9, y + 38, 5, 3, C.brown); bg.px(x + 6, y + 18, C.ink); bg.px(x + 10, y + 18, C.ink); },
+  flamingo(bg, x, y) { bg.vline(x + 8, y + 24, 30, C.ink); bg.ellipse(x + 8, y + 20, 10, 6, C.hot); bg.thick(x + 12, y + 18, x + 16, y + 2, 2, C.hot); bg.ellipse(x + 16, y + 2, 3, 3, C.hot); bg.rect(x + 18, y + 2, 4, 2, C.ink); bg.px(x + 16, y + 1, C.ink); },
+  slug(bg, x, y) { bg.ellipse(x, y, 10, 3, C.yellow); bg.ellipse(x - 2, y - 1, 6, 2, C.gold); bg.px(x + 8, y - 4, C.gold); bg.px(x + 10, y - 4, C.gold); for (let i = -6; i < 6; i += 4) bg.px(x + i, y - 1, C.brown); },
+  crow(bg, x, y) { bg.ellipse(x, y, 9, 6, C.ink); bg.ellipse(x + 8, y - 5, 5, 4, C.ink); bg.poly([[x + 12, y - 6], [x + 17, y - 4], [x + 12, y - 3]], C.slate); bg.px(x + 9, y - 6, C.white); bg.poly([[x - 8, y - 2], [x - 16, y + 2], [x - 8, y + 3]], C.ink); bg.vline(x - 2, y + 6, 5, C.slate); bg.vline(x + 3, y + 6, 5, C.slate); },
+  hoseReel(bg, x, y) { bg.rect(x, y + 30, 44, 4, C.forest); bg.ring(x + 22, y + 16, 16, 16, C.forest); for (let r = 6; r < 16; r += 3) bg.ring(x + 22, y + 16, r, r, C.green); bg.ellipse(x + 22, y + 16, 4, 4, C.gold); bg.vline(x + 4, y + 16, 18, C.forest); bg.vline(x + 40, y + 16, 18, C.forest); },
+};
+
 // ------------------------------------------------------------------ TOILET
 function toilet(scene, v) {
   const bg = new PX(SW, SH);
@@ -33,6 +72,9 @@ function toilet(scene, v) {
   // valve on wall + pipe stub
   bg.rect(76, 242, 16, 8, C.silver); bg.box(76, 242, 16, 8, C.steel);
   bg.cylH(84, 232, 10, 6, RAMP.chrome); nut(bg, 90, 230, 6, 10);
+  if (v === 'clog') { PROP.fishPic(bg, 14, 70); PROP.tp(bg, 214, 150); PROP.mags(bg, 20, 270); }
+  if (v === 'tank') { PROP.lava(bg, 222, 200); PROP.cactus(bg, 26, 214); }
+  if (v === 'base') { PROP.rainbowMat(bg, 206, 262); PROP.plant(bg, 16, 196); }
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_toilet_' + v);
 
@@ -130,6 +172,8 @@ function sink(scene, v) {
   bg.rect(34, 252, 12, 18, C.lime); bg.rect(37, 247, 6, 5, C.white); bg.rect(34, 258, 12, 5, C.yellow);
   bg.rect(212, 256, 22, 14, C.cyan); bg.rect(214, 252, 18, 4, C.yellow);
   if (v === 'disposal') { bg.rect(30, 236, 16, 22, C.silver); bg.box(30, 236, 16, 22, C.steel); bg.rect(35, 240, 2, 4, C.ink); bg.rect(40, 240, 2, 4, C.ink); bg.rect(35, 250, 2, 4, C.ink); bg.rect(40, 250, 2, 4, C.ink); }
+  if (!vanity) { PROP.herbs(bg, 20, 48); PROP.mug(bg, 44, 53); PROP.trap(bg, 84, 266); PROP.spray(bg, 192, 250); }
+  if (v === 'vanity') { PROP.cup(bg, 34, 48); PROP.tpPyramid(bg, 56, 258); }
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_sink_' + v);
 
@@ -250,6 +294,7 @@ function shower(scene) {
   // shampoo army
   [[20, 30, C.hot], [34, 26, C.lime], [48, 32, C.gold], [230, 260, C.mauve]].forEach(([x, y, c]) => { bg.rect(x, y, 10, 14, c); bg.rect(x + 3, y - 3, 4, 3, C.white); });
   bg.ellipse(240, 40, 12, 8, C.yellow); bg.px(236, 37, C.white); // rubber duck-ish
+  PROP.fur(bg, 60, 236); PROP.fur(bg, 214, 128); PROP.fur(bg, 96, 90); PROP.loofah(bg, 32, 262);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_shower');
   const parts = {};
@@ -332,6 +377,8 @@ function basement(scene, v) {
     // laundry sink
     bg.rect(226, 128, 44, 30, C.silver); bg.box(226, 128, 44, 30, C.ink); bg.rect(240, 122, 4, 8, C.silver);
   }
+  PROP.tpPack(bg, 86, 256);
+  if (v === 'prv') PROP.poster(bg, 98, 124); else PROP.wine(bg, 96, 204);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_basement_' + v);
   const parts = {};
@@ -384,6 +431,7 @@ function heater(scene) {
   bg.rect(184, 50, 10, 8, C.gold); pipeV(bg, 188, 58, 180, 6);
   // burner panel
   bg.rect(112, 222, 46, 22, C.storm); bg.box(112, 222, 46, 22, C.ink); bg.rect(118, 228, 34, 10, C.ink);
+  PROP.surfboard(bg, 26, 122); PROP.lights(bg, 4, 266, 10); PROP.cooler(bg, 200, 240);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_heater');
   const parts = {};
@@ -417,6 +465,7 @@ function sump(scene) {
   bg.rect(222, 96, 20, 28, C.white); bg.box(222, 96, 20, 28, C.steel); for (const y of [102, 114]) { bg.rect(228, y, 2, 4, C.ink); bg.rect(234, y, 2, 4, C.ink); }
   // floating drum kit (flavor)
   bg.ellipse(240, 200, 18, 12, C.red); bg.ring(240, 200, 18, 12, C.silver); bg.ellipse(240, 196, 16, 6, C.white);
+  PROP.umbrella(bg, 30, 180); PROP.boots(bg, 8, 274);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_sump');
   const parts = {};
@@ -450,6 +499,7 @@ function crawl(scene) {
   for (let r = 0; r < 3; r++) for (let i = 0; i < 5 - r; i++) { const x = 186 + i * 14 + r * 7, y = 262 - r * 16; bg.cylV(x, y, 12, 15, RAMP.chrome); bg.rect(x, y + 4, 12, 7, [C.red, C.gold, C.lime][r]); }
   pipeH(bg, 0, 146, SW, 10);
   for (let x = 20; x < SW; x += 70) { bg.rect(x, 60, 2, 86, C.steel); bg.rect(x - 3, 144, 8, 2, C.steel); }
+  PROP.eyes(bg, 232, 118); PROP.web(bg, 16, 12); PROP.frisbee(bg, 56, 244);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_crawl');
   const parts = {};
@@ -478,6 +528,7 @@ function yard(scene) {
   // cleanout stub
   bg.ellipse(140, 232, 22, 8, C.brown);
   bg.cylV(126, 196, 28, 36, RAMP.pvc); bg.ellipse(140, 196, 14, 4, C.white);
+  PROP.gnome(bg, 208, 196); PROP.flamingo(bg, 236, 146); PROP.slug(bg, 190, 280);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_yard');
   const parts = {};
@@ -497,6 +548,7 @@ function bib(scene) {
   bg.rect(12, 12, 70, 10, C.ink);
   // bib body protruding
   bg.rect(128, 134, 24, 24, C.silver); bg.box(128, 134, 24, 24, C.steel); bg.cylH(146, 140, 34, 12, RAMP.brass); bg.cylV(172, 146, 12, 24, RAMP.brass); bg.rect(170, 168, 16, 6, C.gold);
+  PROP.hoseReel(bg, 18, 250); PROP.crow(bg, 232, 244); PROP.slug(bg, 70, 196);
   bg.outline(C.ink);
   bg.toTexture(scene, 'fx_bib');
   const parts = {};

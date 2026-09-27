@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
+import { W, H, txt, setTxt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -13,7 +13,7 @@ const DRAG_SHOWS = { cartridge: 'cartNew', flapper: 'flapperNew', waxring: 'waxN
 const HOW = {
   turn: s => (s.dir > 0 ? 'CIRCLE CLOCKWISE  >>' : '<<  CIRCLE COUNTER-CLOCKWISE'), crank: () => 'CRANK CLOCKWISE. EASE OFF WHEN IT BINDS!', dial: () => 'TURN TO SET THE NEEDLE IN THE GREEN, THEN HOLD',
   rhythm: () => 'TAP WHEN THE MARKER IS IN THE GREEN', hold: s => `HOLD... RELEASE IN THE GREEN (${s.label || 'POWER'})`, drag: () => 'DRAG IT ONTO THE GLOWING SPOT',
-  pull: () => 'DRAG ALONG THE ARROW. DON\'T LET GO!', scrub: () => 'SCRUB BACK AND FORTH!', taps: () => 'TAP EVERY ONE!', tap: () => 'TAP IT!',
+  pull: () => 'DRAG ALONG THE ARROW. DON\'T LET GO!', scrub: () => 'SCRUB BACK AND FORTH!', taps: () => 'TAP EVERY ONE!', tap: () => 'TAP IT!', scan: () => 'DRAG THE CAMERA AROUND TO FIND THEM!',
 };
 const BAD_IDEAS = ['POUR DRAIN-O-MATIC IN IT', 'HIT IT WITH A HAMMER', 'CALL NORTHWEST FOR ADVICE', 'WIGGLE IT AND PRAY', 'DUCT TAPE THE WHOLE THING', 'SEND JARED FOR COFFEE', 'FLUSH IT AND RUN LIKE HELL', 'SNIFF IT TO DIAGNOSE', 'BLAME THE LAST PLUMBER', 'TAKE A DUMP IN IT FOR LUCK'];
 const GRIPES = ['ARE YOU SURE YOU\'RE A PLUMBER?', 'MY CAT COULD DO THAT BETTER.', 'IS THAT... SUPPOSED TO HAPPEN?', 'I\'M TIMING YOU, YOU KNOW.', 'NORTHWEST DID THAT TOO. BAD SIGN.', 'OH GOD. OH NO.', 'WHAT WAS THAT NOISE?!', 'WHAT THE HELL IS THAT SMELL?!', 'DID YOU JUST FART IN MY BATHROOM?', 'JESUS CHRIST, MY FLOOR!', 'I\'M PAYING YOU FOR THIS SHIT?!', 'PULL YOUR PANTS UP, I CAN SEE THE MOON.'];
@@ -247,6 +247,7 @@ export class Repair extends Phaser.Scene {
     if (s.type === 'pull') { A.part = this.parts[s.target]; A.base = A.part ? { x: A.part.x, y: A.part.y } : { x: a.x, y: a.y }; }
     if (s.type === 'scrub') { A.lastX = null; A.target = this.parts[s.target] || null; if (A.target) A.target.setVisible(true).setAlpha(1); }
     if (s.type === 'taps') this.spawnSpots(s);
+    if (s.type === 'scan') this.spawnScan(s);
     if (s.type === 'turn' || s.type === 'crank') { A.need = s.turns * 360 * (this.milan ? 0.8 : 1); A.wrong = 0; A.jamAt = []; if (s.type === 'crank') for (let j = 1; j <= s.jams; j++) A.jamAt.push(A.need * j / (s.jams + 1)); A.strain = 0; A.cable = 0; }
     if (s.type === 'tap') { /* just tap the anchor */ }
   }
@@ -254,7 +255,7 @@ export class Repair extends Phaser.Scene {
     this.phase = 'done';
     [this.ring, this.cursor, this.gauge].forEach(o => o && o.destroy()); this.ring = this.cursor = this.gauge = null;
     (this.spots || []).forEach(sp => sp.destroy()); this.spots = [];
-    if (this.monitor) { this.monitor.destroy(); this.monitor = null; }
+    if (this.monitor) { this.monitor.destroy(); this.monitor = null; } this.lamp = null;
     this.gfx.clear(); this.act = null; this.dragging = false;
   }
   near(p, a, extra = 20) { return Phaser.Math.Distance.Between(p.x, p.y, a.x, a.y) < a.r + extra; }
@@ -268,9 +269,11 @@ export class Repair extends Phaser.Scene {
     if (s.type === 'drag' && Phaser.Math.Distance.Between(p.x, p.y, this.cursor.x, this.cursor.y) < 36) { this.dragging = true; this.tweens.killTweensOf(this.cursor); }
     if (s.type === 'pull' && this.near(p, a, 30)) { A.start = { x: p.x, y: p.y }; A.active = true; }
     if (s.type === 'scrub') { A.lastX = p.x; A.lastY = p.y; }
+    if (s.type === 'scan') this.scanAt(p.x, p.y);
     if (s.type === 'tap' && this.near(p, a, 14)) { const pt = this.parts[s.target]; if (pt) this.tweens.add({ targets: pt, y: pt.y + 3, yoyo: true, duration: 90 }); if (s.fx && s.fx.includes('flush')) audio.sfx('flush'); else audio.sfx('click'); this.completeStep(); }
   }
   onMove(p) {
+    if (this.phase === 'act' && this.act && this.step.type === 'scan' && (p.isDown || !isTouch)) return this.scanAt(p.x, p.y); // mouse can just hover
     if (this.phase !== 'act' || !this.act || !p.isDown) return;
     const s = this.step, A = this.act, a = this.anchor(s.target || s.to);
     if ((s.type === 'turn' || s.type === 'crank' || s.type === 'dial') && A.active) {
@@ -362,6 +365,55 @@ export class Repair extends Phaser.Scene {
     if (s.target === 'hair') bubble(this, W - 60, SY + 60, pick(['OH MY GOD.', 'IS THAT... ALIVE?', "I'M GONNA BE SICK."]), { dur: 1400, tail: 'up' });
     if (s.target === 'junk') floatText(this, W / 2, SY + 100, 'ONE SMARTWATCH. 12,000 STEPS.', C.cyan, 160);
     this.completeStep();
+  }
+  // Sewer camera: roots hide in the dark pipe until the camera light passes over them.
+  spawnScan(s) {
+    this.spots = [];
+    const cx = W / 2, cy = SY + 110, mw = 200, mh = 130;
+    const m = this.monitor = this.add.container(0, 0).setDepth(44);
+    m.add(this.add.rectangle(cx, cy, mw, mh, hex(C.ink)).setStrokeStyle(3, hex(C.slate)));
+    for (let r = 60; r > 4; r -= 8) m.add(this.add.ellipse(cx, cy, r * 1.6, r * 1.1, [hex(C.umber), hex(C.brown), hex(C.clay)][(r / 8) % 3]));
+    m.add(this.add.ellipse(cx, cy, 16, 11, hex(C.ink)));
+    // it's dark down there, except where the camera light points
+    m.add(this.add.rectangle(cx, cy, mw - 4, mh - 4, hex(C.ink), 0.78));
+    m.add(txt(this, cx - 96, cy - 62, 'CAM 1  REC *  32 FT', { color: C.lime }));
+    this.scanLeft = txt(this, cx - 96, cy + 54, `ROOTS FOUND 0/${s.count}`, { color: C.gold }); m.add(this.scanLeft);
+    // the camera light follows your finger (or mouse); the tool icon rides along with it
+    this.lamp = this.add.circle(cx, cy, 28, hex(C.sand), 0.38).setStrokeStyle(2, hex(C.yellow), 0.9).setDepth(49);
+    m.add(this.lamp);
+    if (this.ring) this.ring.setVisible(false);
+    if (this.cursor) this.cursor.setPosition(cx + 24, cy - 22);
+    // hidden roots, spread across the pipe wall
+    const pts = []; let seed = 7 + this.ji * 13;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    while (pts.length < s.count) {
+      const x = cx - mw / 2 + 22 + rnd() * (mw - 44), y = cy - mh / 2 + 24 + rnd() * (mh - 40);
+      if (pts.every(([px, py]) => Math.hypot(px - x, py - y) > 46)) pts.push([x, y]);
+    }
+    this.need = pts.length; this.found = 0;
+    pts.forEach(([x, y]) => {
+      const sp = this.add.container(x, y).setDepth(48).setAlpha(0);
+      for (let k = 0; k < 6; k++) sp.add(this.add.rectangle(Phaser.Math.Between(-8, 8), Phaser.Math.Between(-8, 8), 2, Phaser.Math.Between(6, 14), hex(C.tan)).setAngle(Phaser.Math.Between(-60, 60)));
+      sp.rootX = x; sp.rootY = y; sp.found = false;
+      this.spots.push(sp);
+    });
+  }
+  scanAt(x, y) {
+    if (!this.lamp || this.phase !== 'act') return;
+    const cx = W / 2, cy = SY + 110;
+    this.lamp.setPosition(Phaser.Math.Clamp(x, cx - 96, cx + 96), Phaser.Math.Clamp(y, cy - 61, cy + 61));
+    if (this.cursor) this.cursor.setPosition(this.lamp.x + 24, this.lamp.y - 22);
+    for (const sp of this.spots) {
+      if (sp.found || Math.hypot(sp.rootX - this.lamp.x, sp.rootY - this.lamp.y) > 30) continue;
+      sp.found = true; this.found++;
+      audio.sfx('ding'); this.sparkle(sp.rootX, sp.rootY);
+      this.tweens.add({ targets: sp, alpha: 1, duration: 120 });
+      this.tweens.add({ targets: sp, angle: 10, yoyo: true, repeat: -1, duration: 300 });
+      sp.add(this.add.circle(0, 0, 13, 0xffffff, 0).setStrokeStyle(2, hex(C.red)));
+      floatText(this, sp.rootX, sp.rootY - 14, 'ROOT!', C.red, 160);
+      setTxt(this.scanLeft, `ROOTS FOUND ${this.found}/${this.need}`);
+      if (this.found >= this.need) this.time.delayedCall(450, () => { if (this.phase === 'act') this.completeStep(); });
+    }
   }
   spawnSpots(s) {
     this.spots = [];

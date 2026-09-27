@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { JOBS, TOOL_INFO, trayFor } from '../src/data/jobs.js';
 import { HEROES, DISTRICTS, difficulty, ORDER } from '../src/data/content.js';
 
-const TYPES = ['turn', 'crank', 'dial', 'rhythm', 'hold', 'drag', 'pull', 'scrub', 'taps', 'tap'];
+const TYPES = ['turn', 'crank', 'dial', 'rhythm', 'hold', 'drag', 'pull', 'scrub', 'taps', 'tap', 'scan'];
 
 test('16 jobs in 6 neighborhoods, Alki required before Queen Anne', () => {
   assert.equal(JOBS.length, 16);

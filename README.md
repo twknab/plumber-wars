@@ -24,6 +24,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
 - **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard Locks,
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
+- **Something to find in every room.** A lava lamp in Fremont, husky fur in the shower, a cat poster in the
+  basement, garden gnomes and banana slugs in Queen Anne, glowing raccoon eyes in the crawlspace.
 - **About pages.** Meet the crew (what each homie brings: brains, back, bedside manner) and flip through all six
   neighborhoods with their pixel art, a bit of real history and the plumbing you'll find there.
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
@@ -37,7 +39,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
   actual house at the end.
 - **The repair.** Each job is the real sequence a plumber follows. Every step: grab the right tool from the truck
   tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm, hold for torque,
-  drag parts, pull, scrub, tap leaks). Wrong tools and wrong order cost time and make the customer madder.
+  drag parts, pull, scrub, tap leaks, sweep a sewer camera). Wrong tools and wrong order cost time and make the customer madder.
   A pro tip explains each real step.
 - **16 jobs** across 6 neighborhoods: Ballard, Fremont, Capitol Hill, West Seattle, then **Alki Beach** (Timmy's
   clogged tub, required) before the Queen Anne showdown. Rising difficulty: longer, faster races; a meaner,

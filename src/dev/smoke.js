@@ -33,6 +33,7 @@ async function playJob(g, i) {
       if (s.type === 'pull') { r.onDown({ id: 1, x: a.x, y: a.y }); for (let k = 1; k <= 12 && r.phase === 'act'; k++) r.onMove({ id: 1, isDown: true, x: a.x + s.dir[0] * s.dist * k / 10, y: a.y + s.dir[1] * s.dist * k / 10 }); }
       if (s.type === 'scrub') { r.onDown({ id: 1, x: a.x - 10, y: a.y }); for (let k = 0; k < 600 && r.phase === 'act'; k++) r.onMove({ id: 1, isDown: true, x: a.x + (k % 2 ? 12 : -12), y: a.y }); }
       if (s.type === 'taps') { for (const sp of [...r.spots]) sp.emit('pointerdown'); }
+      if (s.type === 'scan') { for (const sp of [...r.spots]) { r.scanAt(sp.rootX, sp.rootY); await sleep(40); } await sleep(600); }
       if (s.type === 'tap') r.onDown({ id: 1, x: a.x, y: a.y });
     } catch (e) { log.push('ERR step ' + t0 + ' ' + s.type + ': ' + e.message); break; }
     await sleep(40);

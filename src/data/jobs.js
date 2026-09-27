@@ -10,6 +10,7 @@
 //   scrub  - scrub back and forth until clean
 //   taps   - tap every hotspot (leaks, roots, debris)
 //   tap    - tap one thing (a handle, a button)
+//   scan   - sweep a camera light around a monitor; whatever it passes over is found (sewer camera)
 // Anchor names (target / to) are defined by each scene in art/fixtures.js.
 
 const TOOLS_BASE = ['hand'];
@@ -217,7 +218,7 @@ export const JOBS = [
     call: 'EVERY DRAIN IN THE HOUSE GURGLES. THE BASEMENT SMELLS OF... POOR PEOPLE. KINDLY REMEDY THIS.', decoys: ['drano', 'hammer'],
     steps: [
       { t: 'OPEN THE CLEANOUT CAP', tool: 'wrench', type: 'turn', target: 'cap', dir: -1, turns: 1.5, tip: 'CAREFUL - A BACKED-UP LINE WILL BURP WHEN THE CAP COMES OFF. STAND TO THE SIDE.' , fx: ['away:cap'] },
-      { t: 'CAMERA: FIND THE ROOTS', tool: 'camera', type: 'taps', target: 'screen', count: 4, tip: 'OLD CLAY PIPE + 100-YEAR-OLD CEDARS = ROOTS IN EVERY JOINT. SPOT THEM ALL.' },
+      { t: 'CAMERA: FIND THE ROOTS', tool: 'camera', type: 'scan', target: 'screen', count: 4, tip: 'OLD CLAY PIPE + 100-YEAR-OLD CEDARS = ROOTS IN EVERY JOINT. SWEEP THE CAMERA AND SPOT THEM ALL.' },
       { t: 'DRUM AUGER + ROOT CUTTER', tool: 'drum', type: 'crank', target: 'cap', turns: 4, jams: 3, tip: 'FEED SLOWLY. WHEN IT GRABS, BACK OFF AND LET THE CUTTER CHEW.' },
       { t: 'HYDRO-JET THE LINE', tool: 'jetter', type: 'rhythm', target: 'cap', hits: 4, tip: 'HIGH-PRESSURE WATER SCOURS ROOT HAIR OFF THE PIPE WALLS.' },
       { t: 'CAP THE CLEANOUT', tool: 'wrench', type: 'turn', target: 'cap', dir: 1, turns: 1.25, tip: 'RECOMMEND A LINER OR REPLACEMENT. THE ROOTS WILL BE BACK. THEY ALWAYS COME BACK.' , pre: ['restore:cap'] },
