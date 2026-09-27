@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, soundToggle, bubble } from '../core/ui.js';
+import { W, H, txt, button, wipeTo, wipeIn, soundToggle, bubble, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -47,16 +47,21 @@ export class Title extends Phaser.Scene {
     const has = progress.unlocked > 0 && progress.hero;
     const by = H - 150;
     if (has) {
-      button(this, W / 2, by, 150, 26, 'CONTINUE', () => this.go('Map'), { size: 1 });
-      button(this, W / 2, by + 32, 150, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white });
+      button(this, W / 2, by, 150, 26, 'CONTINUE', () => this.go('Map'), { size: 1, key: 'ENTER' });
+      button(this, W / 2, by + 32, 150, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
     } else {
-      const b = button(this, W / 2, by + 10, 170, 30, 'TAP TO START', () => this.go('Crew'), { size: 1 });
+      const b = button(this, W / 2, by + 10, 170, 30, isTouch ? 'TAP TO START' : 'PRESS ENTER', () => this.go('Crew'), { size: 1, key: ['ENTER', 'SPACE'] });
       this.tweens.add({ targets: b, scale: 1.06, yoyo: true, repeat: -1, duration: 500 });
     }
     soundToggle(this);
-    const vo = txt(this, 8, 8, audio.voices ? 'VOICES: ON' : 'VOICES: OFF', { color: C.silver });
-    vo.setInteractive({ useHandCursor: true }).on('pointerup', () => { audio.unlock(); audio.setVoices(!audio.voices); vo.setText(audio.voices ? 'VOICES: ON' : 'VOICES: OFF'); if (audio.voices) audio.say("Get out of our lane, homies!"); });
-    txt(this, W / 2, H - 10, 'NSFW: PLUMBERS SWEAR. A LOT.', { ox: 0.5, color: C.steel });
+    const vo = txt(this, 10, 10, '', { color: C.white });
+    const vlabel = () => vo.setText((audio.voices ? 'VOICES: ON' : 'VOICES: OFF') + (isTouch ? '' : ' [V]'));
+    vlabel();
+    const vt = () => { audio.unlock(); audio.setVoices(!audio.voices); vlabel(); if (audio.voices) audio.say("Get out of our lane, homies!"); };
+    this.add.rectangle(4, 4, 76, 20, 0x181425, 0.6).setOrigin(0).setStrokeStyle(1, 0x5a6988);
+    hitZone(this, 44, 14, 88, 32, vt, 96);
+    this.input.keyboard.on('keydown-V', vt);
+    txt(this, W / 2, H - 10, 'NSFW: PLUMBERS SWEAR. A LOT.', { ox: 0.5, color: C.silver });
     this.input.once('pointerdown', () => { audio.unlock(); audio.music('title'); });
     if (audio.ctx) audio.music('title');
   }
@@ -64,8 +69,8 @@ export class Title extends Phaser.Scene {
     const c = this.add.container(0, 0).setDepth(200);
     c.add(this.add.rectangle(0, 0, W, H, 0x000000, 0.7).setOrigin(0).setInteractive());
     c.add(txt(this, W / 2, H / 2 - 40, 'WIPE ALL PROGRESS?', { ox: 0.5, color: C.red, size: 2 }));
-    c.add(button(this, W / 2 - 55, H / 2, 90, 24, 'YES, WIPE', () => { progress.reset(); this.go('Crew'); }, { color: 'btnRed', textColor: C.white, depth: 201 }));
-    c.add(button(this, W / 2 + 55, H / 2, 90, 24, 'NO', () => c.destroy(), { color: 'btnGrey', textColor: C.white, depth: 201 }));
+    c.add(button(this, W / 2 - 55, H / 2, 90, 24, 'YES, WIPE', () => { progress.reset(); this.go('Crew'); }, { color: 'btnRed', textColor: C.white, depth: 201, key: 'Y' }));
+    c.add(button(this, W / 2 + 55, H / 2, 90, 24, 'NO', () => c.destroy(), { color: 'btnGrey', textColor: C.white, depth: 201, key: 'ESC' }));
   }
   go(k) { audio.unlock(); wipeTo(this, k); }
 }

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel } from '../core/ui.js';
+import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -112,23 +112,23 @@ export class Drive extends Phaser.Scene {
     this.tVan = this.add.image(x0, 19, 'iVan').setDepth(d + 2);
     this.distTxt = txt(this, x0, 21, '', { color: C.silver, depth: d });
     this.leadTxt = txt(this, x1 - 2, 21, '', { color: C.lime, ox: 1, depth: d });
-    const pb = this.add.image(W - 12, 15, 'iPause').setScale(1.6).setDepth(d).setInteractive({ useHandCursor: true });
-    pb.on('pointerup', () => this.pause(true));
+    this.add.image(W - 12, 15, 'iPause').setScale(1.6).setDepth(d);
+    hitZone(this, W - 16, 15, 34, 30, () => this.pause(true), d + 5);
   }
   buildControls() {
     const by = H - 26;
-    this.hornBtn = button(this, 36, by, 60, 34, 'HONK', () => this.honk(), { color: 'btnBlue', textColor: C.white, depth: 101, sound: null });
-    this.boostBtn = button(this, W - 38, by, 64, 34, 'BOOST', () => this.useBoost(), { color: 'btnRed', textColor: C.white, depth: 101, sound: null });
+    this.hornBtn = button(this, 36, by, 60, 34, isTouch ? 'HONK' : 'HONK [H]', () => this.honk(), { color: 'btnBlue', textColor: C.white, depth: 101, sound: null });
+    this.boostBtn = button(this, W - 38, by, 64, 34, isTouch ? 'BOOST' : 'BOOST [SPC]', () => this.useBoost(), { color: 'btnRed', textColor: C.white, depth: 101, sound: null });
     this.boostCount = txt(this, W - 12, by - 20, '', { color: C.yellow, depth: 102, ox: 1 });
-    if (!this.dalton) this.assistBtn = button(this, W / 2, by + 4, 74, 22, 'DALTON:CLEAR', () => this.assist(), { color: 'btnGold', depth: 101, sound: null });
+    if (!this.dalton) this.assistBtn = button(this, W / 2, by + 4, 74, 22, isTouch ? 'DALTON:CLEAR' : 'CLEAR [C]', () => this.assist(), { color: 'btnGold', depth: 101, sound: null });
     // steering: relative drag anywhere else
     this.input.on('pointerdown', p => { if (p.y > H - 46 && (p.x < 70 || p.x > W - 74 || (this.assistBtn && Math.abs(p.x - W / 2) < 40))) return; this.drag = { id: p.id, x0: p.x, v0: this.targetX }; });
     this.input.on('pointermove', p => { if (this.drag && this.drag.id === p.id && p.isDown) this.targetX = Phaser.Math.Clamp(this.drag.v0 + (p.x - this.drag.x0) * 1.35, ROAD_L + 10, ROAD_R - 10); });
     this.input.on('pointerup', p => { if (this.drag && this.drag.id === p.id) this.drag = null; });
-    this.keys = this.input.keyboard.addKeys('LEFT,RIGHT,A,D,SPACE,H,UP,ESC,P');
-    this.keys.SPACE.on('down', () => this.useBoost()); this.keys.UP.on('down', () => this.useBoost()); this.keys.H.on('down', () => this.honk());
+    this.keys = this.input.keyboard.addKeys('LEFT,RIGHT,A,D,SPACE,H,SHIFT,DOWN,S,C,UP,W,ESC,P');
+    this.keys.SPACE.on('down', () => this.useBoost()); this.keys.UP.on('down', () => this.useBoost()); this.keys.H.on('down', () => this.honk()); this.keys.SHIFT.on('down', () => this.honk()); this.keys.DOWN.on('down', () => this.honk()); this.keys.S.on('down', () => this.honk()); this.keys.W.on('down', () => this.useBoost()); this.keys.C.on('down', () => this.assist());
     this.keys.ESC.on('down', () => this.pause(true)); this.keys.P.on('down', () => this.pause(true));
-    const hint = txt(this, W / 2, this.PY + 34, 'DRAG ANYWHERE TO STEER', { ox: 0.5, color: C.white, depth: 97 });
+    const hint = txt(this, W / 2, this.PY + 34, isTouch ? 'DRAG ANYWHERE TO STEER' : 'ARROWS/A-D STEER  SPACE BOOST  H HONK', { ox: 0.5, color: C.white, depth: 97 });
     this.tweens.add({ targets: hint, alpha: 0, delay: 3500, duration: 800 });
   }
   startCountdown() {
@@ -159,7 +159,7 @@ export class Drive extends Phaser.Scene {
     floatText(this, this.px, this.PY - 30, 'CAFFEINE!', C.gold);
   }
   assist() {
-    if (this.assistUsed || this.state !== 'race') return;
+    if (!this.assistBtn || this.assistUsed || this.state !== 'race') return;
     this.assistUsed = true; this.assistBtn.setEnabled(false); audio.sfx('honk');
     const d = HEROES[0];
     bubble(this, W / 2, this.PY - 40, "DALTON: MOVE IT OR LOSE IT!", { dur: 1500, color: C.flame });
@@ -493,7 +493,7 @@ export class Drive extends Phaser.Scene {
     this.time.delayedCall(400, () => audio.say(line, { pitch: 0.5 }));
     const tr = this.add.sprite(-100, H * 0.58, 'sideTruck').setDepth(151).setOrigin(0.5, 1); c.add(tr);
     this.tweens.add({ targets: tr, x: W + 100, duration: 2200, delay: 300 });
-    c.add(button(this, W / 2, H * 0.68, 160, 30, 'RETRY RACE', () => wipeTo(this, 'Drive', { job: this.ji }), { color: 'btnGreen', textColor: C.white, depth: 152 }));
-    c.add(button(this, W / 2, H * 0.68 + 38, 160, 24, 'BACK TO MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, depth: 152 }));
+    c.add(button(this, W / 2, H * 0.68, 160, 30, 'RETRY RACE', () => wipeTo(this, 'Drive', { job: this.ji }), { color: 'btnGreen', textColor: C.white, depth: 152, key: 'ENTER' }));
+    c.add(button(this, W / 2, H * 0.68 + 38, 160, 24, 'BACK TO MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, depth: 152, key: 'M' }));
   }
 }

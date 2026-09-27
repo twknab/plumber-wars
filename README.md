@@ -35,6 +35,21 @@ problems before the customer loses it and calls the competition.
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
 
+## Controls (touch or keyboard)
+
+| | Touch | Keyboard |
+|---|---|---|
+| Menus / dialogs | Tap | Enter / Space (Esc = back/skip) |
+| Steer | Drag anywhere | Arrows or A / D |
+| Boost | BOOST | Space, W or Up |
+| Honk | HONK | H, Shift, S or Down |
+| Dalton assist | CLEAR | C |
+| Pick tool | Tap tray | 1–0 |
+| Pick next step | Tap card | 1–3 |
+| Milan / Jared assist | Buttons | Q / E |
+| Repair gestures | Finger | Mouse |
+| Pause · Sound · Voices | Icons | Esc/P · M · V |
+
 ## Art & sound
 
 Everything is generated in code at boot — no image or audio files:

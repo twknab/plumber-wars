@@ -4,6 +4,7 @@ import { audio } from './audio.js';
 import { C, hex } from './palette.js';
 
 export const W = 270;
+export const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 export let H = 480;
 export function setH(h) { H = h; }
 
@@ -22,7 +23,7 @@ export function panel(scene, x, y, w, h, key = 'panel') {
   return scene.add.nineslice(x, y, key, undefined, w, h, 8, 8, 8, 8).setOrigin(0, 0);
 }
 
-export function button(scene, x, y, w, h, label, onTap, { color = 'btnGold', textColor = C.ink, size = 1, icon, depth = 50, sound = 'select' } = {}) {
+export function button(scene, x, y, w, h, label, onTap, { color = 'btnGold', textColor = C.ink, size = 1, icon, depth = 50, sound = 'select', key } = {}) {
   const c = scene.add.container(x, y).setDepth(depth);
   const bg = scene.add.nineslice(0, 0, color, undefined, w, h, 6, 6, 6, 8).setOrigin(0.5);
   const t = txt(scene, icon ? 6 : 0, -1, label, { outline: false, color: textColor, size, ox: 0.5, oy: 0.5 });
@@ -34,6 +35,12 @@ export function button(scene, x, y, w, h, label, onTap, { color = 'btnGold', tex
   bg.on('pointerout', () => { c.y = y; bg.clearTint(); });
   bg.on('pointerup', () => { if (!c.enabled) return; c.y = y; bg.clearTint(); audio.unlock(); if (sound) audio.sfx(sound); onTap && onTap(); });
   c.setEnabled = on => { c.enabled = on; c.setAlpha(on ? 1 : 0.45); return c; };
+  // Optional keyboard shortcut(s): key: 'ENTER' or ['ENTER','SPACE']
+  if (key && scene.input.keyboard) for (const k of [].concat(key)) {
+    const fn = () => { if (!c.active || !c.visible || !c.enabled || c.alpha === 0) return; audio.unlock(); if (sound) audio.sfx(sound); onTap && onTap(); };
+    scene.input.keyboard.on('keydown-' + k, fn);
+    c.once('destroy', () => scene.input.keyboard && scene.input.keyboard.off('keydown-' + k, fn));
+  }
   return c;
 }
 
@@ -66,7 +73,10 @@ export function dialog(scene, { portrait, name, text, color = C.gold, side = 'le
       if (auto) scene.time.delayedCall(auto, close); }
     function close() { if (!c.active) return; hit.destroy(); c.destroy(); resolve(); }
     const hit = scene.add.zone(0, 0, W, H).setOrigin(0).setInteractive().setDepth(depth + 1);
-    hit.on('pointerup', () => { audio.unlock(); if (!done) finish(); else { audio.sfx('blip'); close(); } });
+    const adv = () => { audio.unlock(); if (!done) finish(); else { audio.sfx('blip'); close(); } };
+    hit.on('pointerup', adv);
+    const kb = scene.input.keyboard; const onKey = e => { if (['Enter', ' ', 'ArrowRight'].includes(e.key)) adv(); };
+    if (kb) { kb.on('keydown', onKey); hit.once('destroy', () => kb.off('keydown', onKey)); }
     c.fromY = by; c.alpha = 0; c.y = 10; scene.tweens.add({ targets: c, alpha: 1, y: 0, duration: 150 });
   });
 }
@@ -121,9 +131,17 @@ export function wipeIn(scene) {
 
 // Small corner sound toggle used on menus.
 export function soundToggle(scene, x = W - 14, y = 14) {
-  const ic = scene.add.image(x, y, audio.enabled ? 'iSound' : 'iMute').setScale(2).setDepth(95).setInteractive({ useHandCursor: true });
-  ic.on('pointerup', () => { audio.unlock(); audio.setSound(!audio.enabled); ic.setTexture(audio.enabled ? 'iSound' : 'iMute'); if (audio.enabled) audio.sfx('select'); });
+  const ic = scene.add.image(x, y, audio.enabled ? 'iSound' : 'iMute').setScale(2).setDepth(95);
+  const toggle = () => { audio.unlock(); audio.setSound(!audio.enabled); ic.setTexture(audio.enabled ? 'iSound' : 'iMute'); if (audio.enabled) audio.sfx('select'); };
+  hitZone(scene, x, y, 34, 30, toggle, 96);
+  if (scene.input.keyboard) scene.input.keyboard.on('keydown-M', toggle);
   return ic;
+}
+
+// Invisible, generously sized touch target (for small icons).
+export function hitZone(scene, x, y, w, h, fn, depth = 100) {
+  const z = scene.add.zone(x, y, w, h).setInteractive({ useHandCursor: true }).setDepth(depth);
+  z.on('pointerup', fn); return z;
 }
 
 export function stars(scene, x, y, n, of = 3, scale = 1, depth = 60) {

@@ -33,7 +33,7 @@ export class Brief extends Phaser.Scene {
     const ring = txt(this, W / 2, cy + 162, 'RING RING RING...', { ox: 0.5, color: C.yellow });
     this.tweens.add({ targets: ring, alpha: 0.2, yoyo: true, repeat: 5, duration: 120 });
     for (let i = 0; i < 3; i++) this.time.delayedCall(i * 450, () => audio.sfx('alarm'));
-    const skip = button(this, W - 34, H - 14, 56, 16, 'SKIP >>', () => this.go(ji), { color: 'btnGrey', textColor: C.white, depth: 200 });
+    const skip = button(this, W - 36, H - 16, 64, 24, 'SKIP >>', () => this.go(ji), { color: 'btnGrey', textColor: C.white, depth: 200, key: 'ESC' });
     await this.wait(1200); if (this.left) return; ring.destroy();
     const dy = cy + 170;
     await dialog(this, { portrait: portrait(this, 'job' + ji, job.look, 'worried'), name: job.who, text: job.call, color: C.cyan, pitch: 1.1, y: dy });

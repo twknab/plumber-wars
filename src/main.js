@@ -15,7 +15,9 @@ import { Pause } from './scenes/Pause.js';
 
 // Portrait, mobile-first: fixed 270px-wide pixel canvas; height stretches to fill tall phones.
 const aspect = Math.max(1.5, Math.min(2.2, window.innerHeight / Math.max(1, window.innerWidth)));
-const H = window.innerWidth > window.innerHeight ? 480 : Math.round(W * aspect);
+// Phones held sideways at load still get a portrait-shaped game (the CSS asks them to rotate).
+const touchLandscape = window.innerWidth > window.innerHeight && matchMedia('(pointer: coarse)').matches;
+const H = window.innerWidth > window.innerHeight ? (touchLandscape ? Math.round(W * Math.min(2.2, window.innerWidth / Math.max(1, window.innerHeight))) : 480) : Math.round(W * aspect);
 setH(H);
 
 const scenes = [Boot, Title, Crew, MapScene, Brief, Drive, Arrival, Repair, Result, Finale, Pause];
@@ -36,6 +38,9 @@ const game = new Phaser.Game({
 window.__game = game;
 
 // Pause everything when the tab/app is backgrounded.
+// Pause the action while the phone is sideways.
+const mqLand = matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 540px)');
+mqLand.addEventListener?.('change', e => { if (e.matches) game.scene.getScenes(true).forEach(s => s.events.emit('app-hidden')); });
 document.addEventListener('visibilitychange', () => {
   game.scene.getScenes(true).forEach(s => s.events.emit(document.hidden ? 'app-hidden' : 'app-visible'));
 });

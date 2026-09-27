@@ -42,7 +42,7 @@ export class Finale extends Phaser.Scene {
     this.time.delayedCall(2600, () => audio.say("Fine! We're moving to Tacoma!", { pitch: 0.5 }));
     const total = progress.totalStars();
     txt(this, W / 2, H - 48, `TOTAL STARS: ${total}/45`, { ox: 0.5, color: C.yellow });
-    button(this, W / 2, H - 22, 170, 24, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white });
+    button(this, W / 2, H - 22, 170, 26, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
     // credits crawl
     const cr = txt(this, W / 2, H + 10, "G'S PLUMBING PRESENTS\nPLUMBER WARS\n\nSTARRING\nDALTON - MILAN - JARED\n\nAND BIG RANDY AS HIMSELF\n\nNO TOILETS WERE HARMED\n(SOME WERE HARMED)", { ox: 0.5, align: 1, color: C.silver, depth: 5 });
     cr.setAlpha(0.8); this.tweens.add({ targets: cr, y: H * 0.42, duration: 9000, delay: 1000, onComplete: () => this.tweens.add({ targets: cr, alpha: 0, duration: 800 }) });

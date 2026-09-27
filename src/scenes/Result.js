@@ -44,7 +44,7 @@ export class Result extends Phaser.Scene {
     for (let i = 0; i < 5; i++) this.add.image(76 + i * 10, cy + 22, 'iStar');
     txt(this, 72, cy + 32, '"' + pick(REVIEWS) + '"', { outline: false, color: C.storm, maxW: W - 92 });
     const rows = [['TIME LEFT', secsLeft + ' SEC'], ['MISTAKES', mistakes], ['SCORE', score + (best ? '  NEW BEST!' : '')]];
-    rows.forEach(([k, v], i) => { txt(this, 20, cy + 114 + i * 12, k, { color: C.steel }); txt(this, W - 20, cy + 114 + i * 12, String(v), { color: i === 2 && best ? C.gold : C.white, ox: 1 }); });
+    rows.forEach(([k, v], i) => { txt(this, 20, cy + 114 + i * 12, k, { color: C.silver }); txt(this, W - 20, cy + 114 + i * 12, String(v), { color: i === 2 && best ? C.gold : C.white, ox: 1 }); });
     // district conquered?
     const districtDone = (ji + 1) % 3 === 0 && first;
     if (districtDone) {
@@ -55,10 +55,10 @@ export class Result extends Phaser.Scene {
     }
     const last = ji >= 14;
     const by = H - 70;
-    if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold' });
-    else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => wipeTo(this, 'Brief', { job: ji + 1 }), { color: 'btnGreen', textColor: C.white });
-    button(this, W / 2 - 50, by + 38, 90, 22, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white });
-    button(this, W / 2 + 50, by + 38, 90, 22, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white });
+    if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
+    else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => wipeTo(this, 'Brief', { job: ji + 1 }), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    button(this, W / 2 - 50, by + 38, 90, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
+    button(this, W / 2 + 50, by + 38, 90, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });
     this.time.delayedCall(700, () => bubble(this, W / 2, 110, pick(hero.barks), { dur: 1800, color: C.forest }));
   }
   lose(ji, job, hero) {
@@ -72,8 +72,8 @@ export class Result extends Phaser.Scene {
     this.time.delayedCall(300, () => audio.say(line, { pitch: 0.5 }));
     txt(this, W / 2, cy + 120, 'TIP: WRONG TOOLS AND WRONG STEPS EAT THE CLOCK. USE YOUR HOMIES!', { ox: 0.5, maxW: W - 30, color: C.silver, align: 1 });
     const by = H - 84;
-    button(this, W / 2, by, 190, 30, 'RETRY REPAIR', () => wipeTo(this, 'Arrival', { job: ji }), { color: 'btnGreen', textColor: C.white });
-    button(this, W / 2, by + 36, 190, 22, 'RETRY FROM THE RACE', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGold' });
-    button(this, W / 2, by + 64, 190, 20, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white });
+    button(this, W / 2, by, 190, 30, 'RETRY REPAIR', () => wipeTo(this, 'Arrival', { job: ji }), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    button(this, W / 2, by + 36, 190, 26, 'RETRY FROM THE RACE', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGold', key: 'R' });
+    button(this, W / 2, by + 68, 190, 24, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
   }
 }

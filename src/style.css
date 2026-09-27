@@ -4,3 +4,7 @@ body { touch-action: none; -webkit-user-select: none; user-select: none; -webkit
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: radial-gradient(circle at 50% 40%, #262b44 0, #181425 70%); }
 canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+#rotate { display: none; position: fixed; inset: 0; z-index: 10; background: #181425; color: #ffffff; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px; font: bold 18px/1.2 ui-monospace, Menlo, monospace; letter-spacing: 1px; text-align: center; }
+#rotate small { color: #c0cbdc; font-size: 12px; }
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 540px) { #rotate { display: flex; } }

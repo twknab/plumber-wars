@@ -68,6 +68,12 @@ export class MapScene extends Phaser.Scene {
     this.listY = top + 244;
     this.list = this.add.container(0, 0);
     this.showDistrict(curD);
+    const kb = this.input.keyboard; this.curD = curD;
+    kb.on('keydown-ENTER', () => { if (this.enterJob != null) this.play(this.enterJob); });
+    kb.on('keydown-SPACE', () => { if (this.enterJob != null) this.play(this.enterJob); });
+    const step = d => { const n = this.curD + d; if (n >= 0 && n <= 4 && progress.unlocked >= n * 3) { this.curD = n; audio.sfx('select'); this.showDistrict(n); } };
+    kb.on('keydown-LEFT', () => step(-1)); kb.on('keydown-RIGHT', () => step(1)); kb.on('keydown-UP', () => step(-1)); kb.on('keydown-DOWN', () => step(1));
+    kb.on('keydown-ESC', () => wipeTo(this, 'Title'));
   }
   showDistrict(d) {
     this.list.removeAll(true);
@@ -86,16 +92,17 @@ export class MapScene extends Phaser.Scene {
       if (open) {
         this.list.add(this.add.image(30, y + rowH / 2, portrait(this, 'job' + i, job.look, done ? 'happy' : 'worried')).setScale(Math.min(0.8, rowH / 50)));
         this.list.add(txt(this, 54, y + 5, job.title, { color: done ? C.lime : C.white }));
-        this.list.add(txt(this, 54, y + 16, job.who + ' - ' + job.address, { color: C.steel, maxW: W - 136 }));
+        this.list.add(txt(this, 54, y + 16, job.who + ' - ' + job.address, { color: C.silver, maxW: W - 136 }));
         if (done) stars(this, W - 42, y + 9, progress.stars(i)).forEach(s => this.list.add(s));
         const b = button(this, W - 42, y + rowH - 12, 56, 16, done ? 'REPLAY' : 'GO!', () => this.play(i), { color: done ? 'btnGrey' : 'btnGreen', textColor: C.white, depth: 60 });
         this.list.add(b);
         if (!done && firstOpen == null) { firstOpen = i; this.tweens.add({ targets: b, scale: 1.1, yoyo: true, repeat: -1, duration: 400 }); }
       } else {
         this.list.add(this.add.image(30, y + rowH / 2, 'iLock').setScale(2));
-        this.list.add(txt(this, 54, y + rowH / 2 - 4, '???  (NORTHWEST TERRITORY)', { color: C.slate }));
+        this.list.add(txt(this, 54, y + rowH / 2 - 4, '???  (NORTHWEST TERRITORY)', { color: C.steel }));
       }
     }
+    if (firstOpen != null) this.enterJob = firstOpen; else this.enterJob = null;
     this.list.add(button(this, 50, H - 18, 76, 18, 'CREW', () => wipeTo(this, 'Crew'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
     this.list.add(button(this, W - 50, H - 18, 76, 18, 'TITLE', () => wipeTo(this, 'Title'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
   }

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel } from '../core/ui.js';
+import { W, H, txt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -58,7 +58,9 @@ export class Repair extends Phaser.Scene {
     txt(this, 24, 4, this.job.title, { color: C.gold, depth: d });
     this.stepTxt = txt(this, 24, 14, '', { color: C.silver, depth: d });
     this.clock = txt(this, W - 26, 5, '', { color: C.white, size: 2, ox: 1, depth: d });
-    this.add.image(W - 12, 12, 'iPause').setScale(1.5).setDepth(d).setInteractive({ useHandCursor: true }).on('pointerup', () => this.pause());
+    this.add.image(W - 12, 12, 'iPause').setScale(1.5).setDepth(d);
+    hitZone(this, W - 16, 14, 34, 30, () => this.pause(), d + 5);
+    if (this.input.keyboard) { this.input.keyboard.on('keydown-ESC', () => this.pause()); this.input.keyboard.on('keydown-P', () => this.pause()); }
     this.barBg = this.add.rectangle(0, SY - 4, W, 4, hex(C.storm)).setOrigin(0).setDepth(d);
     this.bar = this.add.rectangle(0, SY - 4, W, 4, hex(C.lime)).setOrigin(0).setDepth(d);
     // customer mood
@@ -80,18 +82,25 @@ export class Repair extends Phaser.Scene {
     const sh = Math.min(48, Math.floor((avail - assistH - 4) / rows)), sw = Math.floor((W - 8) / 5);
     this.add.rectangle(0, ty, W, avail, hex(C.umber)).setOrigin(0).setDepth(70);
     for (let x = 0; x < W; x += 12) this.add.rectangle(x, ty, 1, avail, hex(C.brown)).setOrigin(0).setDepth(70);
+    if (this.input.keyboard) this.input.keyboard.on('keydown', e => {
+      const n = '1234567890'.indexOf(e.key); if (n >= 0 && this.slots[n]) this.pickTool(this.slots[n].k, this.slots[n].bg);
+      if (this.phase === 'choose' && this.choiceKeys && '123'.includes(e.key)) this.choiceKeys[+e.key - 1]();
+      if (e.key === 'q' || e.key === 'Q') this.useAssist('milan');
+      if (e.key === 'e' || e.key === 'E') this.useAssist('jared');
+    });
     this.slots = items.map((k, i) => {
       const x = 4 + (i % 5) * sw + sw / 2, y = ty + 3 + Math.floor(i / 5) * sh + sh / 2;
       const bg = this.add.rectangle(x, y, sw - 4, sh - 4, hex(C.night)).setStrokeStyle(1, hex(C.ink)).setDepth(71).setInteractive({ useHandCursor: true });
       const ic = this.add.image(x, y, 'tool_' + k).setScale(Math.min(2, (sh - 8) / 20)).setDepth(72);
       bg.on('pointerup', () => this.pickTool(k, bg));
+      if (!isTouch) txt(this, x - sw / 2 + 4, y - sh / 2 + 3, String((i + 1) % 10), { color: C.silver, depth: 73 });
       return { k, bg, ic };
     });
     // homie assists (the two crew members who aren't lead)
     const ay = H - assistH / 2 - 2;
     this.assists = [];
-    if (this.hero.id !== 'milan') this.assists.push(button(this, this.hero.id === 'jared' ? W / 2 : W / 4 + 2, ay, W / 2 - 12, assistH - 4, 'MILAN: AUTO-FIX', () => this.useAssist('milan'), { color: 'btnGreen', textColor: C.white, depth: 90, sound: null }));
-    if (this.hero.id !== 'jared') this.assists.push(button(this, this.hero.id === 'milan' ? W / 2 : 3 * W / 4 - 2, ay, W / 2 - 12, assistH - 4, 'JARED: +12 SEC', () => this.useAssist('jared'), { color: 'btnBlue', textColor: C.white, depth: 90, sound: null }));
+    if (this.hero.id !== 'milan') this.assists.push(Object.assign(button(this, this.hero.id === 'jared' ? W / 2 : W / 4 + 2, ay, W / 2 - 12, assistH - 4, isTouch ? 'MILAN: AUTO-FIX' : 'MILAN: AUTO-FIX [Q]', () => this.useAssist('milan'), { color: 'btnGreen', textColor: C.white, depth: 90, sound: null }), { who: 'milan' }));
+    if (this.hero.id !== 'jared') this.assists.push(Object.assign(button(this, this.hero.id === 'milan' ? W / 2 : 3 * W / 4 - 2, ay, W / 2 - 12, assistH - 4, isTouch ? 'JARED: +12 SEC' : 'JARED: +12S [E]', () => this.useAssist('jared'), { color: 'btnBlue', textColor: C.white, depth: 90, sound: null }), { who: 'jared' }));
   }
 
   // ------------------------------------------------------------------ flow
@@ -103,7 +112,7 @@ export class Repair extends Phaser.Scene {
     this.stepTxt.setText(`STEP ${this.si + 1}/${this.job.steps.length}`);
     this.tool = null; this.slots.forEach(sl => sl.bg.setStrokeStyle(1, hex(C.ink)));
     if (this.df.stepChoice) { this.phase = 'choose'; this.instr.setText('WHAT\'S THE NEXT STEP, BOSS?'); this.how.setText(''); this.showChoices(); return; }
-    this.phase = 'tool'; this.instr.setText(s.t); this.how.setText('GRAB THE RIGHT TOOL FROM THE TRUCK TRAY'); this.hintTool();
+    this.phase = 'tool'; this.instr.setText(s.t); this.how.setText(isTouch ? 'GRAB THE RIGHT TOOL FROM THE TRUCK TRAY' : 'GRAB THE RIGHT TOOL (CLICK OR KEYS 1-0)'); this.hintTool();
   }
   hintTool() {
     if (!this.df.toolHints) return;
@@ -117,8 +126,9 @@ export class Repair extends Phaser.Scene {
     const c = this.choice = this.add.container(0, 0).setDepth(150);
     c.add(this.add.rectangle(0, SY, W, SH, hex(C.ink), 0.78).setOrigin(0).setInteractive());
     c.add(txt(this, W / 2, SY + 40, "WHAT'S NEXT?", { ox: 0.5, size: 2, color: C.gold }));
+    this.choiceKeys = opts.map(o => () => this.choose(o, later.includes(o)));
     opts.forEach((o, i) => {
-      const b = button(this, W / 2, SY + 90 + i * 50, W - 30, 40, o, () => this.choose(o, later.includes(o)), { color: 'btnGrey', textColor: C.white, depth: 151 });
+      const b = button(this, W / 2, SY + 90 + i * 50, W - 30, 40, (isTouch ? '' : `${i + 1}. `) + o, () => this.choose(o, later.includes(o)), { color: 'btnGrey', textColor: C.white, depth: 151 });
       b.label.setMaxWidth((W - 44)); c.add(b);
     });
   }
@@ -182,7 +192,7 @@ export class Repair extends Phaser.Scene {
     if (this.over || (this.used || {})[who]) return;
     if (who === 'milan' && !['tool', 'act', 'choose'].includes(this.phase)) return;
     this.used = { ...(this.used || {}), [who]: true };
-    const b = this.assists.find(a => a.label.text.startsWith(who.toUpperCase())); b && b.setEnabled(false);
+    const b = this.assists.find(a => a.who === who); b && b.setEnabled(false);
     const h = HEROES.find(x => x.id === who);
     audio.sfx('coin');
     bubble(this, W / 2, SY + 110, who === 'milan' ? 'MILAN: SCOOT OVER. I GOT THIS.' : `JARED: ${this.job.who.split(' ')[0]}, HAVE YOU BEEN WORKING OUT?`, { dur: 1600, maxW: 200 });

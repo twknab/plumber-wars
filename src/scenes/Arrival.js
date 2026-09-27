@@ -67,12 +67,12 @@ export class Arrival extends Phaser.Scene {
     c.add(txt(this, W / 2, py + 24, job.title, { ox: 0.5, outline: false, color: C.crimson, size: 2 }));
     const rows = [['STEPS', job.steps.length], ['CLOCK', secs + ' SEC'], ['VAN ARMOR', this.drive.hp + '/' + this.drive.maxHp], ['HINTS', df.toolHints ? 'TOOLS GLOW' : 'NONE']];
     if (df.stepChoice) rows.push(['ORDER', 'YOU CALL IT']);
-    rows.forEach(([k, v], i) => { c.add(txt(this, 26, py + 48 + i * 12, k, { outline: false, color: C.storm })); c.add(txt(this, W - 26, py + 48 + i * 12, String(v), { outline: false, color: C.ink, ox: 1 })); });
+    rows.forEach(([k, v], i) => { c.add(txt(this, 26, py + 48 + i * 12, k, { outline: false, color: C.night })); c.add(txt(this, W - 26, py + 48 + i * 12, String(v), { outline: false, color: C.ink, ox: 1 })); });
     const how = df.stepChoice ? 'PICK THE NEXT STEP LIKE A REAL PLUMBER. WRONG ORDER = DISASTER.' : 'EACH STEP: PICK THE RIGHT TOOL FROM THE TRAY, THEN DO THE MOVE.';
     c.add(txt(this, W / 2, py + 120, how, { ox: 0.5, outline: false, color: C.forest, maxW: W - 44, align: 1 }));
     c.add(txt(this, W / 2, py + 150, 'LEFTY-LOOSEY. RIGHTY-TIGHTY.', { ox: 0.5, outline: false, color: C.brown }));
     c.alpha = 0; this.tweens.add({ targets: c, alpha: 1, duration: 250 });
-    button(this, W / 2, py + 180, 170, 28, "LET'S FIX IT!", () => { audio.sfx('go'); wipeTo(this, 'Repair', { job: ji, secs, drive: this.drive }); }, { color: 'btnGreen', textColor: C.white, depth: 60 });
+    button(this, W / 2, py + 180, 170, 28, "LET'S FIX IT!", () => { audio.sfx('go'); wipeTo(this, 'Repair', { job: ji, secs, drive: this.drive }); }, { color: 'btnGreen', textColor: C.white, depth: 60, key: ['ENTER', 'SPACE'] });
   }
   wait(ms) { return new Promise(r => this.time.delayedCall(ms, r)); }
 }

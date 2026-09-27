@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { W, H, txt, button, wipeTo, wipeIn, panel, soundToggle } from '../core/ui.js';
+import { W, H, txt, button, wipeTo, wipeIn, panel, soundToggle, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
@@ -27,9 +27,9 @@ export class Crew extends Phaser.Scene {
       const fr = this.add.rectangle(38, cardH / 2, 54, 54, hex(C.storm)).setStrokeStyle(2, hex(h.color)); c.add(fr);
       const pimg = this.add.image(38, cardH / 2, portrait(this, h.id, { ...h.look, patch: true }, 'happy')); c.add(pimg);
       c.add(txt(this, 72, 10, h.name, { size: 2, color: h.color }));
-      c.add(txt(this, 72, 28, h.role, { color: C.silver }));
+      c.add(txt(this, 72, 28, h.role, { color: C.white }));
       ['drive', 'fix', 'charm'].forEach((k, j) => {
-        c.add(txt(this, 72, 42 + j * 10, k.toUpperCase(), { color: C.steel }));
+        c.add(txt(this, 72, 42 + j * 10, k.toUpperCase(), { color: C.silver }));
         for (let s = 0; s < 5; s++) c.add(this.add.rectangle(112 + s * 9, 45 + j * 10, 7, 5, s < h.stats[k] ? hex(h.color) : hex(C.storm)).setOrigin(0, 0.5));
       });
       c.add(txt(this, 72, 74, h.perk, { color: C.white, maxW: W - 90 }));
@@ -37,7 +37,12 @@ export class Crew extends Phaser.Scene {
       c.frame = fr; c.bgp = bg; c.pimg = pimg;
       return c;
     });
-    this.go = button(this, W / 2, H - 22, 180, 30, "LET'S ROLL!", () => { progress.hero = HEROES[this.sel].id; audio.sfx('go'); wipeTo(this, 'Map'); }, { color: 'btnGreen', textColor: C.white });
+    this.go = button(this, W / 2, H - 22, 180, 30, "LET'S ROLL!", () => { progress.hero = HEROES[this.sel].id; audio.sfx('go'); wipeTo(this, 'Map'); }, { color: 'btnGreen', textColor: C.white, key: ['ENTER', 'SPACE'] });
+    const kb = this.input.keyboard;
+    kb.on('keydown-UP', () => this.pick((this.sel + 2) % 3)); kb.on('keydown-DOWN', () => this.pick((this.sel + 1) % 3));
+    kb.on('keydown-LEFT', () => this.pick((this.sel + 2) % 3)); kb.on('keydown-RIGHT', () => this.pick((this.sel + 1) % 3));
+    ['ONE', 'TWO', 'THREE'].forEach((k, i) => kb.on('keydown-' + k, () => this.pick(i)));
+    if (!isTouch) txt(this, W / 2, H - 46, 'ARROWS TO PICK - ENTER TO ROLL', { ox: 0.5, color: C.gold });
     soundToggle(this);
     this.pick(this.sel, true);
   }
