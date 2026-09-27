@@ -23,6 +23,8 @@ art or deploy — update these in the same change:
    recorded: `node scripts/voices.mjs twk-experiments` (Google Cloud TTS, Chirp 3 HD; only renders missing lines).
 5. **Cast assets**: `/?assets=1` re-exports every character/house to `docs/assets/` (used by the cast review page).
 6. **How to Play** (`src/scenes/HowTo.js`): update it when controls, mechanics or saving change.
+8. **District art**: new/changed district photos go through `scripts/districts.mjs` + `/?districts=1`; keep the
+   README credits table in sync with `public/districts/credits.json` (CC licenses require attribution).
 7. **Reviews**: every job needs its own lines in `JOB_REVIEWS` (`src/data/reviews.js`); a test enforces it.
 
 `npm test` enforces this (`tests/docs-sync.test.js`): it fails if the README/About job counts or job table drift

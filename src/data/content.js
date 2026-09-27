@@ -3,15 +3,19 @@
 export const HEROES = [
   { id: 'dalton', name: 'DALTON', role: 'THE WHEELMAN', color: '#feae34', stats: { drive: 5, fix: 2, charm: 3 },
     perk: 'VAN HANDLES 25% SHARPER. +1 ARMOR.', assist: 'DALTON: CLEAR THE ROAD', assistShort: 'CLEAR ROAD',
-    look: { skin: 'light', hair: 'brown', style: 'cap', beard: 'stubble', shirt: '#feae34', patch: true }, pitch: 1.0,
+    // Caucasian, 6'0" 180 lb, strong. Short haircut + short beard, brown eyes, white tee, black cap forward, black pants.
+    look: { skin: 'light', hair: 'brown', style: 'cap', hat: '#181425', beard: 'short', eyes: 'brown', shirt: '#ffffff', pants: '#181425', build: 'strong', patch: true }, pitch: 1.0,
     barks: ['SUCK IT, NORTHWEST!', 'EAT MY TAILPIPE, RANDY!', 'NICE MULLET, SKEETER!', 'I DRIVE LIKE I PLUNGE: HARD!', 'YOUR TRUCK SMELLS LIKE YOUR BREATH, RANDY!', 'GO FLUSH YOURSELF, SKEETER!'] },
   { id: 'milan', name: 'MILAN', role: 'THE PIPE WHISPERER', color: '#63c74d', stats: { drive: 2, fix: 5, charm: 3 },
     perk: 'WIDER TIMING WINDOWS. FASTER WRENCHING.', assist: 'MILAN: FINISH THIS STEP', assistShort: 'AUTO-FIX',
-    look: { skin: 'tan', hair: 'black', style: 'beanie', beard: 'full', shirt: '#63c74d', patch: true }, pitch: 0.85,
+    // Asian / Pacific Islander, 6'0" 180 lb, strong. Long black hair in a ponytail under a dark red stocking cap,
+    // clean-shaven, brown eyes, light-brown skin, white tee, dark red pants.
+    look: { skin: 'tan', hair: 'black', style: 'beaniepony', hat: '#a22633', beard: 'none', eyes: 'brown', shirt: '#ffffff', pants: '#a22633', build: 'strong', patch: true }, pitch: 0.85,
     barks: ['YOUR CRACK IS SHOWING, RANDY!', 'EAT A WET WIPE!', 'THE PIPES FEAR ME!', 'I SPEAK FLUENT DRAIN!', 'I\'VE SEEN SMARTER CLOGS THAN YOU, RANDY!', 'NICE PLUNGER, DID YOUR MOM BUY IT?'] },
   { id: 'jared', name: 'JARED', role: 'THE PEOPLE PERSON', color: '#0099db', stats: { drive: 3, fix: 3, charm: 5 },
     perk: 'CUSTOMERS STAY PATIENT 30% LONGER.', assist: 'JARED: SWEET-TALK +12S', assistShort: '+12 SEC',
-    look: { skin: 'fair', hair: 'ginger', style: 'swoop', beard: 'none', shirt: '#0099db', patch: true }, pitch: 1.2,
+    // Caucasian, 6'0" 200 lb, stockier build. Blue eyes, smoky blonde hair, white shirt, navy pants, navy cap forward.
+    look: { skin: 'fair', hair: 'ash', style: 'cap', hat: '#124e89', beard: 'none', eyes: 'blue', shirt: '#ffffff', pants: '#124e89', build: 'stocky', patch: true }, pitch: 1.2,
     barks: ['BLESS YOUR HEART, DIPSHIT!', 'I WILL LITERALLY FIVE-STAR YOUR MOM!', 'SEE YOU NEVER, NORTHWEST!', 'HONK IF YOU SUCK!', 'YOUR REVIEWS ARE ONE STAR AND A POOP EMOJI!', 'KISS MY GLORIOUS ASS, NORTHWEST!'] },
 ];
 
@@ -21,12 +25,12 @@ export const RIVALS = {
 };
 
 export const DISTRICTS = [
-  { name: 'BALLARD', tag: 'LUTEFISK, LAGERS & LOW-FLOW TOILETS.', weather: 'clear', time: 'day', sky: 'day', road: 'NW MARKET ST', rain: 0 },
-  { name: 'FREMONT', tag: 'CENTER OF THE UNIVERSE. CENTER OF THE CLOGS.', weather: 'cloudy', time: 'day', sky: 'overcast', road: 'N 36TH ST', rain: 0.25 },
-  { name: 'CAPITOL HILL', tag: 'STEEP HILLS. OLD PIPES. NO PARKING.', weather: 'drizzle', time: 'day', sky: 'overcast', road: 'E PINE ST', rain: 0.55 },
-  { name: 'WEST SEATTLE', tag: 'THE BRIDGE IS OPEN. THE SEWERS ARE NOT.', weather: 'storm', time: 'dusk', sky: 'dusk', road: 'CALIFORNIA AVE SW', rain: 1 },
-  { name: 'QUEEN ANNE', tag: 'OLD MONEY. OLDER PLUMBING. FINAL SHOWDOWN.', weather: 'storm', time: 'night', sky: 'night', road: 'W HIGHLAND DR', rain: 0.8 },
-  { name: 'ALKI BEACH', tag: 'BONUS: VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0, bonus: true },
+  { name: 'BALLARD', art: 'ballard', tag: 'LUTEFISK, LAGERS & LOW-FLOW TOILETS.', weather: 'clear', time: 'day', sky: 'day', road: 'NW MARKET ST', rain: 0 },
+  { name: 'FREMONT', art: 'fremont', tag: 'CENTER OF THE UNIVERSE. CENTER OF THE CLOGS.', weather: 'cloudy', time: 'day', sky: 'overcast', road: 'N 36TH ST', rain: 0.25 },
+  { name: 'CAPITOL HILL', art: 'capitolhill', tag: 'STEEP HILLS. OLD PIPES. NO PARKING.', weather: 'drizzle', time: 'day', sky: 'overcast', road: 'E PINE ST', rain: 0.55 },
+  { name: 'WEST SEATTLE', art: 'westseattle', tag: 'THE BRIDGE IS OPEN. THE SEWERS ARE NOT.', weather: 'storm', time: 'dusk', sky: 'dusk', road: 'CALIFORNIA AVE SW', rain: 1 },
+  { name: 'QUEEN ANNE', art: 'queenanne', tag: 'OLD MONEY. OLDER PLUMBING. FINAL SHOWDOWN.', weather: 'storm', time: 'night', sky: 'night', road: 'W HIGHLAND DR', rain: 0.8 },
+  { name: 'ALKI BEACH', art: 'alki', tag: 'BONUS: VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0, bonus: true },
 ];
 
 // Difficulty curve per job index (0..14).
@@ -85,6 +89,15 @@ export const TRASH = {
 };
 
 // One-off spoken lines (title, finale) that also get recorded by scripts/voices.mjs.
-export const VOICE_EXTRA = { randy: ['WELCOME TO PLUMBER WARS!', "FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!", 'GET OUT OF OUR LANE, HOMIES!'] };
+// Big Randy welcomes you to each district (shown on the district intro).
+export const DISTRICT_WELCOME = [
+  "WELCOME TO BALLARD, HOMIES. SMELLS LIKE FISH AND FAILURE.",
+  'WELCOME TO FREMONT. THE TROLL WORKS FOR US NOW.',
+  "WELCOME TO CAPITOL HILL. YOU CAN'T AFFORD TO PARK HERE.",
+  'WELCOME TO WEST SEATTLE. HOPE YOU LIKE BRIDGES, SUCKERS.',
+  "WELCOME TO QUEEN ANNE. THIS IS NORTHWEST'S HOUSE. LITERALLY, WE OWN A HOUSE HERE.",
+  'WELCOME TO ALKI BEACH. GO BUILD A SANDCASTLE, LOSERS.',
+];
+export const VOICE_EXTRA = { randy: ['WELCOME TO PLUMBER WARS!', "FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!", 'GET OUT OF OUR LANE, HOMIES!', ...DISTRICT_WELCOME] };
 
 export const pick = a => a[Math.floor(Math.random() * a.length)];

@@ -7,6 +7,7 @@ import { DISTRICTS, HEROES } from '../data/content.js';
 import { JOBS } from '../data/jobs.js';
 import { PX } from '../core/pixel.js';
 import { portrait } from '../art/people.js';
+import { goToJob } from './District.js';
 
 const NODES = [[62, 52], [118, 62], [182, 128], [60, 204], [104, 108], [26, 176]];
 const BONUS_OPEN = 9; // Alki opens once West Seattle does
@@ -107,5 +108,5 @@ export class MapScene extends Phaser.Scene {
     this.list.add(button(this, 52, H - 18, 84, 22, 'CHANGE LEAD', () => wipeTo(this, 'Crew'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
     this.list.add(button(this, W - 52, H - 18, 84, 22, 'MAIN MENU', () => wipeTo(this, 'Title'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
   }
-  play(i) { audio.sfx('go'); wipeTo(this, 'Brief', { job: i }); }
+  play(i) { audio.sfx('go'); goToJob(this, i); } // district intro first when the job opens a new district
 }

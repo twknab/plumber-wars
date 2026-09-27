@@ -16,7 +16,8 @@ test('README job count and job table match the game', () => {
     assert.ok(readme.includes(name), `README job table is missing district ${name}`);
   }
   const names = DISTRICTS.map(d => d.name.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' '));
-  const rows = readme.split('\n').filter(l => names.some(n => l.startsWith('| ' + n)));
+  const jobsTable = readme.split(/### The \d+ jobs/)[1].split('\n## ')[0]; // only the jobs table, not the photo credits
+  const rows = jobsTable.split('\n').filter(l => names.some(n => l.startsWith('| ' + n)));
   const listed = rows.reduce((n, r) => n + r.split('|')[2].split('·').length, 0);
   assert.equal(listed, JOBS.length, 'README job table should list every job');
 });

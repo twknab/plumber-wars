@@ -20,6 +20,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
 - **Pick a lead homie.** Dalton (wheelman: sharper handling, +1 armor), Milan (pipe whisperer: wider timing
   windows, fewer turns), Jared (people person: 30% more customer patience). The other two ride along as
   one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
+- **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard fishing fleet,
+  the Fremont Troll, Capitol Hill's rainbow crosswalk, downtown from West Seattle, the Kerry Park view, Alki Beach).
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
   Progress **saves automatically** after every finished job (lead homie, unlocked jobs, stars) in your browser;
   hit **CONTINUE** to pick up where you left off.
@@ -87,6 +89,23 @@ Everything is generated in code at boot — there are no image or audio asset fi
   `node scripts/voices.mjs twk-experiments`; the browser's built-in speech is only a fallback.
   (Browsers never allow sound before the first tap, so the game opens on a TAP TO START screen.)
 
+### District intros
+
+Starting each district shows a "Welcome to …" screen with pixel art of the neighborhood, Big Randy's welcome
+and a Northwest-turf stamp. The art is made from openly licensed Wikimedia Commons photos: `node scripts/districts.mjs`
+downloads them (and records credits in `public/districts/credits.json`), then `/?districts=1` on the dev server
+crops each one and maps it onto the game palette with ordered dithering (`public/districts/*.png`). The pixel
+versions are adaptations and keep the source licenses:
+
+| District | Source photo | Photographer | License |
+|---|---|---|---|
+| Ballard | [Hiram M Chittenden Locks pano 03.jpg](https://commons.wikimedia.org/wiki/File:Hiram_M_Chittenden_Locks_pano_03.jpg) | Joe Mabel | CC BY-SA 4.0 |
+| Fremont | [Fremont troll.jpg](https://commons.wikimedia.org/wiki/File:Fremont_troll.jpg) | Sambusak74 | CC BY-SA 4.0 |
+| Capitol Hill | [Rainbow crosswalk Capitol Hill, Seattle.jpg](https://commons.wikimedia.org/wiki/File:Rainbow_crosswalk_Capitol_Hill,_Seattle.jpg) | Ntowle98 | CC BY-SA 4.0 |
+| West Seattle | [Seattle Skyline from Alki (4230478801).jpg](https://commons.wikimedia.org/wiki/File:Seattle_Skyline_from_Alki_(4230478801).jpg) | DearEdward from New York, NY, USA | CC BY 2.0 |
+| Queen Anne | [Seattle Kerry Park Skyline.jpg](https://commons.wikimedia.org/wiki/File:Seattle_Kerry_Park_Skyline.jpg) | CommunistSquared | CC0 |
+| Alki Beach | [Alki Beach, Seattle, April 2012.JPG](https://commons.wikimedia.org/wiki/File:Alki_Beach,_Seattle,_April_2012.JPG) | Another Believer | CC BY-SA 3.0 |
+
 ### Real-crew sprites
 
 Drop photo-derived pixel art for Dalton, Milan and Jared into `public/crew/` and list it in
@@ -111,6 +130,7 @@ Dev helpers (dev server only):
 | `/?smoke=1` | Auto-plays every repair step of all 16 jobs (results in `window.__smoke`) |
 | `/?racebot=1[&jobs=0,5&tries=4]` | A bot races each job at fast-forward (muted) to check every race is winnable (`window.__race`) |
 | `/?docs=1` | Regenerates `docs/` (logo, sprite sheet, screenshots); run it in a phone-sized window |
+| `/?districts=1` | Rebuilds the district intro pixel art from `tools/district-src/` (run `node scripts/districts.mjs` first) |
 | `/?og=1` | Regenerates the 1200×630 link-preview card `public/og.png` |
 | `/?assets=1` | Exports every character (all moods) and house to `docs/assets/` for the cast page |
 

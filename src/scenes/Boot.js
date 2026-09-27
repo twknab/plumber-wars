@@ -9,6 +9,8 @@ export class Boot extends Phaser.Scene {
   preload() {
     // Optional real-crew art (public/crew). Missing files just fall back to generated pixel art.
     this.load.json('crewManifest', 'crew/manifest.json');
+    // district intro art (pixel art made from openly licensed photos; see scripts/districts.mjs)
+    for (const k of ['ballard', 'fremont', 'capitolhill', 'westseattle', 'queenanne', 'alki']) this.load.image('district_' + k, `districts/${k}.png`);
     this.load.once('filecomplete-json-crewManifest', (k, t, data) => {
       for (const [id, spec] of Object.entries(data || {})) {
         if (!spec || typeof spec !== 'object') continue;

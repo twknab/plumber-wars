@@ -11,3 +11,4 @@ terraform.tfvars
 deploy/plumber-wars-qr.png
 .build-id
 preview/
+tools/district-src/
