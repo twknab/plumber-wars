@@ -1,17 +1,27 @@
 import { defineConfig } from 'vite';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { artHash } from './art-hash.js';
 
-// Dev-only endpoint used by src/dev/og.js to save the generated share-card image into public/.
-const saveOg = {
-  name: 'save-og',
+// Dev-only endpoint used by src/dev/og.js and src/dev/docs.js to write generated images
+// (share card, README logo/screenshots/sprite sheet) into the repo.
+const ALLOWED = /^(public\/og\.png|docs\/[a-z0-9-]+\.png|docs\/assets\/[a-z0-9-]+\.png)$/;
+const saveImages = {
+  name: 'save-images',
   apply: 'serve',
   configureServer(server) {
-    server.middlewares.use('/__save-og', (req, res) => {
+    server.middlewares.use('/__save', (req, res) => {
+      const path = new URL(req.url, 'http://x').searchParams.get('path') || '';
+      if (!ALLOWED.test(path)) { res.statusCode = 400; res.end('bad path'); return; }
       const chunks = [];
       req.on('data', c => chunks.push(c));
-      req.on('end', () => { writeFileSync('public/og.png', Buffer.concat(chunks)); res.end('saved'); });
+      req.on('end', () => {
+        mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, Buffer.concat(chunks));
+        if (path === 'docs/sprites.png') writeFileSync('docs/sprites.hash', artHash() + '\n');
+        res.end('saved ' + path);
+      });
     });
   },
 };
 
-export default defineConfig({ plugins: [saveOg] });
+export default defineConfig({ plugins: [saveImages] });

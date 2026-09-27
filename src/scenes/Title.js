@@ -38,7 +38,7 @@ export class Title extends Phaser.Scene {
     this.time.addEvent({ delay: 5200, loop: true, callback: () => {
       truck.x = -100; this.tweens.add({ targets: truck, x: W + 120, duration: 1500, ease: 'Linear' });
       audio.sfx('nwhonk');
-      this.time.delayedCall(550, () => { const line = pick(TRASH.taunt); bubble(this, W / 2 + 20, roadY - 70, line, { dur: 1800, maxW: 160 }); if (audio.ctx) audio.say(line.replace(/#2/g, 'number two'), { pitch: 0.5 }); });
+      this.time.delayedCall(550, () => { const line = pick(TRASH.taunt); bubble(this, W / 2 + 20, roadY - 70, line, { dur: 1800, maxW: 160 }); if (audio.ctx) audio.say(line); });
     } });
     // an orca cruises Elliott Bay and breaches every so often
     const wy = Math.round(H * 0.62) + 46;
@@ -64,21 +64,26 @@ export class Title extends Phaser.Scene {
 
     // menu
     const has = progress.unlocked > 0 && progress.hero;
-    const by = H - 150;
+    const by = H - 176;
+    const k = isTouch ? '' : ' [?]';
     if (has) {
-      button(this, W / 2, by, 150, 26, 'CONTINUE', () => this.go('Map'), { size: 1, key: 'ENTER' });
-      button(this, W / 2 - 38, by + 32, 74, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
-      button(this, W / 2 + 38, by + 32, 74, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
+      button(this, W / 2, by, 156, 26, 'CONTINUE', () => this.go('Map'), { size: 1, key: 'ENTER' });
+      txt(this, W / 2, by - 22, `AUTO-SAVED: JOB ${Math.min(15, progress.unlocked + 1)} OF 15`, { ox: 0.5, color: C.lime });
+      button(this, W / 2 - 40, by + 32, 76, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
+      button(this, W / 2 + 40, by + 32, 76, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
+      button(this, W / 2, by + 60, 156, 22, 'HOW TO PLAY' + k, () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
     } else {
-      const b = button(this, W / 2, by + 10, 170, 30, isTouch ? 'TAP TO START' : 'PRESS ENTER', () => this.go('Crew'), { size: 1, key: ['ENTER', 'SPACE'] });
+      // brand-new players get the primer first, then crew select
+      const b = button(this, W / 2, by + 6, 170, 30, isTouch ? 'TAP TO START' : 'PRESS ENTER', () => { audio.unlock(); wipeTo(this, 'HowTo', { next: 'Crew' }); }, { size: 1, key: ['ENTER', 'SPACE'] });
       this.tweens.add({ targets: b, scale: 1.06, yoyo: true, repeat: -1, duration: 500 });
-      button(this, W / 2, by + 48, 90, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
+      button(this, W / 2 - 40, by + 44, 76, 22, 'HOW TO PLAY', () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
+      button(this, W / 2 + 40, by + 44, 76, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
     }
     soundToggle(this);
     const vo = txt(this, 10, 10, '', { color: C.white });
     const vlabel = () => vo.setText((audio.voices ? 'VOICES: ON' : 'VOICES: OFF') + (isTouch ? '' : ' [V]'));
     vlabel();
-    const vt = () => { audio.unlock(); audio.setVoices(!audio.voices); vlabel(); if (audio.voices) audio.say("Get out of our lane, homies!"); };
+    const vt = () => { audio.unlock(); audio.setVoices(!audio.voices); vlabel(); if (audio.voices) audio.say('GET OUT OF OUR LANE, HOMIES!'); };
     this.add.rectangle(4, 4, 76, 20, 0x181425, 0.6).setOrigin(0).setStrokeStyle(1, 0x5a6988);
     hitZone(this, 44, 14, 88, 32, vt, 96);
     this.input.keyboard.on('keydown-V', vt);

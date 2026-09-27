@@ -14,6 +14,7 @@ import { Finale } from './scenes/Finale.js';
 import { Pause } from './scenes/Pause.js';
 import { About } from './scenes/About.js';
 import { Splash } from './scenes/Splash.js';
+import { HowTo } from './scenes/HowTo.js';
 
 // Portrait, mobile-first: fixed 270px-wide pixel canvas; height stretches to fill tall phones.
 const aspect = Math.max(1.5, Math.min(2.2, window.innerHeight / Math.max(1, window.innerWidth)));
@@ -24,7 +25,7 @@ const MIN_H = 560;
 const H = Math.max(MIN_H, window.innerWidth > window.innerHeight ? (touchLandscape ? Math.round(W * Math.min(2.2, window.innerWidth / Math.max(1, window.innerHeight))) : MIN_H) : Math.round(W * aspect));
 setH(H);
 
-const scenes = [Boot, Splash, Title, Crew, MapScene, Brief, Drive, Arrival, Repair, Result, Finale, Pause, About];
+const scenes = [Boot, Splash, Title, Crew, MapScene, Brief, Drive, Arrival, Repair, Result, Finale, Pause, About, HowTo];
 if (import.meta.env.DEV) scenes.push(Gallery);
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -65,4 +66,10 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).has('smoke')) {
 }
 if (import.meta.env.DEV && new URLSearchParams(location.search).has('og')) {
   import('./dev/og.js').then(m => setTimeout(() => m.makeOg(game).then(r => { window.__og = r; console.log('og', r); }), 1500));
+}
+if (import.meta.env.DEV && new URLSearchParams(location.search).has('docs')) {
+  import('./dev/docs.js').then(m => setTimeout(() => m.makeDocs(game), 1500));
+}
+if (import.meta.env.DEV && new URLSearchParams(location.search).has('assets')) {
+  import('./dev/docs.js').then(m => setTimeout(() => m.makeAssets(game), 1500));
 }

@@ -42,7 +42,7 @@ export class Brief extends Phaser.Scene {
     if (this.left) return;
     audio.sfx('buzz');
     const line = pick(TRASH.steal);
-    audio.say(line.replace('#2', 'number two'), { pitch: 0.55 });
+    audio.say(line);
     await dialog(this, { portrait: portrait(this, 'randy', RIVALS.randy.look, 'yell'), name: 'NORTHWEST (ON YOUR RADIO)', text: 'BREAKER BREAKER, HOMIES. ' + line + ' THIS ONE IS OURS!', color: C.red, pitch: 0.6, y: dy });
     if (this.left) return;
     this.go(ji);

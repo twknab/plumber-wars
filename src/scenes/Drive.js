@@ -183,7 +183,7 @@ export class Drive extends Phaser.Scene {
     this.comms.setVisible(true); this.comms.alpha = 1; this.comms.x = -W; this.tweens.add({ targets: this.comms, x: 0, duration: 140 });
     if (this.commsTimer) this.commsTimer.remove();
     this.commsTimer = this.time.delayedCall(dur, () => this.tweens.add({ targets: this.comms, alpha: 0, duration: 200, onComplete: () => this.comms.setVisible(false) }));
-    audio.sfx('buzz'); audio.say(text.replace(/#2/g, 'number two'), { pitch: who === 'skeeter' ? 0.9 : 0.5, rate: 1.2 });
+    audio.sfx('buzz'); audio.say(text);
   }
 
   // ------------------------------------------------------------------ spawning

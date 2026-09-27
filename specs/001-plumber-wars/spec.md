@@ -1,4 +1,5 @@
 # Feature Specification: Plumber Wars playable campaign
+> **Superseded:** this spec describes the original prototype. The rebuilt game is documented in the root README.md.
 Created: 2026-09-26 · Status: Accepted gameplay
 
 ## User Scenarios & Testing

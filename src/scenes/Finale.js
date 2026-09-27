@@ -39,7 +39,7 @@ export class Finale extends Phaser.Scene {
     this.tweens.add({ targets: tr, x: -120, duration: 6000, delay: 1500, repeat: -1, repeatDelay: 3000 });
     this.add.image(40, H - 110, portrait(this, 'randy', RIVALS.randy.look, 'worried')).setScale(0.8);
     this.time.delayedCall(2200, () => bubble(this, 70, H - 136, 'FINE! WE\'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!', { dur: 3500, maxW: 170 }));
-    this.time.delayedCall(2600, () => audio.say("Fine! We're moving to Tacoma!", { pitch: 0.5 }));
+    this.time.delayedCall(2600, () => audio.say("FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!"));
     const total = progress.totalStars();
     txt(this, W / 2, H - 48, `TOTAL STARS: ${total}/45`, { ox: 0.5, color: C.yellow });
     button(this, W / 2, H - 22, 170, 26, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });

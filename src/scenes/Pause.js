@@ -17,5 +17,6 @@ export class Pause extends Phaser.Scene {
     const snd = button(this, W / 2 - 42, H * 0.5 + 112, 78, 26, audio.enabled ? 'SOUND ON' : 'SOUND OFF', () => { audio.setSound(!audio.enabled); snd.label.setText(audio.enabled ? 'SOUND ON' : 'SOUND OFF'); }, { color: 'btnGrey', textColor: C.white, key: 'M' });
     const vo = button(this, W / 2 + 42, H * 0.5 + 112, 78, 26, audio.voices ? 'VOICES ON' : 'VOICES OFF', () => { audio.setVoices(!audio.voices); vo.label.setText(audio.voices ? 'VOICES ON' : 'VOICES OFF'); }, { color: 'btnGrey', textColor: C.white, key: 'V' });
     this.input.keyboard.once('keydown-ESC', back);
+    txt(this, W / 2, H - 20, 'PROGRESS AUTO-SAVES AFTER EVERY FINISHED JOB', { ox: 0.5, color: C.steel });
   }
 }

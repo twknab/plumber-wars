@@ -27,6 +27,6 @@ export async function makeOg(game) {
   const big = document.createElement('canvas'); big.width = 1200; big.height = 630;
   const bx = big.getContext('2d'); bx.imageSmoothingEnabled = false; bx.drawImage(c, 0, 0, 1200, 630);
   const blob = await new Promise(r => big.toBlob(r, 'image/png'));
-  const res = await fetch('/__save-og', { method: 'POST', body: blob });
+  const res = await fetch('/__save?path=public/og.png', { method: 'POST', body: blob });
   return (await res.text()) + ' ' + blob.size + ' bytes';
 }

@@ -22,7 +22,7 @@ export class Splash extends Phaser.Scene {
       if (started) return; started = true;
       audio.unlock(); audio.sfx('go'); audio.music('title');
       const line = pick(TRASH.taunt);
-      audio.say('Welcome to Plumber Wars! ' + line.replace(/#2/g, 'number two'), { pitch: 0.55 });
+      audio.say(['WELCOME TO PLUMBER WARS!', line]);
       this.cameras.main.flash(120, 254, 174, 52);
       this.time.delayedCall(180, () => this.scene.start('Title'));
     };

@@ -1,6 +1,7 @@
 // Chiptune synth: pulse/triangle/noise channels, a lookahead tracker for music, procedural SFX,
 // an engine drone, and (optional) speech-synth yelling for the Northwest crew.
 import { store } from './save.js';
+import { voiceKey, speakable } from './voicekey.js';
 
 const NOTE = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
 const freq = n => { const m = /^([A-G]#?)(\d)$/.exec(n); return 440 * Math.pow(2, (NOTE[m[1]] + (+m[2] + 1) * 12 - 69) / 12); };
@@ -66,6 +67,8 @@ class Chip {
       this.master = this.ctx.createGain(); this.master.gain.value = this.enabled ? 0.55 : 0; this.master.connect(this.ctx.destination);
       this.musicBus = this.ctx.createGain(); this.musicBus.gain.value = 0.42; this.musicBus.connect(this.master);
       this.sfxBus = this.ctx.createGain(); this.sfxBus.gain.value = 0.8; this.sfxBus.connect(this.master);
+      this.voiceBus = this.ctx.createGain(); this.voiceBus.gain.value = 1.6; this.voiceBus.connect(this.master);
+      this.loadVoices();
       const len = this.ctx.sampleRate; const b = this.ctx.createBuffer(1, len, len); const d = b.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; this.noise = b;
       this.pulse = {};
@@ -81,7 +84,7 @@ class Chip {
   }
   get now() { return this.ctx ? this.ctx.currentTime : 0; }
   setSound(on) { this.enabled = on; store.set('sound', on); if (this.master) this.master.gain.setTargetAtTime(on ? 0.55 : 0, this.now, 0.02); }
-  setVoices(on) { this.voices = on; store.set('voicesOn', on); if (!on && window.speechSynthesis) speechSynthesis.cancel(); }
+  setVoices(on) { this.voices = on; store.set('voicesOn', on); if (!on) this.hush(); }
 
   tone({ type = 'square', duty, f = 440, f2, t = 0, dur = 0.1, vol = 0.2, attack = 0.002, release = 0.05, bus, slide = 'exp' }) {
     if (!this.ctx) return;
@@ -194,15 +197,53 @@ class Chip {
   voice(pitch = 1) { if (!this.ctx) return; this.tone({ duty: 0.5, f: (160 + Math.random() * 60) * pitch, dur: 0.035, vol: 0.06 }); }
 
   // Speech synthesis "yelling". Falls back to grunts.
-  say(text, { pitch = 0.6, rate = 1.15 } = {}) {
-    if (!this.enabled || !this.voices || !window.speechSynthesis) { this.sfx('grunt'); return; }
-    try {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text.replace(/[#$%&@*]{2,}/g, ' bleep ')); u.pitch = pitch; u.rate = rate; u.volume = 0.9;
-      const v = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang)); const pick = v.find(v => /Fred|Daniel|Alex|Google UK English Male|Aaron|Rocko|Grandpa|Ralph/i.test(v.name)) || v[0];
-      if (pick) u.voice = pick; speechSynthesis.speak(u);
-    } catch (e) { this.sfx('grunt'); }
+  // --- voices: pre-rendered Chirp 3 HD clips (public/voice), browser speech only as a fallback ---
+  loadVoices() {
+    this.clips = new Map();
+    fetch('/voice/manifest.json').then(r => r.ok ? r.json() : {}).then(m => {
+      this.voiceMan = m;
+      // warm the cache quietly, a few at a time
+      const keys = Object.keys(m); let i = 0;
+      const next = () => { if (i >= keys.length) return; const k = keys[i++]; this.clip(k).finally(() => setTimeout(next, 60)); };
+      for (let n = 0; n < 3; n++) next();
+    }).catch(() => { this.voiceMan = {}; });
   }
-  hush() { if (window.speechSynthesis) speechSynthesis.cancel(); }
+  clip(key) {
+    if (!this.clips.has(key)) this.clips.set(key, fetch('/voice/' + this.voiceMan[key].f).then(r => r.arrayBuffer()).then(b => new Promise((ok, no) => this.ctx.decodeAudioData(b, ok, no))).catch(() => null));
+    return this.clips.get(key);
+  }
+  duck(on) { if (this.musicBus) this.musicBus.gain.setTargetAtTime(on ? 0.12 : 0.42, this.now, on ? 0.05 : 0.3); }
+  // say(text) or say([line1, line2]) - plays the recorded clip for each line in order.
+  say(text, opts = {}) {
+    if (!this.enabled || !this.voices) { this.sfx('grunt'); return; }
+    const lines = [].concat(text); const token = (this.sayToken = (this.sayToken || 0) + 1);
+    this.hush(true);
+    const playNext = async (i) => {
+      if (i >= lines.length || token !== this.sayToken) { this.duck(false); return; }
+      const key = voiceKey(lines[i]);
+      if (this.ctx && this.voiceMan && this.voiceMan[key]) {
+        const buf = await this.clip(key);
+        if (token !== this.sayToken) return;
+        if (buf) {
+          const src = this.ctx.createBufferSource(); src.buffer = buf; src.connect(this.voiceBus);
+          this.duck(true); src.onended = () => playNext(i + 1); src.start(); this.voiceSrc = src; return;
+        }
+      }
+      this.speakFallback(lines[i], opts, () => playNext(i + 1));
+    };
+    playNext(0);
+  }
+  speakFallback(text, { pitch = 0.9, rate = 1.0 } = {}, done) {
+    if (!window.speechSynthesis) { this.sfx('grunt'); done && done(); return; }
+    try {
+      const u = new SpeechSynthesisUtterance(speakable(text)); u.pitch = Math.max(0.8, pitch); u.rate = rate; u.volume = 1;
+      const all = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+      const pick = ['Google US English', 'Samantha', 'Daniel', 'Microsoft Guy', 'Microsoft Aria'].map(n => all.find(v => v.name.includes(n))).find(Boolean) || all.find(v => v.localService) || all[0];
+      if (pick) u.voice = pick;
+      this.duck(true); u.onend = u.onerror = () => { this.duck(false); done && done(); };
+      speechSynthesis.speak(u);
+    } catch (e) { this.sfx('grunt'); done && done(); }
+  }
+  hush(keepToken) { if (!keepToken) this.sayToken = (this.sayToken || 0) + 1; if (this.voiceSrc) { try { this.voiceSrc.onended = null; this.voiceSrc.stop(); } catch (e) { /* done */ } this.voiceSrc = null; } if (window.speechSynthesis) speechSynthesis.cancel(); this.duck(false); }
 }
 export const audio = new Chip();
