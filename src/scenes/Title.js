@@ -48,10 +48,12 @@ export class Title extends Phaser.Scene {
     const by = H - 150;
     if (has) {
       button(this, W / 2, by, 150, 26, 'CONTINUE', () => this.go('Map'), { size: 1, key: 'ENTER' });
-      button(this, W / 2, by + 32, 150, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
+      button(this, W / 2 - 38, by + 32, 74, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
+      button(this, W / 2 + 38, by + 32, 74, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
     } else {
       const b = button(this, W / 2, by + 10, 170, 30, isTouch ? 'TAP TO START' : 'PRESS ENTER', () => this.go('Crew'), { size: 1, key: ['ENTER', 'SPACE'] });
       this.tweens.add({ targets: b, scale: 1.06, yoyo: true, repeat: -1, duration: 500 });
+      button(this, W / 2, by + 48, 90, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
     }
     soundToggle(this);
     const vo = txt(this, 10, 10, '', { color: C.white });
