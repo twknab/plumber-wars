@@ -4,39 +4,31 @@ import { audio } from '../core/audio.js';
 import { C, hex } from '../core/palette.js';
 
 // Four-page primer. Opened from the title screen, and automatically before a brand-new game.
+// Each line: [gold keyword, the rest]. Keep it to a glance - players won't read paragraphs.
 const PAGES = [
   { title: 'THE GIG', art: [['van'], ['iArrowU'], ['truck']],
     lines: [
-      "YOU'RE THE HOMIES OF G'S PLUMBING. NORTHWEST WANTS YOUR CUSTOMERS.",
-      'EVERY JOB HAS TWO HALVES:',
-      '1. RACE NORTHWEST TO THE HOUSE. GET THERE FIRST OR THEY STEAL THE JOB.',
-      '2. FIX THE PROBLEM FOR REAL, STEP BY STEP, BEFORE THE CUSTOMER LOSES IT.',
-      '15 JOBS ACROSS 5 SEATTLE DISTRICTS, PLUS A BONUS AT ALKI BEACH. IT GETS HARDER AS YOU GO.',
+      ['RACE', 'NORTHWEST TO THE HOUSE.'],
+      ['FIX', 'THE JOB BEFORE THE CUSTOMER SNAPS.'],
+      ['WIN', 'SEATTLE, ONE TOILET AT A TIME.'],
     ] },
-  { title: 'THE RACE', art: [['coffee'], ['cone'], ['pothole'], ['turd'], ['cyclist', 0]],
+  { title: 'THE RACE', art: [['coffee'], ['cone'], ['turd'], ['cyclist', 0]],
     lines: [
-      isTouch ? 'DRAG ANYWHERE TO STEER.' : 'ARROWS / A-D TO STEER.',
-      isTouch ? 'BOOST: BURN AN ESPRESSO. HONK: CLEAR YOUR LANE.' : 'SPACE = BOOST (ESPRESSO). H = HONK TO CLEAR YOUR LANE.',
-      'GRAB COFFEE CUPS FOR BOOSTS AND RED KITS TO FIX THE VAN.',
-      'DODGE CARS, CYCLISTS, POTHOLES, PUDDLES, OIL AND WHATEVER SKEETER THROWS.',
-      'WHEN THE TRUCK FLASHES RED IT\'S ABOUT TO RAM YOU. SWERVE! STEER INTO IT TO SHOVE IT INTO THE CURB.',
-      'LOSE ALL YOUR ARMOR OR GET BEAT TO THE HOUSE = RETRY.',
+      [isTouch ? 'DRAG' : 'ARROWS', 'TO STEER.'],
+      [isTouch ? 'BOOST' : 'SPACE', 'BURNS AN ESPRESSO. GRAB CUPS FOR MORE.'],
+      ['RED TRUCK', '= RAM INCOMING. SWERVE!'],
     ] },
-  { title: 'THE REPAIR', art: [['tool_hand'], ['tool_wrench'], ['tool_plunger'], ['tool_driver'], ['tool_bucket']],
+  { title: 'THE REPAIR', art: [['tool_hand'], ['tool_wrench'], ['tool_plunger'], ['tool_bucket']],
     lines: [
-      'EACH STEP: 1) PICK THE RIGHT TOOL FROM THE TRUCK TRAY, 2) DO THE MOVE.',
-      'CIRCLE YOUR FINGER TO TURN. RIGHTY-TIGHTY (CLOCKWISE) CLOSES, LEFTY-LOOSEY OPENS.',
-      'TAP IN THE GREEN, HOLD AND RELEASE IN THE GREEN, DRAG PARTS, PULL ALONG THE ARROW, SCRUB, TAP LEAKS.',
-      'WRONG TOOL OR WRONG ORDER COSTS TIME AND PISSES OFF THE CUSTOMER.',
-      'FROM CAPITOL HILL ON YOU PICK THE NEXT STEP YOURSELF. READ THE PRO TIPS!',
+      ['TAP', 'THE RIGHT TOOL IN THE TRAY.'],
+      ['DO', 'THE MOVE. CIRCLE = TURN (RIGHTY-TIGHTY).'],
+      ['WRONG', 'TOOL OR STEP = LOST TIME.'],
     ] },
-  { title: 'HOMIES & SAVING', art: [['badge'], ['iStar'], ['iStar'], ['iStar']],
+  { title: 'THE HOMIES', art: [['badge'], ['iStar'], ['iStar'], ['iStar']],
     lines: [
-      'PICK A LEAD: DALTON DRIVES, MILAN FIXES, JARED CHARMS.',
-      'THE OTHER TWO EACH HELP ONCE PER JOB. IN THE RACE, THE GOLD CLEAR ROAD BUTTON IS DALTON WIPING OUT THE TRAFFIC AHEAD. IN REPAIRS: MILAN AUTO-FIXES A STEP, JARED BUYS +12 SECONDS.',
-      'STARS: FINISH FAST, MAKE FEW MISTAKES, KEEP THE VAN IN ONE PIECE.',
-      'YOUR GAME SAVES AUTOMATICALLY AFTER EVERY FINISHED JOB. HIT CONTINUE ON THE TITLE SCREEN TO PICK UP WHERE YOU LEFT OFF.',
-      'SAVES LIVE IN THIS BROWSER ON THIS DEVICE. IN THE MIDDLE OF A JOB? PAUSE, THEN RESUME.',
+      ['GOLD', 'BUTTONS = A HOMIE HELPS, ONCE PER JOB.'],
+      ['STARS', 'FOR SPEED, FEW MISTAKES, NO DENTS.'],
+      ['SAVES', 'AUTOMATICALLY AFTER EVERY JOB.'],
     ] },
 ];
 
@@ -54,6 +46,7 @@ export class HowTo extends Phaser.Scene {
     this.prev = button(this, 50, H - 24, 80, 26, '< BACK', () => this.go(-1), { color: 'btnGrey', textColor: C.white, key: 'LEFT', sound: 'blip' });
     this.nextBtn = button(this, W - 60, H - 24, 100, 26, 'NEXT >', () => this.go(1), { color: 'btnGreen', textColor: C.white, key: ['RIGHT', 'ENTER', 'SPACE'], sound: 'blip' });
     this.input.keyboard.on('keydown-ESC', () => this.leave());
+    button(this, W - 30, 22, 48, 18, 'SKIP', () => this.leave(), { color: 'btnGrey', textColor: C.white, sound: 'blip' });
     // swipe between pages
     this.input.on('pointerup', p => { const dx = p.upX - p.downX; if (Math.abs(dx) > 50 && Math.abs(p.upY - p.downY) < 60) this.go(dx < 0 ? 1 : -1); });
     this.show();
@@ -67,12 +60,22 @@ export class HowTo extends Phaser.Scene {
   leave() { audio.sfx('select'); wipeTo(this, this.next); }
   show() {
     const P = PAGES[this.page]; this.body.removeAll(true);
-    const top = 66; this.body.add(panel(this, 8, top, W - 16, H - top - 78));
-    this.body.add(txt(this, W / 2, top + 10, `${this.page + 1}. ${P.title}`, { ox: 0.5, color: C.lime, size: 2 }));
+    const top = 66, bottom = H - 78;
+    this.body.add(panel(this, 8, top, W - 16, bottom - top));
+    const parts = [];
+    parts.push(txt(this, W / 2, 0, `${this.page + 1}. ${P.title}`, { ox: 0.5, color: C.lime, size: 2 }));
     // sprite strip
-    const n = P.art.length; P.art.forEach(([k, f], i) => { const im = this.add.image(W / 2 + (i - (n - 1) / 2) * 46, top + 52, k, f).setScale(k.startsWith('tool_') ? 1.6 : ['van', 'truck'].includes(k) ? 1.2 : 2); this.body.add(im); });
-    let y = top + 84;
-    for (const ln of P.lines) { const t = txt(this, 20, y, ln, { maxW: W - 40, color: C.white }); this.body.add(t); y += t.height + 7; }
+    const n = P.art.length; const artY = 58;
+    P.art.forEach(([k, f], i) => parts.push(this.add.image(W / 2 + (i - (n - 1) / 2) * 52, artY, k, f).setScale(k.startsWith('tool_') ? 2 : ['van', 'truck'].includes(k) ? 1.2 : 2.5)));
+    let y = artY + 48;
+    for (const [key, rest] of P.lines) {
+      parts.push(txt(this, W / 2, y, key, { ox: 0.5, color: C.gold, size: 2 }));
+      const t = txt(this, W / 2, y + 18, rest, { ox: 0.5, maxW: W - 44, color: C.white, align: 1 }); parts.push(t);
+      y += 18 + t.height + 22;
+    }
+    // centre the whole block in the card
+    const dy = top + Math.max(12, Math.round((bottom - top - y) / 2));
+    for (const o of parts) { o.y += dy; this.body.add(o); }
     this.dots.forEach((d, i) => d.setFillStyle(i === this.page ? hex(C.gold) : hex(C.storm)));
     this.prev.label.setText(this.page === 0 ? '< EXIT' : '< BACK');
     this.nextBtn.label.setText(this.page === PAGES.length - 1 ? (this.next === 'Title' ? 'GOT IT!' : "LET'S GO!") : 'NEXT >');
