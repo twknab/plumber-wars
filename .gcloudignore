@@ -1,0 +1,14 @@
+# What `gcloud run deploy --source .` uploads to Cloud Build. Mirrors .gitignore except that
+# .build-id (the commit stamp shown on the title screen) must be uploaded.
+.git
+.gitignore
+node_modules/
+dist/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars
+*.auto.tfvars
+.env*
+deploy/plumber-wars-qr.png
