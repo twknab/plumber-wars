@@ -9,31 +9,57 @@ import { PX } from '../core/pixel.js';
 import { portrait } from '../art/people.js';
 import { goToJob } from './District.js';
 
-const NODES = [[62, 52], [118, 62], [182, 128], [60, 204], [104, 108], [26, 176]];
+// Pin positions, projected from real coordinates (lon -122.44..-122.215, lat 47.69..47.555; north up).
+const NODES = [[68, 30], [112, 56], [150, 116], [72, 222], [98, 100], [40, 182]];
+const PIN_ICONS = ['pin_ballard', 'pin_fremont', 'pin_capitol', 'pin_westseattle', 'pin_queenanne', 'pin_alki'];
 const DORDER = [0, 1, 2, 3, 5, 4]; // district play order: Alki comes before the Queen Anne showdown
 
 function drawMap(scene) {
   if (scene.textures.exists('seattleMap')) return;
   const w = W, h = 240, p = new PX(w, h);
+  // water everywhere (Puget Sound, Elliott Bay), then the land on top
   p.rect(0, 0, w, h, C.navy);
   for (let j = 0; j < h; j += 5) for (let i = (j * 3) % 11; i < w; i += 11) p.hline(i, j, 3, C.blue);
-  const land = [[40, 0], [228, 0], [226, 40], [214, 90], [222, 140], [216, 200], [226, 240], [100, 240], [96, 180], [84, 158], [66, 150], [72, 130], [60, 100], [36, 80], [30, 40]];
-  p.poly(land, C.forest);
-  p.poly([[20, 170], [84, 164], [92, 180], [96, 240], [14, 240], [8, 200]], C.forest); // West Seattle
+  // the city: Shilshole, Discovery Park / Magnolia, Interbay, Elliott Bay waterfront, down to the Duwamish,
+  // and the Lake Washington shoreline (Sand Point, Union Bay, Madison Park, Leschi, Seward Park) on the east
+  p.poly([[42, 0], [46, 32], [30, 44], [8, 48], [6, 56], [18, 70], [34, 90], [46, 106], [66, 112], [84, 116], [100, 132], [118, 150], [124, 166],
+    [118, 178], [108, 184], [104, 200], [108, 240], [220, 240], [214, 222], [200, 206], [188, 176], [186, 150], [192, 118], [194, 96], [190, 76],
+    [198, 60], [214, 44], [226, 28], [214, 12], [206, 0]], C.forest);
+  // West Seattle: Duwamish Head, Alki Beach, Alki Point, down the west side
+  p.poly([[64, 168], [50, 176], [36, 184], [24, 194], [20, 210], [28, 226], [34, 240], [98, 240], [96, 214], [88, 198], [80, 182], [72, 172]], C.forest);
+  // Harbor Island at the mouth of the Duwamish
+  p.rect(98, 186, 8, 14, C.slate);
+  // the far shore of Lake Washington and Mercer Island
+  p.poly([[256, 0], [270, 0], [270, 240], [252, 240], [258, 180], [252, 120], [260, 60]], C.forest);
+  p.poly([[236, 176], [246, 172], [250, 200], [246, 240], [232, 240], [230, 210]], C.forest);
   p.dither(0, 0, w, h, C.green, 0.08);
-  // ship canal + Lake Union
-  p.thick(34, 72, 130, 74, 5, C.navy); p.ellipse(140, 92, 12, 22, C.navy); p.ellipse(138, 90, 8, 18, C.blue);
-  // Duwamish
-  p.thick(92, 160, 104, 240, 6, C.navy);
-  // Lake Washington
-  p.poly([[230, 0], [270, 0], [270, 240], [232, 240], [222, 180], [230, 120], [220, 60]], C.navy); p.dither(234, 0, 36, 240, C.blue, 0.3);
-  // I-5 and arterials
-  for (let y = 0; y < h; y++) p.px(160 + Math.round(Math.sin(y / 30) * 6), y, C.gold);
-  p.thick(60, 52, 118, 62, 1, C.sand); p.thick(118, 62, 104, 108, 1, C.sand); p.thick(104, 108, 182, 128, 1, C.sand); p.thick(104, 108, 90, 150, 1, C.sand); p.thick(90, 150, 60, 204, 1, C.sand);
-  // Space Needle marker & Rainier hint
-  p.rect(112, 120, 2, 8, C.silver); p.rect(109, 118, 8, 2, C.silver);
+  // Salmon Bay + the Ship Canal from the Locks to Lake Union, then the Montlake Cut to Lake Washington
+  const canal = [[40, 42], [56, 42], [72, 48], [92, 58], [106, 68], [116, 76]];
+  for (let i = 1; i < canal.length; i++) p.thick(canal[i - 1][0], canal[i - 1][1], canal[i][0], canal[i][1], 5, C.navy);
+  p.ellipse(126, 94, 11, 20, C.navy); p.ellipse(125, 93, 8, 16, C.blue);                    // Lake Union
+  for (const [a, b] of [[[132, 80], [152, 78]], [[152, 78], [170, 76]], [[170, 76], [194, 72]]]) p.thick(a[0], a[1], b[0], b[1], 4, C.navy); // Portage Bay, Montlake Cut, Union Bay
+  p.ellipse(132, 18, 7, 9, C.navy); p.ellipse(132, 17, 5, 7, C.blue);                        // Green Lake
+  // the Duwamish between West Seattle and SoDo
+  p.thick(100, 202, 102, 240, 4, C.navy);
+  // I-5, the West Seattle Bridge, and Aurora (99)
+  for (const [a, b] of [[[142, 0], [142, 72]], [[142, 72], [132, 124]], [[132, 124], [138, 160]], [[138, 160], [144, 240]]]) p.thick(a[0], a[1], b[0], b[1], 1, C.gold);
+  p.thick(84, 212, 138, 210, 2, C.gold);
+  for (const [a, b] of [[[112, 0], [110, 74]], [[110, 74], [108, 120]], [[108, 120], [120, 148]]]) p.thick(a[0], a[1], b[0], b[1], 1, C.sand);
+  // downtown towers, the stadiums, and a ferry crossing Elliott Bay
+  for (let i = 0; i < 6; i++) p.rect(120 + i * 3, 146 - (i % 3) * 3, 2, 6 + (i % 3) * 3, C.silver);
+  p.ellipse(128, 176, 4, 3, C.silver); p.ellipse(126, 184, 4, 3, C.steel);
+  p.rect(76, 140, 8, 3, C.white); p.rect(78, 138, 4, 2, C.white); for (let i = 0; i < 12; i += 2) p.px(86 + i, 142 + (i >> 2), C.cyan);
   p.outline(C.ink);
   p.toTexture(scene, 'seattleMap');
+
+  // one little icon per neighborhood, drawn inside its pin
+  const icon = (key, fn) => { const q = new PX(14, 14); fn(q); q.toTexture(scene, key); };
+  icon('pin_ballard', q => { q.poly([[1, 8], [13, 8], [11, 12], [3, 12]], C.red); q.rect(6, 2, 1, 6, C.white); q.poly([[7, 2], [11, 7], [7, 7]], C.white); q.hline(0, 12, 14, C.blue); });            // fishing boat
+  icon('pin_fremont', q => { q.blob(7, 8, 6, 5, [C.steel, C.silver, C.white]); q.px(5, 7, C.ink); q.px(9, 7, C.ink); q.rect(9, 10, 5, 3, C.blue); q.hline(3, 5, 8, C.steel); });              // the Troll (and his VW)
+  icon('pin_capitol', q => { [C.red, C.flame, C.yellow, C.lime, C.blue, C.plum].forEach((c, i) => q.rect(1, 1 + i * 2, 12, 2, c)); });                                                        // rainbow crosswalk
+  icon('pin_westseattle', q => { q.rect(0, 5, 14, 2, C.silver); for (const x of [2, 7, 12]) q.rect(x - 1, 7, 2, 6, C.steel); q.hline(0, 12, 14, C.blue); });                                // West Seattle Bridge
+  icon('pin_queenanne', q => { q.rect(6, 5, 2, 9, C.silver); q.ellipse(7, 4, 5, 2, C.white); q.rect(6, 0, 2, 3, C.silver); q.line(3, 13, 6, 7, C.steel); q.line(10, 13, 8, 7, C.steel); });  // Space Needle
+  icon('pin_alki', q => { q.rect(5, 4, 4, 9, C.white); q.rect(5, 7, 4, 2, C.red); q.rect(4, 2, 6, 2, C.ink); q.rect(6, 1, 2, 1, C.yellow); q.rect(1, 13, 12, 1, C.sand); });                 // Alki Point lighthouse
 }
 
 export class MapScene extends Phaser.Scene {
@@ -61,8 +87,9 @@ export class MapScene extends Phaser.Scene {
     NODES.forEach(([x, y], d) => {
       const js = districtJobs(d); const done = js.every(i => progress.isDone(i)), open = progress.isOpen(js[0]);
       const col = done ? C.lime : open ? C.gold : C.red;
-      const ring = this.add.circle(x, top + y, 9, hex(C.ink)).setStrokeStyle(2, hex(col));
-      if (done) this.add.image(x, top + y, 'badge').setScale(0.4); else this.add.image(x, top + y, open ? 'iPin' : 'iTruck').setScale(open ? 1.4 : 1);
+      const ring = this.add.circle(x, top + y, 10, hex(C.ink)).setStrokeStyle(2, hex(col));
+      this.add.image(x, top + y, PIN_ICONS[d]).setAlpha(open ? 1 : 0.35);
+      if (done) this.add.image(x + 8, top + y - 8, 'iStar'); else if (!open) this.add.image(x + 8, top + y - 8, 'iLock');
       txt(this, x + (d === 5 ? 12 : 0), top + y + 12, d === 5 ? 'ALKI' : DISTRICTS[d].name, { ox: 0.5, color: col });
       if (d === curD && !done) this.tweens.add({ targets: ring, scale: 1.5, alpha: 0.3, yoyo: true, repeat: -1, duration: 500 });
       ring.setInteractive({ useHandCursor: true }).on('pointerup', () => { if (open) { audio.sfx('select'); this.showDistrict(d); } else audio.sfx('wrong'); });

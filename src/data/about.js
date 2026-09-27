@@ -1,7 +1,7 @@
 // Copy for the About pages: who the crew is, and a little real history for every neighborhood
 // (shown with the same pixel art as the "Welcome to ..." intros). Keep it short.
 
-export const CREW_BLURB = 'HARD WORK, BIG BRAINS, STRONG BACKS. THEY SHOW UP WHEN YOUR DAY IS UNDERWATER AND FIX IT RIGHT.';
+export const CREW_BLURB = 'GOOD MEN WHO OUTWORK EVERYONE. THE STRENGTH TO HAUL A WATER HEATER, THE BRAINS TO KNOW WHY IT FAILED, AND THE HEART TO SHOW UP WHEN YOUR DAY IS UNDERWATER.';
 
 // A word from the boss about each homie (shown on the About page and the character sheet).
 export const HOMIE_TRIBUTES = {
