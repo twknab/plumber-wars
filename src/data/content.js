@@ -30,7 +30,7 @@ export const DISTRICTS = [
   { name: 'CAPITOL HILL', art: 'capitolhill', tag: 'STEEP HILLS. OLD PIPES. NO PARKING.', weather: 'drizzle', time: 'day', sky: 'overcast', road: 'E PINE ST', rain: 0.55 },
   { name: 'WEST SEATTLE', art: 'westseattle', tag: 'THE BRIDGE IS OPEN. THE SEWERS ARE NOT.', weather: 'storm', time: 'dusk', sky: 'dusk', road: 'CALIFORNIA AVE SW', rain: 1 },
   { name: 'QUEEN ANNE', art: 'queenanne', tag: 'OLD MONEY. OLDER PLUMBING. FINAL SHOWDOWN.', weather: 'storm', time: 'night', sky: 'night', road: 'W HIGHLAND DR', rain: 0.8 },
-  { name: 'ALKI BEACH', art: 'alki', tag: 'VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0 },
+  { name: 'ALKI BEACH', art: 'alki', tag: 'BEACH VIBES, TIDEPOOLS, GOOD EATS & OCEAN VIEWS.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0 },
 ];
 
 // Difficulty curve per job index (0..14).
