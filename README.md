@@ -24,6 +24,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
 - **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard Locks,
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
+- **About pages.** Meet the crew (what each homie brings: brains, back, bedside manner) and flip through all six
+  neighborhoods with their pixel art, a bit of real history and the plumbing you'll find there.
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
   Progress **saves automatically** after every finished job (lead homie, unlocked jobs, stars) in your browser;
   hit **CONTINUE** to pick up where you left off.
