@@ -14,5 +14,5 @@ gcloud run deploy plumber-wars \
 url="$(gcloud run services describe plumber-wars --project "$project" --region "$region" --format='value(status.url)')"
 echo "Live at: $url"
 npx --yes qrcode -o deploy/plumber-wars-qr.png -w 600 "$url"
-npx --yes qrcode -t terminal "$url"
+npx --yes qrcode "$url" </dev/null
 echo "QR code saved to deploy/plumber-wars-qr.png"
