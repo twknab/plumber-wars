@@ -252,7 +252,7 @@ export const JOBS = [
 
   // ----------------------------------------------------------------- ALKI BEACH (bonus)
   { title: 'HAIR-CLOGGED BATHROOM SINK', scene: 'sink', variant: 'alki', address: '2600 ALKI AVE SW, APT 3', bonus: true,
-    who: 'JIMMY', look: { skin: 'fair', hair: 'salt', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
+    who: 'JIMMY', look: { skin: 'fair', hair: 'beach', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
     house: { style: 'townhouse', body: '#feae34', trim: '#ffffff', roof: '#124e89', door: '#0099db', extra: 'alki' },
     call: "BRO. MY SINK WON'T DRAIN. I RINSE MY HAIR IN IT AFTER KAYAKING. ALSO BOY - MY SQUIRREL - MIGHT'VE STASHED AN ACORN IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
     steps: [

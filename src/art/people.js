@@ -8,7 +8,7 @@ const SKIN = {
 };
 const HAIR = {
   brown: [C.umber, C.brown, C.clay], black: [C.ink, C.night, C.storm], blond: [C.flame, C.gold, C.yellow], ginger: [C.brown, C.rust, C.orange],
-  white: [C.steel, C.silver, C.white], grey: [C.slate, C.steel, C.silver], salt: [C.storm, C.steel, C.silver], purple: [C.plum, C.mauve, C.pink], pink: [C.crimson, C.hot, C.pink],
+  white: [C.steel, C.silver, C.white], grey: [C.slate, C.steel, C.silver], salt: [C.storm, C.steel, C.silver], beach: [C.umber, C.brown, C.clay], purple: [C.plum, C.mauve, C.pink], pink: [C.crimson, C.hot, C.pink],
 };
 const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16); const f = c => Math.max(0, Math.min(255, Math.round(c * k))); return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, '0')).join(''); };
 
