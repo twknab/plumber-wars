@@ -192,7 +192,7 @@ function sink(scene, v) {
   };
   return { bg: 'fx_sink_' + v, parts, anchors };
 }
-// Jimmy's Alki apartment wall: kayak on the wall, an electric guitar, an amanita, and Boy the squirrel.
+// Timmy's Alki apartment wall: kayak on the wall, an electric guitar, an amanita, and Boy the squirrel.
 function alkiWall(bg) {
   bg.rect(0, 0, SW, 64, C.cyan); bg.dither(0, 0, SW, 64, C.blue, 0.12); for (let i = 0; i < SW; i += 30) bg.vline(i, 0, 64, C.blue);
   // kayak on wall hooks
@@ -262,6 +262,53 @@ function shower(scene) {
   part(scene, 'p_grime', 36, 36, p => { p.ellipse(18, 18, 16, 16, C.brown); p.ellipse(18, 18, 8, 8, 0); p.dither(0, 0, 36, 36, C.clay, 0.3); p.dither(0, 0, 36, 36, C.white, 0.08); }, null);
   parts.grime = { key: 'p_grime', x: 135, y: 160, ox: 0.5, oy: 0.5, depth: 2, hidden: true };
   return { bg: 'fx_shower', parts, anchors: { cover: { x: 135, y: 160, r: 30 }, hair: { x: 135, y: 150, r: 30 }, grime: { x: 135, y: 160, r: 30 }, pool: { x: 135, y: 160, r: 60 } } };
+}
+
+// ------------------------------------------------------------------ BATHTUB (Timmy's Alki apartment)
+// 3/4 view: the apartment wall on top, the tub below. Lift-and-turn stopper in the drain, overflow plate
+// on the end wall, a tub full of standing water.
+function tub(scene) {
+  const bg = new PX(SW, SH);
+  alkiWall(bg);
+  tiles(bg, 0, 64, SW, 60, 12, 12, C.white, C.silver, false);
+  for (let i = 6; i < SW; i += 48) bg.rect(i, 76, 12, 12, C.cyan);
+  // spout + handle on the end wall
+  bg.rect(196, 96, 30, 8, C.silver); bg.rect(196, 96, 30, 3, C.white); bg.rect(222, 96, 6, 14, C.steel); bg.box(195, 95, 34, 10, C.ink);
+  bg.blob(240, 82, 7, 7, RAMP.chrome); bg.rect(236, 80, 12, 3, C.silver);
+  // tub rim + basin
+  bg.rect(4, 122, SW - 8, 170, C.white); bg.box(3, 121, SW - 6, 172, C.ink);
+  bg.rect(4, 122, SW - 8, 6, C.silver);
+  bg.rect(18, 134, SW - 36, 132, C.silver); bg.box(17, 133, SW - 34, 134, C.steel);
+  // inside back wall of the tub (the overflow plate lives here), then the tub floor with the drain
+  bg.vgrad(20, 136, SW - 40, 62, [C.white, C.white, C.silver]); bg.hline(20, 198, SW - 40, C.steel); bg.hline(20, 199, SW - 40, C.slate);
+  bg.vgrad(20, 200, SW - 40, 64, [C.silver, C.white, C.silver]);
+  bg.rect(4, 276, SW - 8, 16, C.silver); bg.hline(4, 276, SW - 8, C.steel);
+  // rubber duck + shampoo on the rim
+  bg.ellipse(40, 126, 7, 4, C.yellow); bg.ellipse(46, 122, 4, 3, C.yellow); bg.px(48, 122, C.ink); bg.px(51, 123, C.flame);
+  [[70, 116, C.hot], [82, 114, C.lime], [230, 116, C.gold]].forEach(([x, y, c]) => { bg.rect(x, y, 8, 12, c); bg.rect(x + 2, y - 3, 4, 3, C.white); });
+  // drain opening under the stopper
+  bg.ellipse(200, 230, 13, 6, C.slate); bg.ellipse(200, 230, 9, 4, C.ink);
+  // overflow hole behind the plate
+  bg.ellipse(200, 160, 9, 9, C.slate); bg.ellipse(200, 160, 5, 5, C.ink);
+  bg.outline(C.ink);
+  bg.toTexture(scene, 'fx_tub');
+  const parts = {};
+  part(scene, 'p_tubPool', 230, 88, p => { p.rect(0, 0, 230, 88, '#0099db58'); p.hline(0, 0, 230, '#2ce8f5c0'); p.hline(0, 1, 230, '#ffffff60'); for (let i = 0; i < 14; i++) p.hline(10 + (i * 41) % 200, 6 + (i * 29) % 76, 10, '#ffffff70'); p.dither(0, 0, 230, 88, '#a2654880', 0.05); }, null);
+  parts.pool = { key: 'p_tubPool', x: 135, y: 220, ox: 0.5, oy: 0.5, depth: 5 };
+  part(scene, 'p_stopper', 30, 16, p => { p.blob(15, 9, 14, 6, RAMP.chrome); p.rect(12, 0, 6, 6, C.silver); p.rect(13, 0, 4, 2, C.white); p.px(6, 7, C.white); });
+  parts.stopper = { key: 'p_stopper', x: 200, y: 226, ox: 0.5, oy: 0.5, depth: 6 };
+  part(scene, 'p_overflow', 30, 30, p => { p.blob(15, 15, 13, 13, RAMP.chrome); for (let i = 0; i < 4; i++) p.hline(8, 16 + i * 2, 14, C.slate); p.ellipse(15, 5, 2, 2, C.steel); p.hline(13, 5, 5, C.ink); p.ellipse(15, 25, 2, 2, C.steel); p.hline(13, 25, 5, C.ink); p.px(9, 9, C.white); });
+  parts.overflow = { key: 'p_overflow', x: 200, y: 160, ox: 0.5, oy: 0.5, depth: 6 };
+  part(scene, 'p_rag', 22, 20, p => { p.blob(11, 10, 10, 9, [C.umber, C.red, C.pink]); p.hline(3, 10, 16, C.crimson); p.hline(5, 6, 12, C.crimson); });
+  parts.rag = { key: 'p_rag', x: 200, y: 160, ox: 0.5, oy: 0.5, depth: 7, hidden: true };
+  part(scene, 'p_tubHair', 24, 72, p => { for (let k = 0; k < 9; k++) { let x = 12 + (k - 4) * 1.4; for (let y = 0; y < 72; y++) { x += Math.sin(y / 5 + k) * 0.7; p.px(x, y, [C.umber, C.brown, C.clay, C.gold][k % 4]); } } p.blob(12, 64, 8, 7, [C.umber, C.brown, C.clay]); p.ellipse(12, 60, 5, 4, C.brown); p.ellipse(12, 59, 3, 2.5, C.clay); p.rect(10, 55, 4, 2, C.umber); }, null);
+  parts.hair = { key: 'p_tubHair', x: 200, y: 236, ox: 0.5, oy: 1, depth: 4, hidden: true };
+  part(scene, 'p_tubGrime', 34, 18, p => { p.ellipse(17, 9, 15, 7, C.brown); p.ellipse(17, 9, 8, 3, 0); p.dither(0, 0, 34, 18, C.clay, 0.3); p.dither(0, 0, 34, 18, C.white, 0.1); }, null);
+  parts.grime = { key: 'p_tubGrime', x: 200, y: 230, ox: 0.5, oy: 0.5, depth: 3, hidden: true };
+  return { bg: 'fx_tub', parts, anchors: {
+    stopper: { x: 200, y: 226, r: 24 }, overflow: { x: 200, y: 160, r: 24 }, hair: { x: 200, y: 222, r: 26 }, drain: { x: 200, y: 230, r: 26 },
+    grime: { x: 200, y: 230, r: 26 }, pool: { x: 120, y: 220, r: 60 }, spout: { x: 212, y: 100, r: 22 },
+  } };
 }
 
 // ------------------------------------------------------------------ BASEMENT (PRV / main)
@@ -464,5 +511,5 @@ function bib(scene) {
   return { bg: 'fx_bib', parts, anchors: { inside: { x: 60, y: 66, r: 26 }, bibhandle: { x: 176, y: 128, r: 24 }, packing: { x: 176, y: 140, r: 22 }, stem: { x: 180, y: 138, r: 26 }, stemTip: { x: 250, y: 138, r: 26 } } };
 }
 
-const BUILDERS = { toilet, sink, shower, basement, heater, sump, crawl, yard, bib };
+const BUILDERS = { toilet, sink, shower, tub, basement, heater, sump, crawl, yard, bib };
 export function buildFixture(scene, name, variant) { return BUILDERS[name](scene, variant); }

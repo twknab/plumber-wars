@@ -1,14 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JOBS, TOOL_INFO, trayFor } from '../src/data/jobs.js';
-import { HEROES, DISTRICTS, difficulty } from '../src/data/content.js';
+import { HEROES, DISTRICTS, difficulty, ORDER } from '../src/data/content.js';
 
 const TYPES = ['turn', 'crank', 'dial', 'rhythm', 'hold', 'drag', 'pull', 'scrub', 'taps', 'tap'];
 
-test('15 campaign jobs in 5 districts + Alki bonus', () => {
+test('16 jobs in 6 neighborhoods, Alki required before Queen Anne', () => {
   assert.equal(JOBS.length, 16);
   assert.equal(DISTRICTS.length, 6);
-  assert.ok(JOBS[15].bonus && DISTRICTS[5].bonus);
+  assert.deepEqual([...ORDER].sort((a, b) => a - b), [...JOBS.keys()], 'ORDER plays every job once');
+  assert.ok(ORDER.indexOf(15) === ORDER.indexOf(12) - 1, 'Alki comes right before Queen Anne');
+  assert.equal(JOBS[15].scene, 'tub');
   JOBS.forEach((j, i) => assert.equal(j.district, Math.floor(i / 3)));
 });
 
@@ -49,4 +51,20 @@ test('every job has its own customer reviews', async () => {
   JOB_REVIEWS.forEach((r, i) => assert.ok(r.length >= 2, `job ${i} needs at least two reviews`));
   assert.ok(REVIEWS.length >= 20);
   assert.equal(new Set([...REVIEWS, ...JOB_REVIEWS.flat()]).size, REVIEWS.length + JOB_REVIEWS.flat().length, 'no duplicate reviews');
+});
+
+test('campaign progress: Alki gates Queen Anne, old saves migrate', async () => {
+  const { progress, store } = await import('../src/core/save.js');
+  progress.reset();
+  for (let i = 0; i < 12; i++) progress.complete(i, 2);
+  assert.ok(progress.isOpen(15) && !progress.isOpen(12), 'after West Seattle only Alki is open');
+  progress.complete(15, 3);
+  assert.ok(progress.isOpen(12) && !progress.isOpen(13));
+  // an old save (index-based, Alki optional) that skipped Alki gets sent back to it
+  store.set('cleared', null); store.set('unlocked', 14); store.set('stars', { 12: 3, 13: 2 });
+  assert.equal(progress.unlocked, 12);
+  assert.ok(progress.isOpen(15) && !progress.isOpen(12));
+  progress.complete(15, 2);
+  assert.ok(progress.isOpen(14), 'jobs the old save already starred are skipped');
+  progress.reset();
 });

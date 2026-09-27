@@ -250,19 +250,20 @@ export const JOBS = [
       { t: 'BLEED THE AIR', tool: 'hand', type: 'taps', target: 'faucets', count: 3, tip: 'OPEN FAUCETS UNTIL THE SPUTTERING STOPS. THE GALA IS SAVED!' },
     ] },
 
-  // ----------------------------------------------------------------- ALKI BEACH (bonus)
-  { title: 'HAIR-CLOGGED BATHROOM SINK', scene: 'sink', variant: 'alki', address: '2600 ALKI AVE SW, APT 3', bonus: true,
-    who: 'JIMMY', look: { skin: 'fair', hair: 'beach', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
+  // ----------------------------------------------------------------- ALKI BEACH
+  { title: 'CLOGGED BATHTUB', scene: 'tub', variant: 'alki', address: '2600 ALKI AVE SW, APT 3',
+    who: 'TIMMY', look: { skin: 'fair', hair: 'beach', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
     house: { style: 'townhouse', body: '#feae34', trim: '#ffffff', roof: '#124e89', door: '#0099db', extra: 'alki' },
-    call: "BRO. MY SINK WON'T DRAIN. I RINSE MY HAIR IN IT AFTER KAYAKING. ALSO BOY - MY SQUIRREL - MIGHT'VE STASHED AN ACORN IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
+    call: "BRO. MY TUB WON'T DRAIN. I'M STANDING IN A FOOT OF MY OWN KAYAK WATER. ALSO BOY - MY SQUIRREL - MIGHT'VE STASHED AN ACORN IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
     steps: [
-      { t: 'UNSCREW THE PIVOT NUT', tool: 'pliers', type: 'turn', target: 'pivot', dir: -1, turns: 1, tip: 'BEHIND THE DRAIN PIPE UNDER THE SINK. IT HOLDS THE POP-UP ROD IN PLACE.', early: 'YOU YANKED THE STOPPER WITH THE ROD STILL HOOKED. SNAP. JIMMY FLEXES SADLY.' },
-      { t: 'SLIDE OUT THE PIVOT ROD', tool: 'hand', type: 'pull', target: 'rod', dir: [1, 0], dist: 28, tip: 'THE ROD HOOKS THROUGH THE STOPPER. PULL IT BACK AND THE STOPPER COMES FREE.' },
-      { t: 'LIFT OUT THE POP-UP STOPPER', tool: 'hand', type: 'pull', target: 'popup', dir: [0, -1], dist: 26, keep: true, tip: 'NINE TIMES OUT OF TEN THE CLOG IS WRAPPED RIGHT AROUND THE STOPPER.', fx: ['show:popGrime', 'show:hairS'] },
-      { t: 'SCRUB THE STOPPER', tool: 'brush', type: 'scrub', target: 'popGrime', amount: 0.9, tip: 'SOAP SCUM + TOOTHPASTE + HAIR = THE GRAY STUFF. SCRUB IT OFF.' },
-      { t: 'ZIP-IT: HAIR + ONE ACORN', tool: 'zipit', type: 'pull', target: 'hairS', dir: [0, -1], dist: 56, tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (BOY WANTS HIS ACORN BACK.)" },
-      { t: 'SNUG THE PIVOT NUT', tool: 'pliers', type: 'hold', target: 'pivot', zone: [0.55, 0.75], label: 'TORQUE', pre: ['restore:popup', 'hide:popGrime', 'restore:rod'], tip: 'STOPPER BACK IN, ROD THROUGH THE HOLE, NUT SNUG. TOO TIGHT AND THE STOPPER WON\'T MOVE.' },
-      { t: 'RUN THE WATER', tool: 'hand', type: 'tap', target: 'fhandle', tip: 'DRAINS LIKE A RIPTIDE. TELL JIMMY TO USE A HAIR CATCHER. HE WILL NOT.' },
+      { t: 'UNSCREW THE TUB STOPPER', tool: 'hand', type: 'turn', target: 'stopper', dir: -1, turns: 1.5, tip: 'LIFT-AND-TURN STOPPER: HOLD THE BODY, TWIST THE KNOB COUNTER-CLOCKWISE AND IT SPINS OFF THE DRAIN.', fx: ['away:stopper'] },
+      { t: 'REMOVE THE OVERFLOW PLATE', tool: 'driver', type: 'turn', target: 'overflow', dir: -1, turns: 1.5, tip: 'TWO SCREWS ON THE ROUND PLATE UNDER THE SPOUT. IT LETS AIR IN SO THE DRAIN CAN BREATHE.', early: 'YOU PLUNGED WITH THE OVERFLOW OPEN. THE WATER SHOT OUT THE PLATE AND HIT TIMMY IN THE ABS.', fx: ['away:overflow'] },
+      { t: 'ZIP-IT: HAIR + ONE ACORN', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 64, pre: ['show:hair'], tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (BOY WANTS HIS ACORN BACK.)", fx: ['show:grime'] },
+      { t: 'STUFF A WET RAG IN THE OVERFLOW', tool: 'hand', type: 'tap', target: 'overflow', tip: 'PLUG THE OVERFLOW OR THE PLUNGER JUST PUSHES AIR OUT OF IT INSTEAD OF MOVING THE CLOG.', fx: ['show:rag'] },
+      { t: 'PLUNGE THE TUB DRAIN', tool: 'cupplunger', type: 'rhythm', target: 'drain', hits: 4, tip: 'FLAT CUP PLUNGER, A FEW INCHES OF WATER OVER IT, SHARP STRAIGHT STROKES.', fx: ['fade:pool'] },
+      { t: 'SCRUB THE DRAIN FLANGE', tool: 'brush', type: 'scrub', target: 'grime', amount: 0.9, tip: 'SOAP SCUM + SUNSCREEN + SAND. ALKI GETS IN EVERYTHING.' , fx: ['hide:grime'] },
+      { t: 'OVERFLOW PLATE BACK ON', tool: 'driver', type: 'turn', target: 'overflow', dir: 1, turns: 1.25, pre: ['hide:rag', 'restore:overflow', 'restore:stopper'], tip: 'RAG OUT, PLATE ON, STOPPER BACK IN. SNUG, NOT CRANKED - THE GASKET SEALS IT.' },
+      { t: 'RUN THE WATER', tool: 'hand', type: 'tap', target: 'spout', tip: 'DRAINS LIKE A RIPTIDE. TELL TIMMY TO USE A HAIR CATCHER. HE WILL NOT.' },
     ] },
 ];
 

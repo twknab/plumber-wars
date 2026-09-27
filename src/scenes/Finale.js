@@ -24,7 +24,7 @@ export class Finale extends Phaser.Scene {
     const logo = this.add.image(W / 2, 40, 'badgeBig');
     this.tweens.add({ targets: logo, scale: 1.1, yoyo: true, repeat: -1, duration: 400 });
     txt(this, W / 2, 84, "THE SOUND IS G'S COUNTRY!", { ox: 0.5, size: 2, color: C.gold });
-    txt(this, W / 2, 104, 'ALL 15 JOBS. ALL 5 DISTRICTS. ZERO FLOODS (MOSTLY).', { ox: 0.5, color: C.white, maxW: 250, align: 1 });
+    txt(this, W / 2, 104, 'ALL 16 JOBS. ALL 6 NEIGHBORHOODS. ZERO FLOODS (MOSTLY).', { ox: 0.5, color: C.white, maxW: 250, align: 1 });
     // crew on stage
     const gy = H * 0.64;
     HEROES.forEach((h, i) => {

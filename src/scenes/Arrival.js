@@ -10,7 +10,7 @@ import { portrait, body } from '../art/people.js';
 import { houseTextures } from '../art/houses.js';
 
 const SKY = { day: [C.navy, C.blue, C.cyan, C.silver], overcast: [C.storm, C.slate, C.steel, C.silver], dusk: [C.night, C.plum, C.mauve, C.pink, C.flame], night: [C.ink, C.night, C.storm] };
-const WHERE = { alki: 'BATHROOM', toilet: 'BATHROOM', sink: 'KITCHEN', shower: 'BATHROOM', basement: 'BASEMENT', heater: 'GARAGE', sump: 'BASEMENT', crawl: 'CRAWLSPACE', yard: 'SIDE YARD', bib: 'BACK OF THE HOUSE' };
+const WHERE = { alki: 'BATHROOM', tub: 'BATHROOM', toilet: 'BATHROOM', sink: 'KITCHEN', shower: 'BATHROOM', basement: 'BASEMENT', heater: 'GARAGE', sump: 'BASEMENT', crawl: 'CRAWLSPACE', yard: 'SIDE YARD', bib: 'BACK OF THE HOUSE' };
 
 export function skyTex(scene, d) {
   const key = 'sky' + d; if (scene.textures.exists(key)) return key;

@@ -7,7 +7,7 @@
   <img src="docs/shot-title.png" width="200" alt="Title screen: pixel Seattle skyline at sunset with the Space Needle, Mt. Rainier and the G's van">
   <img src="docs/shot-drive.png" width="200" alt="Top-down race against the Northwest truck in the rain">
   <img src="docs/shot-repair.png" width="200" alt="Repair screen: grease-clogged kitchen sink with the truck tool tray">
-  <img src="docs/shot-alki.png" width="200" alt="Arriving at Jimmy's Alki Beach apartment">
+  <img src="docs/shot-alki.png" width="200" alt="Arriving at Timmy's Alki Beach apartment">
 </p>
 
 The Homies of **G's Plumbing** (Dalton, Milan, Jared) race the foul-mouthed **Northwest** crew across Seattle,
@@ -20,7 +20,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
 - **Pick a lead homie.** Dalton (wheelman: sharper handling, +1 armor), Milan (pipe whisperer: wider timing
   windows, fewer turns), Jared (people person: 30% more customer patience). The other two ride along as
   one-shot assists: *Dalton clears the road*, *Milan auto-fixes a step*, *Jared sweet-talks +12s*.
-- **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard fishing fleet,
+- **Welcome to the neighborhood.** Each district opens with pixel art of the real place (the Ballard Locks,
   the Fremont Troll, Capitol Hill's rainbow crosswalk, downtown from West Seattle, the Kerry Park view, Alki Beach).
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
   Progress **saves automatically** after every finished job (lead homie, unlocked jobs, stars) in your browser;
@@ -35,8 +35,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm, hold for torque,
   drag parts, pull, scrub, tap leaks). Wrong tools and wrong order cost time and make the customer madder.
   A pro tip explains each real step.
-- **16 jobs** — a 15-job campaign across 5 districts (Ballard, Fremont, Capitol Hill, West Seattle, Queen Anne) plus an
-  **Alki Beach bonus** at Jimmy's (unlocks with West Seattle). Rising difficulty: longer, faster races; a meaner,
+- **16 jobs** across 6 neighborhoods: Ballard, Fremont, Capitol Hill, West Seattle, then **Alki Beach** (Timmy's
+  clogged tub, required) before the Queen Anne showdown. Rising difficulty: longer, faster races; a meaner,
   faster rival; tighter repair clocks and timing windows; tool hints only in Ballard; from Capitol Hill on you
   pick the next step yourself.
 
@@ -48,8 +48,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
 | Fremont | Running toilet (flapper) · Grease-clogged kitchen sink (P-trap) · Jammed disposal |
 | Capitol Hill | Low water pressure (PRV) · Leaky supply line · Rocking toilet / wax ring |
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
+| Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus one squirrel acorn), rag + plunge |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
-| Alki Beach (bonus) | Hair-clogged bathroom sink at Jimmy's: pivot nut, pop-up stopper, zip-it, one squirrel acorn |
 
 ## Controls (touch or keyboard)
 
@@ -100,7 +100,7 @@ versions are adaptations and keep the source licenses:
 
 | District | Source photo | Photographer | License |
 |---|---|---|---|
-| Ballard | [Hiram M Chittenden Locks pano 03.jpg](https://commons.wikimedia.org/wiki/File:Hiram_M_Chittenden_Locks_pano_03.jpg) | Joe Mabel | CC BY-SA 4.0 |
+| Ballard | [Chittenden Locks overview 01.jpg](https://commons.wikimedia.org/wiki/File:Chittenden_Locks_overview_01.jpg) | Joe Mabel | CC BY-SA 3.0 |
 | Fremont | [Fremont troll.jpg](https://commons.wikimedia.org/wiki/File:Fremont_troll.jpg) | Sambusak74 | CC BY-SA 4.0 |
 | Capitol Hill | [Rainbow crosswalk Capitol Hill, Seattle.jpg](https://commons.wikimedia.org/wiki/File:Rainbow_crosswalk_Capitol_Hill,_Seattle.jpg) | Ntowle98 | CC BY-SA 4.0 |
 | West Seattle | [Seattle Skyline from Alki (4230478801).jpg](https://commons.wikimedia.org/wiki/File:Seattle_Skyline_from_Alki_(4230478801).jpg) | DearEdward from New York, NY, USA | CC BY 2.0 |

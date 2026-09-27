@@ -3,7 +3,7 @@ import { W, H, txt, button, wipeTo, wipeIn, dialog, panel } from '../core/ui.js'
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
-import { HEROES, RIVALS, DISTRICTS, TRASH, pick } from '../data/content.js';
+import { HEROES, RIVALS, DISTRICTS, TRASH, pick, ORDER, jobNo } from '../data/content.js';
 import { JOBS } from '../data/jobs.js';
 import { portrait } from '../art/people.js';
 import { houseTextures } from '../art/houses.js';
@@ -19,7 +19,7 @@ export class Brief extends Phaser.Scene {
     this.add.rectangle(0, 0, W, H, hex(C.night)).setOrigin(0);
     for (let y = 0; y < H; y += 4) this.add.rectangle(0, y, W, 1, hex(C.ink), 0.5).setOrigin(0);
     this.add.image(W / 2, 22, 'badge');
-    txt(this, W / 2, 44, ji === 15 ? `BONUS JOB - ${D.name}` : `JOB ${ji + 1} OF 15 - ${D.name}`, { ox: 0.5, color: C.gold, size: 2 });
+    txt(this, W / 2, 44, `JOB ${jobNo(ji)} OF ${ORDER.length} - ${D.name}`, { ox: 0.5, color: C.gold, size: 2 });
     // work order card
     const cy = 64; panel(this, 10, cy, W - 20, 150, 'panelLight');
     txt(this, 18, cy + 8, 'WORK ORDER #' + (4100 + ji * 37), { outline: false, color: C.brown });

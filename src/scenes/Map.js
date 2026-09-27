@@ -3,14 +3,14 @@ import { W, H, txt, button, wipeTo, wipeIn, panel, soundToggle, stars } from '..
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
-import { DISTRICTS, HEROES } from '../data/content.js';
+import { DISTRICTS, HEROES, ORDER, districtJobs } from '../data/content.js';
 import { JOBS } from '../data/jobs.js';
 import { PX } from '../core/pixel.js';
 import { portrait } from '../art/people.js';
 import { goToJob } from './District.js';
 
 const NODES = [[62, 52], [118, 62], [182, 128], [60, 204], [104, 108], [26, 176]];
-const BONUS_OPEN = 9; // Alki opens once West Seattle does
+const DORDER = [0, 1, 2, 3, 5, 4]; // district play order: Alki comes before the Queen Anne showdown
 
 function drawMap(scene) {
   if (scene.textures.exists('seattleMap')) return;
@@ -51,19 +51,19 @@ export class MapScene extends Phaser.Scene {
     txt(this, 28, 16, `LEAD: ${hero.name}   ` + '`' + ` ${progress.totalStars()}/48`, { color: C.gold });
     soundToggle(this, W - 12, 12);
     const unlocked = progress.unlocked;
-    const curD = Math.min(4, Math.floor(unlocked / 3));
+    const curD = JOBS[ORDER[Math.min(unlocked, ORDER.length - 1)]].district;
     // Northwest market share meter
-    const share = Math.max(0, 100 - Math.round(unlocked / 15 * 100));
+    const share = Math.max(0, 100 - Math.round(unlocked / ORDER.length * 100));
     this.add.rectangle(W - 86, top + 6, 80, 16, hex(C.ink), 0.85).setOrigin(0).setStrokeStyle(1, hex(C.red));
     txt(this, W - 83, top + 8, `NW TURF ${share}%`, { color: C.red });
     this.add.rectangle(W - 83, top + 17, 74, 2, hex(C.storm)).setOrigin(0); this.add.rectangle(W - 83, top + 17, 74 * share / 100, 2, hex(C.red)).setOrigin(0);
     // nodes
     NODES.forEach(([x, y], d) => {
-      const bonus = d === 5; const done = bonus ? progress.stars(15) > 0 : unlocked >= (d + 1) * 3, open = bonus ? unlocked >= BONUS_OPEN : unlocked >= d * 3;
+      const js = districtJobs(d); const done = js.every(i => progress.isDone(i)), open = progress.isOpen(js[0]);
       const col = done ? C.lime : open ? C.gold : C.red;
       const ring = this.add.circle(x, top + y, 9, hex(C.ink)).setStrokeStyle(2, hex(col));
       if (done) this.add.image(x, top + y, 'badge').setScale(0.4); else this.add.image(x, top + y, open ? 'iPin' : 'iTruck').setScale(open ? 1.4 : 1);
-      txt(this, x + (bonus ? 12 : 0), top + y + 12, bonus ? 'ALKI (BONUS)' : DISTRICTS[d].name, { ox: 0.5, color: bonus && open && !done ? C.cyan : col });
+      txt(this, x + (d === 5 ? 12 : 0), top + y + 12, d === 5 ? 'ALKI' : DISTRICTS[d].name, { ox: 0.5, color: col });
       if (d === curD && !done) this.tweens.add({ targets: ring, scale: 1.5, alpha: 0.3, yoyo: true, repeat: -1, duration: 500 });
       ring.setInteractive({ useHandCursor: true }).on('pointerup', () => { if (open) { audio.sfx('select'); this.showDistrict(d); } else audio.sfx('wrong'); });
     });
@@ -73,22 +73,22 @@ export class MapScene extends Phaser.Scene {
     const kb = this.input.keyboard; this.curD = curD;
     kb.on('keydown-ENTER', () => { if (this.enterJob != null) this.play(this.enterJob); });
     kb.on('keydown-SPACE', () => { if (this.enterJob != null) this.play(this.enterJob); });
-    const step = d => { const n = this.curD + d; if (n >= 0 && n <= 5 && (n === 5 ? progress.unlocked >= BONUS_OPEN : progress.unlocked >= n * 3)) { this.curD = n; audio.sfx('select'); this.showDistrict(n); } };
+    const step = d => { const n = DORDER[DORDER.indexOf(this.curD) + d]; if (n != null && progress.isOpen(districtJobs(n)[0])) { this.curD = n; audio.sfx('select'); this.showDistrict(n); } };
     kb.on('keydown-LEFT', () => step(-1)); kb.on('keydown-RIGHT', () => step(1)); kb.on('keydown-UP', () => step(-1)); kb.on('keydown-DOWN', () => step(1));
     kb.on('keydown-ESC', () => wipeTo(this, 'Title'));
   }
   showDistrict(d) {
     this.list.removeAll(true);
-    const unlocked = progress.unlocked;
     const y0 = this.listY, D = DISTRICTS[d];
     this.list.add(panel(this, 4, y0, W - 8, H - y0 - 4));
-    this.list.add(txt(this, 12, y0 + 7, `${d + 1}. ${D.name}`, { size: 2, color: C.gold }));
+    this.list.add(txt(this, 12, y0 + 7, `${DORDER.indexOf(d) + 1}. ${D.name}`, { size: 2, color: C.gold }));
     this.list.add(txt(this, 12, y0 + 24, D.tag, { color: C.silver, maxW: W - 24 }));
     const rowH = Math.min(46, Math.floor((H - y0 - 80) / 3));
     let firstOpen = null;
-    for (let k = 0; k < (d === 5 ? 1 : 3); k++) {
-      const i = d * 3 + k, job = JOBS[i]; const y = y0 + 40 + k * (rowH + 3);
-      const open = d === 5 ? unlocked >= BONUS_OPEN : (i <= unlocked && i < 15), done = d === 5 ? progress.stars(15) > 0 : i < unlocked;
+    const js = districtJobs(d);
+    for (let k = 0; k < js.length; k++) {
+      const i = js[k], job = JOBS[i]; const y = y0 + 40 + k * (rowH + 3);
+      const open = progress.isOpen(i), done = progress.isDone(i);
       const row = this.add.rectangle(10, y, W - 20, rowH, hex(open ? C.storm : C.night)).setOrigin(0).setStrokeStyle(1, hex(done ? C.lime : open ? C.gold : C.storm));
       this.list.add(row);
       if (open) {

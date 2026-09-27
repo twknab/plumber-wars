@@ -3,7 +3,7 @@ import { W, H, txt, button, wipeTo, wipeIn, panel, stars as drawStars, banner, b
 import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
-import { HEROES, RIVALS, DISTRICTS, TRASH, pick } from '../data/content.js';
+import { HEROES, RIVALS, DISTRICTS, TRASH, pick, ORDER, nextJob, districtJobs } from '../data/content.js';
 import { JOBS } from '../data/jobs.js';
 import { portrait } from '../art/people.js';
 import { skyTex } from './Arrival.js';
@@ -24,7 +24,7 @@ export class Result extends Phaser.Scene {
     if (ok) this.win(ji, job, D, hero, stars, score, secsLeft, mistakes); else this.lose(ji, job, hero);
   }
   win(ji, job, D, hero, stars, score, secsLeft, mistakes) {
-    const first = ji === progress.unlocked;
+    const first = ORDER.indexOf(ji) === progress.unlocked;
     progress.complete(ji, stars); const best = progress.setBest(ji, score);
     txt(this, W / 2, 20, 'JOB DONE!', { ox: 0.5, size: 3, color: C.lime });
     txt(this, W / 2, 44, job.title + ' - ' + job.who, { ox: 0.5, color: C.white });
@@ -50,18 +50,17 @@ export class Result extends Phaser.Scene {
       txt(this, 20, bzY + 34, buzz.text, { color: C.white, maxW: W - 40 });
     }
     // district conquered?
-    const districtDone = (ji + 1) % 3 === 0 && first;
+    const districtDone = first && districtJobs(job.district).at(-1) === ji;
     if (districtDone) {
       this.time.delayedCall(900, () => {
         banner(this, `${D.name}`, { color: C.gold, size: 2, y: H * 0.3, dur: 2600, sub: "IS NOW G'S COUNTRY!" });
         audio.sfx('star'); audio.say(pick(TRASH.lose), { pitch: 0.5 });
       });
     }
-    const last = ji === 14, bonus = ji === 15;
+    const last = nextJob(ji) == null;
     const by = H - 70;
     if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
-    else if (bonus) button(this, W / 2, by, 190, 30, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
-    else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => goToJob(this, ji + 1), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => goToJob(this, nextJob(ji)), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
     button(this, W / 2 - 50, by + 38, 90, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
     button(this, W / 2 + 50, by + 38, 90, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });
     this.time.delayedCall(700, () => bubble(this, W / 2, 110, pick(hero.barks), { dur: 1800, color: C.forest }));

@@ -4,7 +4,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 export const SOURCES = {
-  ballard: { title: 'File:Hiram M Chittenden Locks pano 03.jpg', crop: [0.46, 0, 0.36, 1] },        // fishing fleet at the Locks
+  ballard: { title: 'File:Chittenden Locks overview 01.jpg', crop: [0, 0, 1, 1] },                 // the Locks from the park lawn
   fremont: { title: 'File:Fremont troll.jpg', crop: [0.08, 0, 0.84, 1] },                           // the Troll
   capitolhill: { title: 'File:Rainbow crosswalk Capitol Hill, Seattle.jpg', crop: [0, 0.08, 0.82, 0.84] }, // rainbow crosswalk
   westseattle: { title: 'File:Seattle Skyline from Alki (4230478801).jpg', crop: [0, 0.12, 1, 0.84] }, // downtown from Alki, Space Needle included

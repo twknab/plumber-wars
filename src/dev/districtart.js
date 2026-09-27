@@ -1,6 +1,6 @@
 // Dev-only: turns the Commons photos in tools/district-src/ (see scripts/districts.mjs) into
 // 270x170 pixel art on the game palette with ordered dithering -> public/districts/<key>.png.
-// Open /?districts=1 on the dev server.
+// Open /?districts=1 on the dev server (or /?districts=<key> for one district).
 import { C } from '../core/palette.js';
 
 const W = 270, H = 170;
@@ -13,6 +13,9 @@ const nearest = (r, g, b) => { // "redmean" perceptual distance
   return PAL[best];
 };
 
+// Per-photo color grading on top of the default (an overcast photo needs more push to read as sunny).
+const GRADE = { ballard: 'hue-rotate(22deg) saturate(1.7) contrast(1.12) brightness(1.04)' };
+
 async function convert(key, crop) {
   const img = new Image(); await new Promise((ok, no) => { img.onload = ok; img.onerror = no; img.src = `/tools/district-src/${key}.jpg`; }); // (decode() stalls in hidden tabs)
   const [cx, cy, cw, ch] = crop; const sx = cx * img.width, sy = cy * img.height, sw = cw * img.width, sh = ch * img.height;
@@ -21,7 +24,7 @@ async function convert(key, crop) {
   const mid = document.createElement('canvas'); mid.width = W * 2; mid.height = H * 2;
   const mx = mid.getContext('2d'); mx.imageSmoothingQuality = 'high'; mx.drawImage(img, sx + (sw - W / scale) / 2, sy + (sh - H / scale) / 2, W / scale, H / scale, 0, 0, W * 2, H * 2);
   const out = document.createElement('canvas'); out.width = W; out.height = H;
-  const ox = out.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.filter = 'saturate(1.25) contrast(1.12)'; ox.drawImage(mid, 0, 0, W, H);
+  const ox = out.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.filter = GRADE[key] || 'saturate(1.25) contrast(1.12)'; ox.drawImage(mid, 0, 0, W, H);
   const id = ox.getImageData(0, 0, W, H), d = id.data;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const i = (y * W + x) * 4, t = BAYER[(y & 3) * 4 + (x & 3)] * 34;
@@ -35,6 +38,7 @@ async function convert(key, crop) {
 export async function makeDistrictArt() {
   const credits = await (await fetch('/districts/credits.json')).json();
   const out = [];
-  for (const [key, c] of Object.entries(credits)) out.push(await convert(key, c.crop));
+  const only = new URLSearchParams(location.search).get('districts'); // /?districts=ballard redoes just one
+  for (const [key, c] of Object.entries(credits)) if (!only || only === '1' || only === key) out.push(await convert(key, c.crop));
   window.__districts = out; return out;
 }

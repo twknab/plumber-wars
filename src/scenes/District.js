@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { W, H, txt, setTxt, wipeTo, wipeIn, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
 import { C, hex } from '../core/palette.js';
-import { DISTRICTS, DISTRICT_WELCOME } from '../data/content.js';
+import { DISTRICTS, DISTRICT_WELCOME, ORDER, jobNo, districtJobs } from '../data/content.js';
 
 // "Welcome to <district>" intro: pixel art of the neighborhood (from an openly licensed photo, see
 // public/districts/credits.json), a Northwest-turf stamp, and Big Randy's welcome. Then the briefing.
@@ -21,21 +21,15 @@ export class District extends Phaser.Scene {
     for (let y = 0; y < H; y += 4) this.add.rectangle(0, y, W, 1, hex(C.night), 0.6).setOrigin(0);
     const top = Math.round(H * 0.25);
     txt(this, W / 2, top - 30, 'WELCOME TO', { ox: 0.5, size: 2, color: C.white });
-    // the art, framed, revealed with a quick scanline wipe
+    // the art, framed and perfectly still (no reveal, no drift)
     const key = 'district_' + D.art;
     const frame = this.add.rectangle(W / 2, top + 85, W - 4, 174, hex(C.gold)).setStrokeStyle(2, hex(C.ink));
-    let art;
-    if (this.textures.exists(key)) {
-      art = this.add.image(W / 2, top + 85, key);
-      const mask = this.add.rectangle(0, top, W, 0, 0xffffff).setOrigin(0).setVisible(false);
-      art.setMask(mask.createGeometryMask());
-      this.tweens.add({ targets: mask, height: 170, duration: 700, ease: 'Sine.out' });
-      this.tweens.add({ targets: art, y: art.y - 3, yoyo: true, repeat: -1, duration: 2600, ease: 'Sine.inOut' }); // gentle drift
-    } else frame.setFillStyle(hex(C.storm));
+    if (this.textures.exists(key)) this.add.image(W / 2, top + 85, key);
+    else frame.setFillStyle(hex(C.storm));
     const name = txt(this, W / 2, top + 186, D.name, { ox: 0.5, size: 3, color: C.gold });
     name.setScale(6).setAlpha(0);
     this.tweens.add({ targets: name, scale: 3, alpha: 1, duration: 350, delay: 500, ease: 'Back.out', onComplete: () => this.cameras.main.shake(120, 0.006) });
-    txt(this, W / 2, top + 216, this.ji === 15 ? 'BONUS LEVEL' : `JOBS ${this.ji + 1}-${this.ji + 3} OF 15`, { ox: 0.5, color: C.lime });
+    txt(this, W / 2, top + 216, (n => (n.length > 1 ? `JOBS ${n[0]}-${n.at(-1)}` : `JOB ${n[0]}`) + ` OF ${ORDER.length}`)(districtJobs(d).map(jobNo)), { ox: 0.5, color: C.lime });
     txt(this, W / 2, top + 230, D.tag, { ox: 0.5, color: C.silver, maxW: W - 30, align: 1 });
     // Northwest turf stamp slams onto the photo
     const stamp = this.add.container(W - 70, top + 30).setAngle(-12).setAlpha(0);

@@ -30,11 +30,16 @@ export const DISTRICTS = [
   { name: 'CAPITOL HILL', art: 'capitolhill', tag: 'STEEP HILLS. OLD PIPES. NO PARKING.', weather: 'drizzle', time: 'day', sky: 'overcast', road: 'E PINE ST', rain: 0.55 },
   { name: 'WEST SEATTLE', art: 'westseattle', tag: 'THE BRIDGE IS OPEN. THE SEWERS ARE NOT.', weather: 'storm', time: 'dusk', sky: 'dusk', road: 'CALIFORNIA AVE SW', rain: 1 },
   { name: 'QUEEN ANNE', art: 'queenanne', tag: 'OLD MONEY. OLDER PLUMBING. FINAL SHOWDOWN.', weather: 'storm', time: 'night', sky: 'night', road: 'W HIGHLAND DR', rain: 0.8 },
-  { name: 'ALKI BEACH', art: 'alki', tag: 'BONUS: VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0, bonus: true },
+  { name: 'ALKI BEACH', art: 'alki', tag: 'VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0 },
 ];
 
 // Difficulty curve per job index (0..14).
-export const BONUS = 15; // Alki Beach bonus job (unlocks with West Seattle, not needed for the finale)
+export const BONUS = 15; // Alki Beach (Timmy's tub): stored last, but played between West Seattle and Queen Anne
+// Campaign order (job indexes). Alki is required: Queen Anne stays locked until Timmy's tub drains.
+export const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, BONUS, 12, 13, 14];
+export const jobNo = ji => ORDER.indexOf(ji) + 1;                 // 1-based number shown to the player
+export const nextJob = ji => ORDER[ORDER.indexOf(ji) + 1];        // undefined after the finale job
+export const districtJobs = d => (d === 5 ? [BONUS] : [d * 3, d * 3 + 1, d * 3 + 2]);
 export function difficulty(i) {
   const t = (i === BONUS ? 10 : i) / 14; const d = Math.floor(i / 3);
   return {

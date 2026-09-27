@@ -1,14 +1,14 @@
 {
   "ballard": {
-    "title": "Hiram M Chittenden Locks pano 03.jpg",
+    "title": "Chittenden Locks overview 01.jpg",
     "artist": "Joe Mabel",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Hiram_M_Chittenden_Locks_pano_03.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chittenden_Locks_overview_01.jpg",
     "crop": [
-      0.46,
       0,
-      0.36,
+      0,
+      1,
       1
     ]
   },

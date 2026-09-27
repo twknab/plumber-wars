@@ -4,7 +4,7 @@ import { audio } from '../core/audio.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { skyline } from '../art/brand.js';
-import { TRASH, pick } from '../data/content.js';
+import { TRASH, pick, ORDER } from '../data/content.js';
 
 export class Title extends Phaser.Scene {
   constructor() { super('Title'); }
@@ -68,7 +68,7 @@ export class Title extends Phaser.Scene {
     const k = isTouch ? '' : ' [?]';
     if (has) {
       button(this, W / 2, by, 156, 26, 'CONTINUE', () => this.go('Map'), { size: 1, key: 'ENTER' });
-      txt(this, W / 2, by - 22, `AUTO-SAVED: JOB ${Math.min(15, progress.unlocked + 1)} OF 15`, { ox: 0.5, color: C.lime });
+      txt(this, W / 2, by - 22, `AUTO-SAVED: JOB ${Math.min(ORDER.length, progress.unlocked + 1)} OF ${ORDER.length}`, { ox: 0.5, color: C.lime });
       button(this, W / 2 - 40, by + 32, 76, 22, 'NEW GAME', () => this.confirmNew(), { color: 'btnGrey', textColor: C.white, key: 'N' });
       button(this, W / 2 + 40, by + 32, 76, 22, 'ABOUT', () => this.go('About'), { color: 'btnGrey', textColor: C.white, key: 'I' });
       button(this, W / 2, by + 60, 156, 22, 'HOW TO PLAY' + k, () => this.go('HowTo'), { color: 'btnBlue', textColor: C.white, key: ['H', 'FORWARD_SLASH'] });
