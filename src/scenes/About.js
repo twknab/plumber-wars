@@ -36,7 +36,7 @@ export class About extends Phaser.Scene {
     txt(this, W / 2, ay + 12, 'TIM KNAB', { ox: 0.5, size: 2, color: C.white });
     const open = () => { audio.sfx('select'); window.open(SITE, '_blank', 'noopener'); };
     button(this, W / 2, ay + 44, 170, 28, 'TIMKNAB.DEV  >', open, { color: 'btnBlue', textColor: C.white, sound: null, key: 'T' });
-    txt(this, W / 2, ay + 66, 'PIXELS, CHIPTUNES & TRASH TALK ALL MADE IN CODE WITH PHASER.', { ox: 0.5, color: C.steel, maxW: W - 30, align: 1 });
+    txt(this, W / 2, ay + 66, 'PIXELS, BANGERS & TRASH TALK ALL MADE IN CODE WITH PHASER.', { ox: 0.5, color: C.steel, maxW: W - 30, align: 1 });
 
     button(this, W / 2, H - 22, 150, 26, isTouch ? '< BACK' : '< BACK [ESC]', () => wipeTo(this, 'Title'), { color: 'btnGrey', textColor: C.white, key: ['ESC', 'BACKSPACE'] });
   }

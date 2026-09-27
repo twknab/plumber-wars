@@ -74,11 +74,14 @@ Everything is generated in code at boot — there are no image or audio asset fi
   ENDESGA-32 palette.
 - `src/art/*` — vehicles, roadside scenery, Seattle houses, repair close-ups, tools, portraits with moods, the
   G's badge, logo lettering, the Kerry Park skyline (and an orca).
-- `src/core/music.js` — electronic soundtrack engine: progressive house (title), psytrance (race), tech house
-  (repairs), deep house (map), big-room finale. Sine kicks with sidechain pump, noise claps/hats, detuned
-  supersaw stabs and pads, resonant acid lines, rolling basslines, arps. `/?music=1` renders every track to
-  `preview/*.wav` (dev server) with peak/RMS levels.
-- `src/core/audio.js` — chiptune SFX (~40), engine drone, recorded voices.
+- `src/core/music.js` — electronic soundtrack engine, 10 tracks: a big-room main theme (impact, snare-roll
+  build, riser, supersaw drop), minimal tech house (dispatch), psytrance (race), tech house (repairs), deep house
+  (map), piano house (job done), moody deep house (fired), festival-drop / tape-stop stings, big-room finale.
+  Sine kicks with sidechain pump, stereo supersaws, plucks, acid lines, high-pass build sweeps, reverb +
+  dotted-8th delay, glue compressor. `/?music=1` renders every track to `preview/*.wav` (dev server) with
+  peak/RMS levels.
+- `src/core/audio.js` — SFX (~40: supersaw plucks for the UI, drop hits for the countdown, a dubstep wub for
+  wrong tools), engine drone, recorded voices.
 - **Voices** — every spoken line is pre-recorded with Google Cloud Text-to-Speech (Chirp 3 HD voices: Big Randy,
   Skeeter and each Homie get their own) into `public/voice/`. Render new/changed lines with
   `node scripts/voices.mjs twk-experiments`; the browser's built-in speech is only a fallback.

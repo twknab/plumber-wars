@@ -137,7 +137,7 @@ export class Drive extends Phaser.Scene {
     this.tweens.add({ targets: hint, alpha: 0, delay: 3500, duration: 800 });
   }
   startCountdown() {
-    let n = 3; audio.engineOn();
+    let n = 3; audio.stopMusic(); audio.engineOn();
     const tick = () => {
       if (n > 0) { banner(this, String(n), { size: 5, dur: 500, color: C.gold }); audio.sfx('tick'); n--; this.time.delayedCall(650, tick); }
       else {

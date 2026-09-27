@@ -1,6 +1,6 @@
 // Dev-only: renders each soundtrack offline (no speakers needed) to preview/<track>.wav and reports
 // peak/RMS levels so the mix can be checked. Open /?music=1 on the dev server.
-import { DJ, TRACKS } from '../core/music.js';
+import { DJ, TRACKS, stepIndex } from '../core/music.js';
 
 function wav(buf) {
   const ch = buf.numberOfChannels, len = buf.length, rate = buf.sampleRate;
@@ -14,25 +14,26 @@ function wav(buf) {
   return new Blob([out], { type: 'audio/wav' });
 }
 
-async function render(name, seconds) {
+export async function render(name, seconds, save = true) {
   const tr = TRACKS[name]; const rate = 44100; const sd = 60 / tr.bpm / 4;
   const steps = tr.once ? tr.bars * 16 : Math.max(tr.bars * 16, Math.ceil(seconds / sd));
-  const len = Math.ceil((steps * sd + 2) * rate);
-  const ctx = new OfflineAudioContext(1, len, rate);
+  const len = Math.ceil((steps * sd + 2.5) * rate);
+  const ctx = new OfflineAudioContext(2, len, rate);
   const master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
   const musicBus = ctx.createGain(); musicBus.gain.value = 0.5; musicBus.connect(master);
   const nb = ctx.createBuffer(1, rate, rate); const d = nb.getChannelData(0); for (let i = 0; i < rate; i++) d[i] = Math.random() * 2 - 1;
-  const dj = new DJ({ ctx, musicBus, noise: nb }); dj.ensureBus();
-  for (let i = 0; i < steps; i++) dj.step(tr, i % (tr.bars * 16), 0.05 + i * sd, sd);
+  const dj = new DJ({ ctx, musicBus, noise: nb }); dj.cue(tr, 0.05);
+  for (let i = 0; i < steps; i++) dj.step(tr, stepIndex(tr, i), 0.05 + i * sd, sd, i === 0 && tr.entry);
   const buf = await ctx.startRendering();
-  const ch = buf.getChannelData(0); let peak = 0, sum = 0; for (let i = 0; i < ch.length; i++) { const a = Math.abs(ch[i]); if (a > peak) peak = a; sum += ch[i] * ch[i]; }
+  let peak = 0, sum = 0, n = 0;
+  for (let c = 0; c < 2; c++) { const ch = buf.getChannelData(c); for (let i = 0; i < ch.length; i++) { const a = Math.abs(ch[i]); if (a > peak) peak = a; sum += ch[i] * ch[i]; n++; } }
   const blob = wav(buf);
-  await fetch(`/__save?path=preview/${name}.wav`, { method: 'POST', body: blob });
-  return { name, bpm: tr.bpm, seconds: +(ch.length / rate).toFixed(1), peak: +peak.toFixed(3), rms: +Math.sqrt(sum / ch.length).toFixed(3) };
+  if (save) await fetch(`/__save?path=preview/${name}.wav`, { method: 'POST', body: blob });
+  return { name, bpm: tr.bpm, seconds: +(buf.length / rate).toFixed(1), peak: +peak.toFixed(3), rms: +Math.sqrt(sum / n).toFixed(3) };
 }
 
-export async function renderAll() {
+export async function renderAll(seconds = 32) {
   const out = [];
-  for (const name of Object.keys(TRACKS)) out.push(await render(name, 32));
+  for (const name of Object.keys(TRACKS)) out.push(await render(name, seconds));
   window.__music = out; return out;
 }

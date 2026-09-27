@@ -19,6 +19,7 @@ export class Result extends Phaser.Scene {
     this.add.image(0, 0, skyTex(this, job.district)).setOrigin(0);
     this.add.image(W / 2, H * 0.42, houseTextures(this, job, D.time === 'night')).setOrigin(0.5, 1).setAlpha(0.9);
     this.add.rectangle(0, H * 0.42, W, H, hex(C.ink), 0.9).setOrigin(0);
+    audio.music(ok ? 'victory' : 'fired', { after: true }); // after the win/lose sting
     if (ok) this.win(ji, job, D, hero, stars, score, secsLeft, mistakes); else this.lose(ji, job, hero);
   }
   win(ji, job, D, hero, stars, score, secsLeft, mistakes) {

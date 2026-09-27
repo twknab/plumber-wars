@@ -60,7 +60,8 @@ class Chip {
   }
 
   // --- music (electronic soundtrack, see music.js) -----------------------------------------
-  music(name) { if (!this.ctx) return; (this.dj = this.dj || new DJ(this)).play(name); }
+  // after = true waits for a playing sting (win/lose) to finish before starting the loop.
+  music(name, { after } = {}) { if (!this.ctx) return; const dj = (this.dj = this.dj || new DJ(this)); after ? dj.after(name) : dj.play(name); }
   stopMusic() { if (this.dj) this.dj.stop(); }
 
   // --- engine ------------------------------------------------------------------------------
@@ -79,12 +80,13 @@ class Chip {
   // --- sfx ---------------------------------------------------------------------------------
   sfx(name, k = 1) {
     if (!this.ctx) return;
-    const T = (o) => this.tone(o), N = (o) => this.hiss(o);
+    const T = (o) => this.tone(o), N = (o) => this.hiss(o), P = (n, t, dur, vol, o) => this.pluck(n, t, dur, vol, o);
     switch (name) {
-      case 'blip': T({ duty: 0.5, f: 880, dur: 0.04, vol: 0.12 }); break;
-      case 'select': T({ duty: 0.25, f: 660, dur: 0.05, vol: 0.14 }); T({ duty: 0.25, f: 990, t: 0.05, dur: 0.08, vol: 0.14 }); break;
-      case 'back': T({ duty: 0.25, f: 520, f2: 260, dur: 0.1, vol: 0.12 }); break;
-      case 'coin': T({ duty: 0.5, f: 988, dur: 0.06, vol: 0.13 }); T({ duty: 0.5, f: 1319, t: 0.06, dur: 0.18, vol: 0.13 }); break;
+      // UI sounds: short supersaw plucks (see pluck()) so the menus sit with the EDM soundtrack
+      case 'blip': P(['A5'], 0, 0.06, 0.09); break;
+      case 'select': P(['E5', 'A5'], 0, 0.07, 0.1); P(['A5', 'E6'], 0.06, 0.14, 0.1); break;
+      case 'back': P(['A5', 'E5'], 0, 0.14, 0.09, { cutoff: [2500, 200] }); break;
+      case 'coin': P(['B5'], 0, 0.06, 0.1); P(['E6'], 0.06, 0.2, 0.1); break;
       case 'boost': T({ type: 'sawtooth', f: 120, f2: 900, dur: 0.5, vol: 0.14 }); N({ dur: 0.6, vol: 0.12, filter: 'bandpass', fq: 600, fq2: 3000 }); break;
       case 'crash': N({ dur: 0.45, vol: 0.5, filter: 'lowpass', fq: 2400, fq2: 200 }); T({ type: 'square', f: 110, f2: 30, dur: 0.35, vol: 0.25 }); T({ duty: 0.125, f: 1600, f2: 400, dur: 0.12, vol: 0.08 }); break;
       case 'bump': N({ dur: 0.15, vol: 0.35, filter: 'lowpass', fq: 900, fq2: 150 }); T({ type: 'square', f: 90, f2: 40, dur: 0.12, vol: 0.2 }); break;
@@ -92,9 +94,9 @@ class Chip {
       case 'splash': N({ dur: 0.35, vol: 0.25, filter: 'bandpass', fq: 1800, fq2: 500, q: 1.5 }); break;
       case 'honk': T({ duty: 0.5, f: 392, dur: 0.28, vol: 0.12 }); T({ duty: 0.5, f: 494, dur: 0.28, vol: 0.12 }); T({ duty: 0.5, f: 392, t: 0.32, dur: 0.22, vol: 0.12 }); T({ duty: 0.5, f: 494, t: 0.32, dur: 0.22, vol: 0.12 }); break;
       case 'nwhonk': T({ type: 'sawtooth', f: 180, dur: 0.5, vol: 0.12 }); T({ type: 'sawtooth', f: 190, dur: 0.5, vol: 0.12 }); break;
-      case 'ding': T({ type: 'triangle', f: 1568, dur: 0.3, vol: 0.2 }); T({ type: 'sine', f: 3136, dur: 0.2, vol: 0.06 }); break;
-      case 'step': T({ duty: 0.25, f: 784, dur: 0.07, vol: 0.14 }); T({ duty: 0.25, f: 1047, t: 0.07, dur: 0.07, vol: 0.14 }); T({ duty: 0.25, f: 1568, t: 0.14, dur: 0.16, vol: 0.14 }); break;
-      case 'wrong': T({ duty: 0.5, f: 180, dur: 0.12, vol: 0.18 }); T({ duty: 0.5, f: 150, t: 0.13, dur: 0.22, vol: 0.18 }); break;
+      case 'ding': P(['G6', 'D7'], 0, 0.35, 0.12, { cutoff: [9000, 2500] }); break;
+      case 'step': P(['C5', 'G5'], 0, 0.08, 0.1); P(['E5', 'C6'], 0.07, 0.08, 0.1); P(['G5', 'E6'], 0.14, 0.2, 0.11); break;
+      case 'wrong': this.wub(0, 0.32, 55); break;
       case 'ratchet': N({ dur: 0.02, vol: 0.2 * k, filter: 'bandpass', fq: 3500, q: 3 }); T({ duty: 0.125, f: 2200, dur: 0.015, vol: 0.05 }); break;
       case 'plunge': T({ type: 'sine', f: 220, f2: 70, dur: 0.18, vol: 0.4 }); N({ dur: 0.15, vol: 0.12, filter: 'lowpass', fq: 600 }); break;
       case 'plop': T({ type: 'sine', f: 300, f2: 900, dur: 0.08, vol: 0.25 }); break;
@@ -109,13 +111,39 @@ class Chip {
       case 'crack': N({ dur: 0.18, vol: 0.45, fq: 1500 }); T({ duty: 0.125, f: 3000, f2: 200, dur: 0.15, vol: 0.12 }); break;
       case 'throw': T({ duty: 0.25, f: 400, f2: 1400, dur: 0.12, vol: 0.08 }); break;
       case 'fart': T({ type: 'sawtooth', f: 90, f2: 60, dur: 0.35, vol: 0.25 }); T({ duty: 0.125, f: 95, f2: 70, dur: 0.35, vol: 0.15 }); break;
-      case 'go': T({ duty: 0.5, f: 523, dur: 0.12, vol: 0.14 }); T({ duty: 0.5, f: 1047, t: 0.12, dur: 0.3, vol: 0.16 }); break;
-      case 'tick': T({ duty: 0.5, f: 1400, dur: 0.03, vol: 0.07 }); break;
-      case 'alarm': T({ duty: 0.5, f: 880, dur: 0.1, vol: 0.1 }); T({ duty: 0.5, f: 660, t: 0.12, dur: 0.1, vol: 0.1 }); break;
-      case 'star': T({ duty: 0.25, f: 1319, dur: 0.06, vol: 0.12 }); T({ duty: 0.25, f: 1760, t: 0.06, dur: 0.06, vol: 0.12 }); T({ duty: 0.25, f: 2637, t: 0.12, dur: 0.2, vol: 0.12 }); break;
+      // "GO!": a drop hit — sub boom, noise burst and a wide major stab
+      case 'go': this.boom(0.55); N({ dur: 0.5, vol: 0.2, filter: 'lowpass', fq: 6000, fq2: 400 }); P(['C5', 'E5', 'G5', 'C6'], 0, 0.45, 0.14, { cutoff: [7000, 900] }); break;
+      // countdown: a driven kick plus a short upward noise swoosh
+      case 'tick': this.boom(0.35, 0.3); N({ dur: 0.35, vol: 0.1, filter: 'bandpass', fq: 600, fq2: 5000, q: 2 }); break;
+      // phone ring as an EDM siren lead
+      case 'alarm': T({ type: 'sawtooth', f: 880, f2: 1320, dur: 0.1, vol: 0.06, slide: 'lin' }); T({ type: 'sawtooth', f: 1320, f2: 880, t: 0.1, dur: 0.12, vol: 0.06, slide: 'lin' }); break;
+      case 'star': P(['E6'], 0, 0.07, 0.1); P(['A6'], 0.06, 0.07, 0.1); P(['E7'], 0.12, 0.25, 0.1, { cutoff: [9000, 2000] }); break;
       case 'grunt': T({ duty: 0.5, f: 110 + Math.random() * 40, f2: 70, dur: 0.12, vol: 0.14 }); break;
       default: T({ duty: 0.5, f: 440, dur: 0.05, vol: 0.1 });
     }
+  }
+  // Supersaw pluck: detuned saws through a snappy low-pass envelope.
+  pluck(notes, t = 0, dur = 0.1, vol = 0.1, { cutoff = [6000, 700] } = {}) {
+    const at = this.now + t, c = this.ctx, f = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'lowpass'; f.Q.value = 2; f.frequency.setValueAtTime(cutoff[0], at); f.frequency.exponentialRampToValueAtTime(cutoff[1], at + dur);
+    const peak = vol / Math.sqrt(notes.length * 3); g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(peak, at + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    f.connect(g); g.connect(this.sfxBus);
+    for (const n of notes) for (const dt of [-12, 0, 12]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = freq(n); o.detune.value = dt; o.connect(f); o.start(at); o.stop(at + dur + 0.02); }
+  }
+  // Kick-style sub boom (tick / GO!).
+  boom(vol = 0.5, dur = 0.5) {
+    const at = this.now, o = this.ctx.createOscillator(), g = this.ctx.createGain(); o.type = 'sine';
+    o.frequency.setValueAtTime(180, at); o.frequency.exponentialRampToValueAtTime(40, at + dur * 0.5);
+    g.gain.setValueAtTime(vol, at); g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(this.sfxBus); o.start(at); o.stop(at + dur + 0.02);
+  }
+  // Dubstep "wub": a detuned saw bass with a wobbling low-pass (the wrong-tool buzzer).
+  wub(t, dur, f0) {
+    const at = this.now + t, c = this.ctx, fl = c.createBiquadFilter(), g = c.createGain(), lfo = c.createOscillator(), depth = c.createGain();
+    fl.type = 'lowpass'; fl.Q.value = 8; fl.frequency.value = 500; lfo.frequency.value = 9; depth.gain.value = 420; lfo.connect(depth); depth.connect(fl.frequency);
+    g.gain.setValueAtTime(0.2, at); g.gain.setValueAtTime(0.2, at + dur - 0.05); g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    fl.connect(g); g.connect(this.sfxBus); lfo.start(at); lfo.stop(at + dur + 0.02);
+    for (const dt of [-15, 15]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, at); o.frequency.exponentialRampToValueAtTime(f0 * 0.8, at + dur); o.detune.value = dt; o.connect(fl); o.start(at); o.stop(at + dur + 0.02); }
   }
   // Typewriter voice blip — each speaker has a base pitch.
   voice(pitch = 1) { if (!this.ctx) return; this.tone({ duty: 0.5, f: (160 + Math.random() * 60) * pitch, dur: 0.035, vol: 0.06 }); }

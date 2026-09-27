@@ -14,7 +14,7 @@ export class Brief extends Phaser.Scene {
   async create({ job: ji = 0 }) {
     this.left = false; // scenes are reused between jobs
     wipeIn(this);
-    audio.stopMusic();
+    audio.music('brief');
     const job = JOBS[ji], D = DISTRICTS[job.district], hero = HEROES.find(h => h.id === progress.hero) || HEROES[0];
     this.add.rectangle(0, 0, W, H, hex(C.night)).setOrigin(0);
     for (let y = 0; y < H; y += 4) this.add.rectangle(0, y, W, 1, hex(C.ink), 0.5).setOrigin(0);
