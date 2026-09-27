@@ -19,7 +19,7 @@ export const progress = {
   totalStars() { return Object.values(store.get('stars', {})).reduce((a, b) => a + b, 0); },
   complete(i, stars) {
     const s = { ...store.get('stars', {}) }; s[i] = Math.max(s[i] || 0, stars); store.set('stars', s);
-    if (i === this.unlocked) store.set('unlocked', i + 1);
+    if (i === this.unlocked && i < 15) store.set('unlocked', i + 1); // bonus job (15) never advances the campaign
   },
   best(i) { return (store.get('best', {}))[i] || 0; },
   setBest(i, score) { const b = { ...store.get('best', {}) }; if (score > (b[i] || 0)) { b[i] = score; store.set('best', b); return true; } return false; },

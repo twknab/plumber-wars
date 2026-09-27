@@ -174,6 +174,12 @@ export function drawHouse(h, { W = 220, H = 170, night = false, seed = 1 } = {})
   if (ex === 'bunker') for (let i = 0; i < 5; i++) { p.ellipse(bx - 8 + i * 9, gY - 3, 5, 3, C.tan); p.ellipse(bx - 4 + i * 9, gY - 8, 5, 3, C.sand); }
   if (ex === 'cedar') { fir(p, 14, gY - 110, 112); fir(p, W - 16, gY - 96, 98); }
   if (ex === 'hedge') for (let i = 0; i < W; i += 10) p.blob(i + 5, gY + 6, 7, 6, [C.deep, C.forest, C.green, C.lime]);
+  if (ex === 'alki') { // beach apartment: kayaks on the rack, volleyball, sand
+    p.rect(0, gY, W, H - gY, C.sand); p.dither(0, gY, W, H - gY, C.tan, 0.3);
+    for (let k = 0; k < 2; k++) { const ky = gY - 10 - k * 6; p.poly([[bx + bw - 60, ky], [bx + bw - 54, ky - 3], [bx + bw - 10, ky - 3], [bx + bw - 4, ky], [bx + bw - 10, ky + 3], [bx + bw - 54, ky + 3]], k ? C.cyan : C.gold); p.ellipse(bx + bw - 32, ky, 6, 1.5, C.ink); }
+    p.ellipse(bx + 12, gY + 6, 4, 4, C.white); p.line(bx + 9, gY + 6, bx + 15, gY + 6, C.flame);
+    for (let i = 0; i < 3; i++) p.rect(bx + 20 + i * 36, by + 10, 22, 2, C.silver); // balconies
+  }
   if (ex === 'cyber') { p.rect(bx + bw - 26, by + 6, 18, 6, C.ink); p.art(bx + bw - 25, by + 7, ['#.#.###.###', '###.#...#.#'], { '#': C.cyan }); }
   if (ex === 'gala') { for (let i = 0; i < 6; i++) { const x0 = bx + 10 + i * 34; p.line(x0, gY - 30, x0, gY - 50, C.silver); p.blob(x0, gY - 54, 4, 5, [C.crimson, C.red, C.pink]); } p.rect(cx - 30, by - 8, 60, 9, C.gold); p.art(cx - 9, by - 6, ['.##..#..#...#.', '#...#.#.#..#.#', '#.#.###.#..###', '.##.#.#.##.#.#'], { '#': C.ink }); }
   // mailbox with house number

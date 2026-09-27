@@ -8,7 +8,8 @@ import { JOBS } from '../data/jobs.js';
 import { PX } from '../core/pixel.js';
 import { portrait } from '../art/people.js';
 
-const NODES = [[62, 52], [118, 62], [182, 128], [60, 204], [104, 108]];
+const NODES = [[62, 52], [118, 62], [182, 128], [60, 204], [104, 108], [26, 176]];
+const BONUS_OPEN = 9; // Alki opens once West Seattle does
 
 function drawMap(scene) {
   if (scene.textures.exists('seattleMap')) return;
@@ -46,7 +47,7 @@ export class MapScene extends Phaser.Scene {
     // header
     this.add.image(14, 14, 'badge').setScale(0.6);
     txt(this, 28, 5, "G'S PLUMBING DISPATCH", { color: C.lime });
-    txt(this, 28, 16, `LEAD: ${hero.name}   ` + '`' + ` ${progress.totalStars()}/45`, { color: C.gold });
+    txt(this, 28, 16, `LEAD: ${hero.name}   ` + '`' + ` ${progress.totalStars()}/48`, { color: C.gold });
     soundToggle(this, W - 12, 12);
     const unlocked = progress.unlocked;
     const curD = Math.min(4, Math.floor(unlocked / 3));
@@ -57,11 +58,11 @@ export class MapScene extends Phaser.Scene {
     this.add.rectangle(W - 83, top + 17, 74, 2, hex(C.storm)).setOrigin(0); this.add.rectangle(W - 83, top + 17, 74 * share / 100, 2, hex(C.red)).setOrigin(0);
     // nodes
     NODES.forEach(([x, y], d) => {
-      const done = unlocked >= (d + 1) * 3, open = unlocked >= d * 3;
+      const bonus = d === 5; const done = bonus ? progress.stars(15) > 0 : unlocked >= (d + 1) * 3, open = bonus ? unlocked >= BONUS_OPEN : unlocked >= d * 3;
       const col = done ? C.lime : open ? C.gold : C.red;
       const ring = this.add.circle(x, top + y, 9, hex(C.ink)).setStrokeStyle(2, hex(col));
       if (done) this.add.image(x, top + y, 'badge').setScale(0.4); else this.add.image(x, top + y, open ? 'iPin' : 'iTruck').setScale(open ? 1.4 : 1);
-      txt(this, x, top + y + 12, DISTRICTS[d].name, { ox: 0.5, color: col });
+      txt(this, x + (bonus ? 12 : 0), top + y + 12, bonus ? 'ALKI (BONUS)' : DISTRICTS[d].name, { ox: 0.5, color: bonus && open && !done ? C.cyan : col });
       if (d === curD && !done) this.tweens.add({ targets: ring, scale: 1.5, alpha: 0.3, yoyo: true, repeat: -1, duration: 500 });
       ring.setInteractive({ useHandCursor: true }).on('pointerup', () => { if (open) { audio.sfx('select'); this.showDistrict(d); } else audio.sfx('wrong'); });
     });
@@ -71,7 +72,7 @@ export class MapScene extends Phaser.Scene {
     const kb = this.input.keyboard; this.curD = curD;
     kb.on('keydown-ENTER', () => { if (this.enterJob != null) this.play(this.enterJob); });
     kb.on('keydown-SPACE', () => { if (this.enterJob != null) this.play(this.enterJob); });
-    const step = d => { const n = this.curD + d; if (n >= 0 && n <= 4 && progress.unlocked >= n * 3) { this.curD = n; audio.sfx('select'); this.showDistrict(n); } };
+    const step = d => { const n = this.curD + d; if (n >= 0 && n <= 5 && (n === 5 ? progress.unlocked >= BONUS_OPEN : progress.unlocked >= n * 3)) { this.curD = n; audio.sfx('select'); this.showDistrict(n); } };
     kb.on('keydown-LEFT', () => step(-1)); kb.on('keydown-RIGHT', () => step(1)); kb.on('keydown-UP', () => step(-1)); kb.on('keydown-DOWN', () => step(1));
     kb.on('keydown-ESC', () => wipeTo(this, 'Title'));
   }
@@ -84,9 +85,9 @@ export class MapScene extends Phaser.Scene {
     this.list.add(txt(this, 12, y0 + 24, D.tag, { color: C.silver, maxW: W - 24 }));
     const rowH = Math.min(46, Math.floor((H - y0 - 80) / 3));
     let firstOpen = null;
-    for (let k = 0; k < 3; k++) {
+    for (let k = 0; k < (d === 5 ? 1 : 3); k++) {
       const i = d * 3 + k, job = JOBS[i]; const y = y0 + 40 + k * (rowH + 3);
-      const open = i <= unlocked && i < 15, done = i < unlocked;
+      const open = d === 5 ? unlocked >= BONUS_OPEN : (i <= unlocked && i < 15), done = d === 5 ? progress.stars(15) > 0 : i < unlocked;
       const row = this.add.rectangle(10, y, W - 20, rowH, hex(open ? C.storm : C.night)).setOrigin(0).setStrokeStyle(1, hex(done ? C.lime : open ? C.gold : C.storm));
       this.list.add(row);
       if (open) {

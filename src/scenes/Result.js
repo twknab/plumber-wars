@@ -53,9 +53,10 @@ export class Result extends Phaser.Scene {
         audio.sfx('star'); audio.say(pick(TRASH.lose), { pitch: 0.5 });
       });
     }
-    const last = ji >= 14;
+    const last = ji === 14, bonus = ji === 15;
     const by = H - 70;
     if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
+    else if (bonus) button(this, W / 2, by, 190, 30, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
     else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => wipeTo(this, 'Brief', { job: ji + 1 }), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
     button(this, W / 2 - 50, by + 38, 90, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
     button(this, W / 2 + 50, by + 38, 90, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });

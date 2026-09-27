@@ -26,11 +26,13 @@ export const DISTRICTS = [
   { name: 'CAPITOL HILL', tag: 'STEEP HILLS. OLD PIPES. NO PARKING.', weather: 'drizzle', time: 'day', sky: 'overcast', road: 'E PINE ST', rain: 0.55 },
   { name: 'WEST SEATTLE', tag: 'THE BRIDGE IS OPEN. THE SEWERS ARE NOT.', weather: 'storm', time: 'dusk', sky: 'dusk', road: 'CALIFORNIA AVE SW', rain: 1 },
   { name: 'QUEEN ANNE', tag: 'OLD MONEY. OLDER PLUMBING. FINAL SHOWDOWN.', weather: 'storm', time: 'night', sky: 'night', road: 'W HIGHLAND DR', rain: 0.8 },
+  { name: 'ALKI BEACH', tag: 'BONUS: VOLLEYBALL, FISH & CHIPS & ONE ENORMOUS DUDE.', weather: 'clear', time: 'day', sky: 'day', road: 'ALKI AVE SW', rain: 0, bonus: true },
 ];
 
 // Difficulty curve per job index (0..14).
+export const BONUS = 15; // Alki Beach bonus job (unlocks with West Seattle, not needed for the finale)
 export function difficulty(i) {
-  const t = i / 14; const d = Math.floor(i / 3);
+  const t = (i === BONUS ? 10 : i) / 14; const d = Math.floor(i / 3);
   return {
     district: d, t,
     raceLength: Math.round(14000 + i * 800),          // px of road to the house

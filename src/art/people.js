@@ -28,15 +28,22 @@ export function drawPortrait(look, mood = 'happy') {
   }
   if (style === 'perm') for (let i = 0; i < 30; i++) p.blob(12 + (i * 5) % 25, 6 + Math.floor(i / 5) * 3 - (i % 5 === 2 ? 1 : 0), 3.2, 3.2, hr);
   // shoulders / shirt
+  if (look.jacked) { // huge delts + tank top
+    p.poly([[0, 48], [2, 36], [10, 30], [20, 31], [28, 31], [38, 30], [46, 36], [48, 48]], sk[1]);
+    p.blob(8, 38, 8, 8, sk); p.blob(40, 38, 8, 8, sk); p.shade(0, 42, 48, 6, sk[0], 0.4);
+    p.poly([[14, 48], [16, 34], [20, 32], [28, 32], [32, 34], [34, 48]], look.shirt); p.rect(16, 30, 3, 6, look.shirt); p.rect(29, 30, 3, 6, look.shirt);
+    p.line(19, 40, 29, 40, sh[1]); p.vline(24, 40, 8, sh[1]);
+  } else {
   p.poly([[4, 48], [9, 36], [18, 32], [30, 32], [39, 36], [44, 48]], sh[2]);
   p.poly([[4, 48], [9, 36], [14, 34], [12, 48]], sh[1]); p.poly([[44, 48], [39, 36], [36, 35], [37, 48]], sh[1]);
   p.hline(18, 32, 12, sh[3]);
   if (look.vest) { p.poly([[9, 48], [12, 36], [19, 33], [20, 48]], C.storm); p.poly([[39, 48], [36, 36], [29, 33], [28, 48]], C.storm); }
   if (look.camo) { for (let i = 0; i < 18; i++) p.ellipse(6 + (i * 13) % 36, 36 + (i * 7) % 11, 2, 1.5, i % 2 ? C.forest : C.brown); }
+  }
   // neck
   p.rect(20, 28, 8, 6, sk[1]); p.hline(20, 33, 8, sk[0]);
   // collar / workwear name patch
-  if (!look.vest && !look.bowtie && !look.pearls) { p.poly([[18, 32], [24, 38], [22, 32]], sh[3]); p.poly([[30, 32], [24, 38], [26, 32]], sh[3]); }
+  if (!look.vest && !look.bowtie && !look.pearls && !look.jacked) { p.poly([[18, 32], [24, 38], [22, 32]], sh[3]); p.poly([[30, 32], [24, 38], [26, 32]], sh[3]); }
   if (look.bowtie) { p.poly([[19, 34], [24, 36], [19, 38]], C.red); p.poly([[29, 34], [24, 36], [29, 38]], C.red); p.rect(23, 35, 2, 2, C.crimson); p.poly([[18, 32], [24, 35], [22, 32]], C.white); p.poly([[30, 32], [24, 35], [26, 32]], C.white); }
   if (look.pearls) for (let i = 0; i < 7; i++) p.px(19 + i * 1.6, 34 + Math.sin(i / 6 * Math.PI) * 2, C.white);
   if (look.patch) { p.ellipse(33, 41, 5, 4, C.ink); p.ellipse(33, 41, 4, 3, C.forest); p.ring(33, 41, 4, 3, C.gold); p.art(32, 39, ['##', '#.', '##'], { '#': C.yellow }); p.px(33, 40, C.yellow); }

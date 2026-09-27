@@ -249,6 +249,21 @@ export const JOBS = [
       { t: 'STREET WATER ON - SLOWLY', tool: 'meterkey', type: 'turn', target: 'curb', dir: -1, turns: 0.5, tip: 'SLOWLY. LET THE PIPES FILL WITHOUT A HAMMER BANG.' },
       { t: 'BLEED THE AIR', tool: 'hand', type: 'taps', target: 'faucets', count: 3, tip: 'OPEN FAUCETS UNTIL THE SPUTTERING STOPS. THE GALA IS SAVED!' },
     ] },
+
+  // ----------------------------------------------------------------- ALKI BEACH (bonus)
+  { title: 'HAIR-CLOGGED BATHROOM SINK', scene: 'sink', variant: 'alki', address: '2600 ALKI AVE SW, APT 3', bonus: true,
+    who: 'JIMMY', look: { skin: 'tan', hair: 'brown', style: 'long', beard: 'stubble', shirt: '#e43b44', jacked: true },
+    house: { style: 'townhouse', body: '#feae34', trim: '#ffffff', roof: '#124e89', door: '#0099db', extra: 'alki' },
+    call: "BRO. MY SINK WON'T DRAIN. I RINSE MY HAIR IN IT AFTER KAYAKING. ALSO BOY - MY SQUIRREL - MIGHT'VE STASHED AN ACORN IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
+    steps: [
+      { t: 'UNSCREW THE PIVOT NUT', tool: 'pliers', type: 'turn', target: 'pivot', dir: -1, turns: 1, tip: 'BEHIND THE DRAIN PIPE UNDER THE SINK. IT HOLDS THE POP-UP ROD IN PLACE.', early: 'YOU YANKED THE STOPPER WITH THE ROD STILL HOOKED. SNAP. JIMMY FLEXES SADLY.' },
+      { t: 'SLIDE OUT THE PIVOT ROD', tool: 'hand', type: 'pull', target: 'rod', dir: [1, 0], dist: 28, tip: 'THE ROD HOOKS THROUGH THE STOPPER. PULL IT BACK AND THE STOPPER COMES FREE.' },
+      { t: 'LIFT OUT THE POP-UP STOPPER', tool: 'hand', type: 'pull', target: 'popup', dir: [0, -1], dist: 26, keep: true, tip: 'NINE TIMES OUT OF TEN THE CLOG IS WRAPPED RIGHT AROUND THE STOPPER.', fx: ['show:popGrime', 'show:hairS'] },
+      { t: 'SCRUB THE STOPPER', tool: 'brush', type: 'scrub', target: 'popGrime', amount: 0.9, tip: 'SOAP SCUM + TOOTHPASTE + HAIR = THE GRAY STUFF. SCRUB IT OFF.' },
+      { t: 'ZIP-IT: HAIR + ONE ACORN', tool: 'zipit', type: 'pull', target: 'hairS', dir: [0, -1], dist: 56, tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (BOY WANTS HIS ACORN BACK.)" },
+      { t: 'SNUG THE PIVOT NUT', tool: 'pliers', type: 'hold', target: 'pivot', zone: [0.55, 0.75], label: 'TORQUE', pre: ['restore:popup', 'hide:popGrime', 'restore:rod'], tip: 'STOPPER BACK IN, ROD THROUGH THE HOLE, NUT SNUG. TOO TIGHT AND THE STOPPER WON\'T MOVE.' },
+      { t: 'RUN THE WATER', tool: 'hand', type: 'tap', target: 'fhandle', tip: 'DRAINS LIKE A RIPTIDE. TELL JIMMY TO USE A HAIR CATCHER. HE WILL NOT.' },
+    ] },
 ];
 
 // Tray contents for a job: every required tool/part + decoys + distractor tools, max 10.
@@ -262,3 +277,4 @@ export function trayFor(job) {
 }
 
 JOBS.forEach((j, i) => { j.id = i; j.district = Math.floor(i / 3); });
+export const MAIN_JOBS = 15;

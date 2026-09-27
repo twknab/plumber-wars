@@ -98,11 +98,12 @@ function toilet(scene, v) {
 // ------------------------------------------------------------------ SINK / CABINET
 function sink(scene, v) {
   const bg = new PX(SW, SH);
-  const vanity = v === 'vanity';
+  const vanity = v === 'vanity' || v === 'alki', alki = v === 'alki';
   // backsplash
   if (vanity) tiles(bg, 0, 0, SW, 70, 12, 12, C.sand, C.tan, false); else tiles(bg, 0, 0, SW, 70, 16, 8, C.white, C.silver, true);
   if (!vanity) { bg.rect(190, 6, 64, 44, C.sand); bg.vgrad(194, 10, 56, 36, [C.cyan, C.blue]); bg.vline(222, 10, 36, C.sand); bg.hline(194, 28, 56, C.sand); bg.box(189, 5, 66, 46, C.ink); for (let i = 0; i < 4; i++) bg.px(200 + i * 12, 40 - i * 3, C.white); }
-  if (vanity) { bg.rect(80, 2, 110, 50, C.silver); bg.vgrad(84, 6, 102, 42, [C.steel, C.silver, C.white]); bg.box(79, 1, 112, 52, C.ink); bg.line(96, 12, 110, 40, C.white); }
+  if (alki) alkiWall(bg);
+  if (vanity && !alki) { bg.rect(80, 2, 110, 50, C.silver); bg.vgrad(84, 6, 102, 42, [C.steel, C.silver, C.white]); bg.box(79, 1, 112, 52, C.ink); bg.line(96, 12, 110, 40, C.white); }
   // counter
   bg.rect(0, 64, SW, 16, vanity ? C.white : C.clay); bg.hline(0, 64, SW, vanity ? C.white : C.tan); bg.rect(0, 76, SW, 4, vanity ? C.silver : C.brown);
   if (!vanity) for (let i = 0; i < SW; i += 9) bg.vline(i, 66, 10, C.brown);
@@ -122,7 +123,7 @@ function sink(scene, v) {
   // angle stops + risers
   for (const [x, col] of [[80, RAMP.red], [190, RAMP.blue]]) {
     pipeH(bg, x - 6, 175, 60, 6, RAMP.copper); bg.rect(x - 6, 168, 12, 18, C.silver); bg.box(x - 6, 168, 12, 18, C.ink); // escutcheon
-    if (!(vanity && x === 190)) { bg.rect(x + 1, 90, 3, 62, C.silver); for (let j = 90; j < 152; j += 3) bg.px(x + 2, j, C.steel); }
+    if (!(v === 'vanity' && x === 190)) { bg.rect(x + 1, 90, 3, 62, C.silver); for (let j = 90; j < 152; j += 3) bg.px(x + 2, j, C.steel); }
     nut(bg, x - 2, 150, 8, 7);
   }
   // clutter: dish soap, sponge bucket
@@ -175,7 +176,8 @@ function sink(scene, v) {
     parts.tail = { key: 'p_tail', x: 135, y: 96, ox: 0.5, oy: 0, depth: 2 };
     pipeTrap(scene, parts, 135, 186);
   }
-  if (vanity) {
+  if (alki) alkiParts(scene, parts);
+  if (v === 'vanity') {
     part(scene, 'p_line', 44, 100, p => { p.thick(4, 96, 30, 50, 4, C.white); p.thick(30, 50, 26, 4, 4, C.white); p.line(5, 94, 29, 50, C.silver); nut(p, 20, 0, 12, 7, RAMP.pvc); nut(p, 0, 92, 12, 7, RAMP.pvc); p.ellipse(28, 60, 3, 2, C.cyan); });
     parts.line = { key: 'p_line', x: 190, y: 82, ox: 0.5, oy: 0, depth: 2 };
     part(scene, 'p_lineNew', 44, 100, p => { p.thick(4, 96, 30, 50, 4, C.silver); p.thick(30, 50, 26, 4, 4, C.silver); for (let j = 4; j < 96; j += 3) p.px(27 + Math.round((j - 50) * -0.05), j, C.steel); nut(p, 20, 0, 12, 7); nut(p, 0, 92, 12, 7); });
@@ -185,10 +187,46 @@ function sink(scene, v) {
     fhandle: { x: 146, y: 44, r: 22 }, fscrew: { x: 138, y: 42, r: 22 }, fnut: { x: 140, y: 50, r: 22 }, cart: { x: 140, y: 42, r: 22 }, drain: { x: 135, y: 69, r: 22 },
     stopC: { x: 216, y: 178, r: 24 }, stopH: { x: 106, y: 178, r: 24 }, stopNut: { x: 190, y: 172, r: 22 }, tail: { x: 190, y: 88, r: 22 }, lineSpot: { x: 190, y: 130, r: 34 },
     slip: { x: 135, y: v === 'disposal' ? 172 : 190, r: 24 }, trap: { x: 150, y: 222, r: 32 }, under: { x: 150, y: 262, r: 34 }, arm: { x: 205, y: 204, r: 26 }, grime: { x: 150, y: 262, r: 34 },
+    pivot: { x: 148, y: 126, r: 22 }, rod: { x: 166, y: 126, r: 24 }, popup: { x: 135, y: 64, r: 22 }, popGrime: { x: 135, y: 34, r: 24 }, hairS: { x: 135, y: 66, r: 22 },
     hex: { x: 135, y: 162, r: 26 }, reset: { x: 150, y: 158, r: 18 }, junk: { x: 135, y: 64, r: 22 }, plug: { x: 44, y: 244, r: 22 }, outlet: { x: 38, y: 247, r: 24 },
   };
   return { bg: 'fx_sink_' + v, parts, anchors };
 }
+// Jimmy's Alki apartment wall: kayak on the wall, an electric guitar, an amanita, and Boy the squirrel.
+function alkiWall(bg) {
+  bg.rect(0, 0, SW, 64, C.cyan); bg.dither(0, 0, SW, 64, C.blue, 0.12); for (let i = 0; i < SW; i += 30) bg.vline(i, 0, 64, C.blue);
+  // kayak on wall hooks
+  bg.poly([[8, 16], [30, 9], [170, 9], [196, 16], [170, 23], [30, 23]], C.gold); bg.hline(30, 9, 140, C.yellow); bg.hline(30, 22, 140, C.flame);
+  bg.ellipse(100, 16, 22, 4, C.ink); bg.ellipse(100, 15, 20, 2.5, C.night); bg.hline(12, 16, 184, C.flame);
+  bg.art(52, 13, ['#.#.#.#', '###.###', '#.#.#.#'], { '#': C.ink }); // "HI" sticker, obviously
+  for (const x of [40, 160]) { bg.rect(x, 5, 3, 6, C.slate); bg.rect(x, 23, 3, 4, C.slate); }
+  // paddle
+  bg.line(20, 30, 70, 58, C.brown); bg.ellipse(20, 30, 5, 3, C.forest); bg.ellipse(70, 58, 5, 3, C.forest);
+  // electric guitar leaning against the wall (clear of the customer portrait)
+  bg.thick(212, 2, 203, 42, 2, C.brown); bg.rect(210, 0, 6, 5, C.ink); for (let j = 8; j < 40; j += 6) bg.px(208 - (j - 8) * 0.22, j, C.silver);
+  bg.blob(200, 52, 12, 10, [C.umber, C.crimson, C.red, C.pink]); bg.blob(195, 44, 7, 6, [C.umber, C.crimson, C.red]);
+  bg.rect(195, 50, 10, 2, C.ink); bg.rect(197, 55, 6, 2, C.white); for (const x of [199, 203]) bg.px(x, 60, C.silver);
+  // amanita mushroom terrarium on the counter
+  bg.rect(26, 48, 20, 16, '#c0cbdc60'); bg.box(26, 48, 20, 16, C.silver); bg.rect(27, 60, 18, 3, C.brown);
+  bg.rect(34, 54, 4, 6, C.white); bg.ellipse(36, 53, 7, 4, C.red); bg.px(33, 51, C.white); bg.px(38, 52, C.white); bg.px(36, 50, C.white);
+  // Boy the squirrel on the counter, guarding an acorn
+  const sq = 178;
+  bg.ellipse(sq, 57, 5, 5, C.clay); bg.ellipse(sq - 6, 52, 5, 8, C.brown); bg.ellipse(sq + 3, 51, 3.5, 3, C.clay);
+  bg.px(sq + 4, 50, C.ink); bg.px(sq, 48, C.clay); bg.px(sq + 5, 53, C.brown); bg.rect(sq - 1, 60, 3, 2, C.umber); bg.ellipse(sq + 8, 60, 2, 2, C.brown); bg.px(sq + 8, 58, C.umber);
+}
+function alkiParts(scene, parts) {
+  part(scene, 'p_popup', 14, 30, p => { p.ellipse(7, 3, 6, 2.5, C.silver); p.px(4, 2, C.white); p.rect(6, 4, 2, 22, C.steel); p.rect(5, 24, 4, 4, C.slate); });
+  parts.popup = { key: 'p_popup', x: 135, y: 66, ox: 0.5, oy: 0.1, depth: 3 };
+  part(scene, 'p_popGrime', 18, 26, p => { p.rect(4, 2, 10, 22, C.brown); p.dither(2, 0, 14, 26, C.umber, 0.4); for (let j = 0; j < 26; j += 3) p.hline(1, j, 16, j % 2 ? C.ink : C.clay); }, null);
+  parts.popGrime = { key: 'p_popGrime', x: 135, y: 44, ox: 0.5, oy: 0.5, depth: 4, hidden: true };
+  part(scene, 'p_hairS', 20, 60, p => { for (let k = 0; k < 7; k++) { let x = 10 + (k - 3) * 1.4; for (let y = 0; y < 60; y++) { x += Math.sin(y / 5 + k) * 0.6; p.px(x, y, [C.umber, C.brown, C.clay][k % 3]); } } p.ellipse(10, 54, 5, 4, C.brown); p.ellipse(10, 53, 3, 2.5, C.clay); p.rect(8, 49, 4, 2, C.umber); }, null);
+  parts.hairS = { key: 'p_hairS', x: 135, y: 70, ox: 0.5, oy: 1, depth: 2, hidden: true };
+  part(scene, 'p_pivot', 10, 10, p => { p.bevel(1, 1, 8, 8, RAMP.chrome, null); p.px(3, 3, C.white); });
+  parts.pivot = { key: 'p_pivot', x: 148, y: 126, ox: 0.5, oy: 0.5, depth: 4 };
+  part(scene, 'p_rod', 34, 6, p => { p.cylH(0, 1, 30, 4, RAMP.chrome); p.rect(28, 0, 6, 6, C.steel); for (let i = 6; i < 28; i += 5) p.vline(i, 1, 4, C.slate); });
+  parts.rod = { key: 'p_rod', x: 150, y: 126, ox: 0, oy: 0.5, depth: 3 };
+}
+
 function pipeTrap(scene, parts, x, y) {
   part(scene, 'p_trap', 80, 50, p => {
     p.cylV(4, 0, 12, 36, RAMP.pvc); p.blob(24, 36, 20, 12, RAMP.pvc); p.ellipse(24, 32, 10, 6, 0); p.cylV(36, 12, 12, 26, RAMP.pvc); p.cylH(36, 12, 40, 12, RAMP.pvc);

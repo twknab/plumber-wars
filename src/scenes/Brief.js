@@ -18,7 +18,7 @@ export class Brief extends Phaser.Scene {
     this.add.rectangle(0, 0, W, H, hex(C.night)).setOrigin(0);
     for (let y = 0; y < H; y += 4) this.add.rectangle(0, y, W, 1, hex(C.ink), 0.5).setOrigin(0);
     this.add.image(W / 2, 22, 'badge');
-    txt(this, W / 2, 44, `JOB ${ji + 1} OF 15 - ${D.name}`, { ox: 0.5, color: C.gold, size: 2 });
+    txt(this, W / 2, 44, ji === 15 ? `BONUS JOB - ${D.name}` : `JOB ${ji + 1} OF 15 - ${D.name}`, { ox: 0.5, color: C.gold, size: 2 });
     // work order card
     const cy = 64; panel(this, 10, cy, W - 20, 150, 'panelLight');
     txt(this, 18, cy + 8, 'WORK ORDER #' + (4100 + ji * 37), { outline: false, color: C.brown });

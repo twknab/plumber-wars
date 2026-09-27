@@ -5,9 +5,10 @@ import { HEROES, DISTRICTS, difficulty } from '../src/data/content.js';
 
 const TYPES = ['turn', 'crank', 'dial', 'rhythm', 'hold', 'drag', 'pull', 'scrub', 'taps', 'tap'];
 
-test('15 jobs, 3 per district, 5 districts', () => {
-  assert.equal(JOBS.length, 15);
-  assert.equal(DISTRICTS.length, 5);
+test('15 campaign jobs in 5 districts + Alki bonus', () => {
+  assert.equal(JOBS.length, 16);
+  assert.equal(DISTRICTS.length, 6);
+  assert.ok(JOBS[15].bonus && DISTRICTS[5].bonus);
   JOBS.forEach((j, i) => assert.equal(j.district, Math.floor(i / 3)));
 });
 

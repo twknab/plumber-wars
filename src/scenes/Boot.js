@@ -24,7 +24,7 @@ export class Boot extends Phaser.Scene {
     buildToolIcons(this);
     buildBrand(this);
     const q = new URLSearchParams(location.search);
-    const start = q.get('scene') || 'Title';
+    const start = q.get('scene') || 'Splash';
     const data = Object.fromEntries(q); if (data.job) data.job = +data.job;
     this.scene.start(this.scene.get(start) ? start : 'Title', data);
   }
