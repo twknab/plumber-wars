@@ -22,7 +22,7 @@ const PAGES = [
     lines: [
       ['TAP', 'THE RIGHT TOOL IN THE TRAY.'],
       ['DO', 'THE MOVE. CIRCLE = TURN (RIGHTY-TIGHTY).'],
-      ['WRONG', 'TOOL OR STEP = LOST TIME.'],
+      ['TOOLS?', 'PAUSES AND NAMES EVERY TOOL. WRONG ONE = LOST TIME.'],
     ] },
   { title: 'THE HOMIES', art: [['badge'], ['iStar'], ['iStar'], ['iStar']],
     lines: [

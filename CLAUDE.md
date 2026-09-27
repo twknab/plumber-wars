@@ -37,5 +37,7 @@ fallback while the voice list is still loading).
 
 - Keyboard *and* touch for every action; key hints only on non-touch devices (`isTouch`).
 - Trash talk is deliberately NSFW (crude, profane, plumbing/bathroom humor) — no slurs or hate.
+- Roast behaviors and archetypes (tech bros, frat bros, preppers, Northwest), never identity. No jokes about
+  wigs, weaves, extensions, dreads, afros or hair texture, or anything that reads as racial. Drain clogs are fine.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
 - Deploy: `bash deploy/deploy.sh twk-experiments us-west1` (Cloud Run, public, scale-to-zero).

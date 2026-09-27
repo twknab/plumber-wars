@@ -102,6 +102,7 @@ Dev helpers (dev server only):
 | `/?scene=Gallery` | Browse every sprite (tap to page) |
 | `/?scene=Drive&job=6`, `/?scene=Repair&job=9` | Jump straight to a race or repair |
 | `/?smoke=1` | Auto-plays every repair step of all 16 jobs (results in `window.__smoke`) |
+| `/?racebot=1[&jobs=0,5&tries=4]` | A bot races each job at fast-forward (muted) to check every race is winnable (`window.__race`) |
 | `/?docs=1` | Regenerates `docs/` (logo, sprite sheet, screenshots); run it in a phone-sized window |
 | `/?og=1` | Regenerates the 1200×630 link-preview card `public/og.png` |
 | `/?assets=1` | Exports every character (all moods) and house to `docs/assets/` for the cast page |

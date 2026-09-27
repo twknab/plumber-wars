@@ -53,7 +53,7 @@ export class Drive extends Phaser.Scene {
     const PY = this.PY = Math.round(H * 0.7);
     this.dist = 0; this.speed = 0; this.L = this.diff.raceLength;
     this.maxSpeed = TOP_SPEED * (this.dalton ? 1.06 : 1);
-    this.hp = this.maxHp = this.dalton ? 5 : 4; this.coffee = 1; this.cash = 0;
+    this.hp = this.maxHp = (this.dalton ? 5 : 4) + (this.job.district >= 3 ? 1 : 0) + (this.job.district === 4 ? 1 : 0); this.coffee = 1; this.cash = 0; // +1 armor from West Seattle on
     this.px = LANES[2]; this.vx = 0; this.targetX = this.px; this.inv = 0; this.boost = 0; this.slide = 0; this.spin = 0; this.splat = 0;
     this.leaving = false; this.paused = false; this.clashCd = 0; this.commsTimer = null; this.result = null; // scenes are reused between jobs
     this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false; this.centerT = 0; this.nextCenter = 900;
@@ -212,7 +212,7 @@ export class Drive extends Phaser.Scene {
       const big = R() < 0.12;
       add(this.mkObj(big ? 'bus' : (R() < 0.15 ? 'wagon' : 'car' + Math.floor(R() * 7)), lane, ahead + i * 40, { kind: 'car', vd: big ? 95 : 120 + R() * 90, hp: 1, w: big ? 22 : 15, h: big ? 80 : 30 }));
     }
-    if (df.oncoming && R() < 0.45 + df.t * 0.4) {
+    if (df.oncoming && R() < 0.32 + df.t * 0.15) {
       const lane = R() < 0.5 ? 0 : 1;
       add(this.mkObj('car' + Math.floor(R() * 7), lane, ahead + 200 + R() * 200, { kind: 'car', vd: -(130 + R() * 110), oncoming: true, w: 15, h: 30, flip: true }));
     }
@@ -233,7 +233,7 @@ export class Drive extends Phaser.Scene {
     // the double yellow isn't a free lane
     if (R() < 0.22 + df.t * 0.3) this.spawnCenter(ahead + 220 + R() * 120);
     // pickups
-    if (R() < 0.22) { const lane = lanePick([0, 1, 2, 3]); if (lane != null) { const k = R() < 0.6 ? 'coffee' : R() < 0.5 ? 'kit' : 'cash'; add(this.mkObj(k, lane, ahead + 60, { kind: k, pickup: true, vd: 0, w: 12, h: 12 })); } }
+    if (R() < 0.22) { const lane = lanePick([0, 1, 2, 3]); if (lane != null) { const k = R() < 0.5 ? 'coffee' : R() < 0.65 ? 'kit' : 'cash'; add(this.mkObj(k, lane, ahead + 60, { kind: k, pickup: true, vd: 0, w: 12, h: 12 })); } }
     this.nextSpawn = this.dist + (150 + R() * 130) / df.traffic;
   }
   // Hazards that sit on the centre line, so straddling the double yellow isn't a safe exploit.
@@ -350,7 +350,7 @@ export class Drive extends Phaser.Scene {
     if (o.hitOnce) return; o.hitOnce = true;
     if (o.kind === 'puddle') { audio.sfx('splash'); this.slide = 0.45; this.vx = (Math.random() < 0.5 ? -1 : 1) * 170; this.speed *= 0.85; this.splash(o.x, this.PY); return; }
     if (o.kind === 'oil') { audio.sfx('skid'); this.spin = 0.8; this.speed *= 0.75; floatText(this, this.px, this.PY - 30, 'OIL SLICK!', C.mauve); return; }
-    if (o.kind === 'pothole') { audio.sfx('bump'); this.speed *= 0.55; this.cameras.main.shake(160, 0.01); if (this.diff.district >= 2) this.damage(1, 'POTHOLE!'); else floatText(this, this.px, this.PY - 30, 'POTHOLE!', C.silver); return; }
+    if (o.kind === 'pothole') { audio.sfx('bump'); this.speed *= 0.55; this.cameras.main.shake(160, 0.01); /* slows you, never costs armor: they're hard to see at night */ floatText(this, this.px, this.PY - 30, 'POTHOLE!', C.silver); return; }
     if (o.kind === 'junk') {
       o.dead = true;
       if (o.key === 'turd') { audio.sfx('fart'); this.addSplat(); floatText(this, this.px, this.PY - 30, 'EWWW!', C.clay); this.speed *= 0.8; }

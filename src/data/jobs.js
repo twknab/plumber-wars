@@ -86,7 +86,7 @@ export const JOBS = [
   { title: 'SLOW SHOWER DRAIN', scene: 'shower', variant: 'hair', address: '5518 BARNES AVE NW',
     who: 'TYLER & BRI', look: { skin: 'tan', hair: 'brown', style: 'manbun', beard: 'lumber', shirt: '#3e8948', glasses: false },
     house: { style: 'modern', body: '#3e8948', trim: '#ffffff', roof: '#262b44', door: '#feae34', extra: 'bikes' },
-    call: "TYLER'S BEARD OIL + BRI'S EXTENSIONS + OUR HUSKY = ANKLE-DEEP SHOWERS. HELP.", decoys: ['drano', 'gum'],
+    call: "TYLER'S BEARD TRIMMINGS + OUR HUSKY'S SHEDDING SEASON = ANKLE-DEEP SHOWERS. WE BATHE IN A PUDDLE. HELP.", decoys: ['drano', 'gum'],
     steps: [
       { t: 'UNSCREW THE DRAIN COVER', tool: 'driver', type: 'turn', target: 'cover', dir: -1, turns: 1.5, tip: 'MOST SHOWER GRATES HAVE ONE OR TWO SCREWS. KEEP THEM OUT OF THE DRAIN!' , fx: ['away:cover'] },
       { t: 'FISH OUT THE HAIR MONSTER', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 70, tip: 'BARBED ZIP-IT STICKS GRAB HAIR. PULL SLOW AND STEADY, DON\'T LET IT SNAP.' , fx: ['show:grime'] },
@@ -136,7 +136,7 @@ export const JOBS = [
   { title: 'LOW WATER PRESSURE', scene: 'basement', variant: 'prv', address: '1531 BELMONT AVE E',
     who: 'MISS ROSALIND', look: { skin: 'dark', hair: 'pink', style: 'bighair', beard: 'none', shirt: '#ff0044', glasses: false, lipstick: true },
     house: { style: 'victorian', body: '#68386c', trim: '#f6757a', roof: '#181425', door: '#fee761', extra: 'pride' },
-    call: 'HONEY, RINSING THIS WIG TAKES FORTY MINUTES. MY SHOWER HAS THE PRESSURE OF A SAD SIGH.', decoys: ['hammer', 'drano'],
+    call: 'DARLING, I REHEARSE MY CABARET IN THE SHOWER AND IT HAS THE PRESSURE OF A SAD SIGH. I CANNOT HIT A HIGH C IN A DRIZZLE!', decoys: ['hammer', 'drano'],
     steps: [
       { t: 'THREAD THE GAUGE ON THE BIB', tool: 'gauge', type: 'drag', to: 'bibg', tip: 'A $10 GAUGE ON ANY HOSE BIB TELLS YOU HOUSE PRESSURE. MEASURE FIRST.' },
       { t: 'OPEN THE BIB & READ IT', tool: 'hand', type: 'turn', target: 'bibg', dir: -1, turns: 1, tip: '25 PSI. YIKES. THE PRESSURE-REDUCING VALVE IS SET WAY TOO LOW.' , fx: ['show:needle'] },
@@ -190,7 +190,7 @@ export const JOBS = [
     house: { style: 'rambler', body: '#265c42', trim: '#fee761', roof: '#262b44', door: '#feae34', extra: 'drums' },
     call: 'ATMOSPHERIC RIVER! THE BASEMENT IS FLOODING AND OUR DRUM KIT IS FLOATING. WE HAVE A GIG TONIGHT!', decoys: ['ducttape', 'drano'],
     steps: [
-      { t: 'UNPLUG THE PUMP', tool: 'hand', type: 'pull', target: 'plug', dir: [1, 0], dist: 30, tip: 'WATER + ELECTRICITY. UNPLUG BEFORE YOU TOUCH ANYTHING IN THE PIT.', early: 'YOU STUCK YOUR HAND IN A LIVE SUMP PIT. YOUR HAIR IS NOW STRAIGHT UP. BZZT.' },
+      { t: 'UNPLUG THE PUMP', tool: 'hand', type: 'pull', target: 'plug', dir: [1, 0], dist: 30, tip: 'WATER + ELECTRICITY. UNPLUG BEFORE YOU TOUCH ANYTHING IN THE PIT.', early: 'YOU STUCK YOUR HAND IN A LIVE SUMP PIT. BZZT. YOU CAN NOW TASTE COLORS.' },
       { t: 'LIFT THE PUMP OUT', tool: 'hand', type: 'pull', target: 'pump', dir: [0, -1], dist: 100, tip: 'LIFT BY THE DISCHARGE PIPE OR HANDLE - NEVER BY THE CORD.' , keep: true, fx: ['show:screen'] },
       { t: 'CLEAR THE INTAKE SCREEN', tool: 'brush', type: 'scrub', target: 'screen', amount: 1, tip: 'GRAVEL, SILT AND PNW MOSS CLOG THE INTAKE. SCRUB IT CLEAR.' },
       { t: 'PULL DEBRIS OFF THE FLOAT', tool: 'hand', type: 'taps', target: 'pit', count: 4, tip: 'A STUCK FLOAT SWITCH NEVER TELLS THE PUMP TO RUN. CLEAR EVERYTHING AROUND IT.' },

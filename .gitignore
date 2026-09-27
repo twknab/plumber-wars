@@ -9,3 +9,4 @@ terraform.tfvars
 *.auto.tfvars
 .env*
 deploy/plumber-wars-qr.png
+.build-id

@@ -6,6 +6,7 @@ project="${1:-twk-experiments}"
 region="${2:-us-west1}"
 cd "$(dirname "$0")/.."
 npm test
+git rev-parse --short HEAD > .build-id   # stamped on the title screen (Cloud Build has no .git)
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com --project "$project"
 gcloud run deploy plumber-wars \
   --project "$project" --region "$region" --source . \

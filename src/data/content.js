@@ -35,13 +35,13 @@ export function difficulty(i) {
   const t = (i === BONUS ? 10 : i) / 14; const d = Math.floor(i / 3);
   return {
     district: d, t,
-    raceLength: Math.round(14000 + i * 800),          // px of road to the house
+    raceLength: Math.round(14000 + Math.min(i, 14) * 480),          // px of road to the house
     rivalSpeed: 0.9 + t * 0.14,                      // fraction of player top speed
     rivalRamEvery: 7 - t * 4.2,                      // seconds between ram attempts
     rivalThrowEvery: 6.5 - t * 3.8,
-    traffic: 0.95 + t * 1.5,                          // spawns per second-ish
+    traffic: 0.95 + t * 0.55,                          // spawn density (capped: at 1.5x the late game was a wall of cars)
     oncoming: d >= 1,                                // left lanes carry oncoming traffic from Fremont on
-    hazards: 0.35 + t * 0.9,
+    hazards: 0.35 + t * 0.7,
     repairFactor: 1.55 - t * 0.62,                   // multiplier on repair clock
     window: 1 - t * 0.45,                            // timing window scale
     toolHints: d === 0,                              // Ballard: correct tool glows

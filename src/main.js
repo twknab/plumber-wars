@@ -73,3 +73,6 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).has('docs')) {
 if (import.meta.env.DEV && new URLSearchParams(location.search).has('assets')) {
   import('./dev/docs.js').then(m => setTimeout(() => m.makeAssets(game), 1500));
 }
+if (import.meta.env.DEV && new URLSearchParams(location.search).has('racebot')) {
+  import('./dev/racebot.js').then(m => setTimeout(() => m.runRaceBot(game), 1500));
+}

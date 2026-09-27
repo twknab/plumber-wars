@@ -27,7 +27,7 @@ export class Repair extends Phaser.Scene {
     this.win = this.df.window * (this.milan ? 1.35 : 1);
     this.si = 0; this.mistakes = 0; this.phase = 'idle'; this.tool = null; this.over = false;
     // scenes are reused between jobs: clear everything left over from the last one
-    this.used = {}; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
+    this.legend = null; this.used = {}; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
     this.act = null; this.ring = null; this.cursor = null; this.gauge = null; this.monitor = null; this.spots = []; this.dragging = false; this.lastTick = null; this.need = 0;
   }
   create() {
@@ -75,7 +75,10 @@ export class Repair extends Phaser.Scene {
     this.add.rectangle(0, iy, W, 30, hex(C.night)).setOrigin(0).setDepth(d);
     this.add.rectangle(0, iy, W, 1, hex(C.gold)).setOrigin(0).setDepth(d);
     this.instr = txt(this, 6, iy + 4, '', { color: C.yellow, depth: d, maxW: W - 12 });
-    this.how = txt(this, 6, iy + 16, '', { color: C.silver, depth: d, maxW: W - 12 });
+    this.how = txt(this, 6, iy + 16, '', { color: C.silver, depth: d, maxW: W - 70 });
+    // "what are my tools?" - pauses the clock and names every glyph in the tray
+    button(this, W - 32, iy + 15, isTouch ? 50 : 60, 22, isTouch ? 'TOOLS?' : 'TOOLS [T]', () => this.toggleLegend(), { color: 'btnBlue', textColor: C.white, depth: d + 1, sound: 'blip' });
+    if (this.input.keyboard) this.input.keyboard.on('keydown-T', () => this.toggleLegend());
   }
   buildTray() {
     const items = trayFor(this.job);
@@ -201,6 +204,25 @@ export class Repair extends Phaser.Scene {
     bubble(this, W / 2, SY + 110, who === 'milan' ? 'MILAN: SCOOT OVER. I GOT THIS.' : `JARED: ${this.job.who.split(' ')[0]}, HAVE YOU BEEN WORKING OUT?`, { dur: 1600, maxW: 200 });
     if (who === 'jared') { this.left = Math.min(this.total + 12, this.left + 12); this.total = Math.max(this.total, this.left); this.setMood('happy', 2000); floatText(this, W - 30, SY + 70, '+12 SEC', C.cyan, 160); }
     else { if (this.choice) { this.choice.destroy(); this.choice = null; } this.completeStep(true); }
+  }
+
+  // Tool legend overlay: every tray item with its name and what it's for. The clock stops while it's open.
+  toggleLegend() {
+    if (this.over) return;
+    if (this.legend) { this.legend.destroy(); this.legend = null; return; }
+    const c = this.legend = this.add.container(0, 0).setDepth(300);
+    c.add(this.add.rectangle(0, 0, W, H, hex(C.ink), 0.92).setOrigin(0).setInteractive().on('pointerup', () => this.toggleLegend()));
+    c.add(txt(this, W / 2, 10, "WHAT'S IN THE TRAY", { ox: 0.5, size: 2, color: C.gold }));
+    c.add(txt(this, W / 2, 28, 'CLOCK PAUSED  -  TAP ANYWHERE TO GO BACK', { ox: 0.5, color: C.lime }));
+    const rowH = Math.min(38, Math.floor((H - 60) / this.slots.length));
+    this.slots.forEach((sl, i) => {
+      const info = TOOL_INFO[sl.k] || { name: sl.k, desc: '' }; const y = 44 + i * rowH;
+      c.add(this.add.rectangle(10, y, W - 20, rowH - 4, hex(C.night)).setOrigin(0).setStrokeStyle(1, hex(C.storm)));
+      c.add(this.add.image(30, y + (rowH - 4) / 2, 'tool_' + sl.k).setScale(1.4));
+      if (!isTouch) c.add(txt(this, 14, y + 3, String((i + 1) % 10), { color: C.slate }));
+      c.add(txt(this, 52, y + 5, info.name, { color: info.decoy ? C.pink : info.part ? C.cyan : C.white }));
+      c.add(txt(this, 52, y + 17, info.decoy ? 'NOT A REAL FIX. DON\'T.' : info.desc, { color: C.silver, maxW: W - 70 }));
+    });
   }
 
   // ------------------------------------------------------------------ interactions
@@ -400,7 +422,7 @@ export class Repair extends Phaser.Scene {
   update(t, dms) {
     if (this.over) return;
     const dt = Math.min(0.05, dms / 1000);
-    if (this.phase !== 'tip') this.left -= dt;
+    if (this.phase !== 'tip' && !this.legend) this.left -= dt;
     const f = Math.max(0, this.left / this.total);
     this.bar.width = W * f; this.bar.fillColor = f > 0.5 ? hex(C.lime) : f > 0.25 ? hex(C.gold) : hex(C.red);
     const sec = Math.max(0, Math.ceil(this.left)); this.clock.setText(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`).setTint(f < 0.25 ? hex(C.red) : 0xffffff);

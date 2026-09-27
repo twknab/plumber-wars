@@ -4,7 +4,9 @@ import { dirname } from 'node:path';
 import { artHash } from './art-hash.js';
 import { execSync } from 'node:child_process';
 
-const sha = (() => { try { return execSync('git rev-parse --short HEAD').toString().trim(); } catch { return 'dev'; } })();
+import { readFileSync as readIfAny } from 'node:fs';
+// Cloud Build has no .git, so deploy.sh writes the commit to .build-id first.
+const sha = (() => { try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { try { return readIfAny('.build-id', 'utf8').trim(); } catch { return 'dev'; } } })();
 const BUILD = `${new Date().toISOString().slice(0, 10)} ${sha}`;
 
 // Dev-only endpoint used by src/dev/og.js and src/dev/docs.js to write generated images
