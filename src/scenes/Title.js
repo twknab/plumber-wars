@@ -87,9 +87,9 @@ export class Title extends Phaser.Scene {
     this.add.rectangle(4, 4, 76, 20, 0x181425, 0.6).setOrigin(0).setStrokeStyle(1, 0x5a6988);
     hitZone(this, 44, 14, 88, 32, vt, 96);
     this.input.keyboard.on('keydown-V', vt);
-    txt(this, W / 2, H - 10, 'NSFW: PLUMBERS SWEAR. A LOT.', { ox: 0.5, color: C.silver });
+    txt(this, W / 2, H - 21, 'NSFW: PLUMBERS SWEAR. A LOT.', { ox: 0.5, color: C.silver });
     // build stamp, so a stale phone tab is easy to spot
-    txt(this, W - 4, H - 10, typeof __BUILD__ !== 'undefined' ? __BUILD__ : '', { ox: 1, color: C.slate, outline: false });
+    txt(this, W / 2, H - 9, typeof __BUILD__ !== 'undefined' ? __BUILD__ : '', { ox: 0.5, color: C.slate, outline: false });
     this.input.once('pointerup', () => { audio.unlock(); audio.music('title'); });
     if (audio.ctx) audio.music('title');
   }
