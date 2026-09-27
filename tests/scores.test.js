@@ -7,7 +7,9 @@ const bests = Array.from({ length: JOBS }, (_, i) => (i < 5 ? 3000 : 0));
 
 test('a normal entry: score is the sum of per-job bests, jobs cleared counted', () => {
   const v = validateEntry({ initials: 'tjk', hero: 'milan', bests });
-  assert.deepEqual(v, { initials: 'TJK', score: 15000, cleared: 5, hero: 'milan' });
+  assert.deepEqual(v, { initials: 'TJK', score: 15000, cleared: 5, hero: 'milan', player: null });
+  assert.equal(validateEntry({ initials: 'TJK', bests, player: 'abc123def456ghi' }).player, 'abc123def456ghi');
+  assert.equal(validateEntry({ initials: 'TJK', bests, player: '../../evil' }).player, null);
 });
 
 test('rejects bad initials, hateful initials and impossible scores', () => {

@@ -184,17 +184,31 @@ export class Repair extends Phaser.Scene {
     if (this.job.leak && this.job.leak.until === this.si) this.stopLeak();
     this.left = Math.min(this.total, this.left + 1.5);
     floatText(this, W / 2, SY + 40, auto ? 'MILAN GOT IT!' : pick(['NICE!', 'CLEAN!', 'PRO MOVE!', 'SMOOTH!', 'HOMIE-GRADE!']), C.lime, 160);
-    // pro tip
+    // pro tip: stays up long enough to actually read (the repair clock is paused meanwhile); tap to move on
     const tip = this.add.container(0, 0).setDepth(160);
-    tip.add(this.add.rectangle(W / 2, SY + SH - 26, W - 12, 42, hex(C.forest), 0.95).setStrokeStyle(1, hex(C.lime)));
-    tip.add(txt(this, 12, SY + SH - 44, 'PRO TIP:', { color: C.yellow }));
-    tip.add(txt(this, 12, SY + SH - 34, s.tip, { maxW: W - 24 }));
+    const body = txt(this, 12, 0, s.tip, { maxW: W - 24 });
+    const th = body.height + 34, ty = SY + SH - th - 4;
+    tip.add(this.add.rectangle(W / 2, ty + th / 2, W - 12, th, hex(C.forest), 0.96).setStrokeStyle(1, hex(C.lime)));
+    tip.add(txt(this, 12, ty + 6, 'PRO TIP:', { color: C.yellow }));
+    tip.add(txt(this, W - 12, ty + 6, isTouch ? 'CLOCK PAUSED - TAP TO CONTINUE' : 'CLOCK PAUSED - [SPACE] TO CONTINUE', { ox: 1, color: C.lime }));
+    body.setPosition(12, ty + 17); tip.add(body);
+    const readMs = Phaser.Math.Clamp(1800 + s.tip.length * 55, 4000, 10000);
+    const bar = this.add.rectangle(8, ty + th - 4, W - 16, 2, hex(C.lime)).setOrigin(0, 0.5); tip.add(bar);
+    this.tweens.add({ targets: bar, scaleX: 0, duration: readMs });
     this.phase = 'tip';
-    const next = () => { if (tip.active) tip.destroy(); this.si++; if (this.si >= this.job.steps.length) this.success(); else this.beginStep(); };
-    this.tipTimer = this.time.delayedCall(Math.min(2600, 900 + s.tip.length * 22), next);
+    let done = false;
     const skip = this.add.zone(0, SY, W, SH).setOrigin(0).setInteractive().setDepth(161);
-    skip.once('pointerup', () => { skip.destroy(); if (this.tipTimer) this.tipTimer.remove(); next(); });
-    this.time.delayedCall(2700, () => skip.active && skip.destroy());
+    const keys = ['keydown-SPACE', 'keydown-ENTER'];
+    const next = () => {
+      if (done) return; done = true;
+      if (this.tipTimer) this.tipTimer.remove();
+      keys.forEach(k => this.input.keyboard.off(k, next)); if (skip.active) skip.destroy();
+      if (tip.active) tip.destroy(); this.si++; if (this.si >= this.job.steps.length) this.success(); else this.beginStep();
+    };
+    this.tipTimer = this.time.delayedCall(readMs, next);
+    skip.once('pointerup', next);
+    keys.forEach(k => this.input.keyboard.on(k, next));
+    this.events.once('shutdown', () => { done = true; keys.forEach(k => this.input.keyboard && this.input.keyboard.off(k, next)); }); // scene is reused
   }
   useAssist(who) {
     if (this.over || (this.used || {})[who]) return;

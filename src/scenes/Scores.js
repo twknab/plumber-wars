@@ -9,6 +9,8 @@ import { portrait } from '../art/people.js';
 // Leaderboard. Anyone can post their running total (best score per job, added up); beating the game
 // earns a crown. Arcade-style three-letter initials. Scores live in Firestore via /api/scores.
 const fmt = n => n.toLocaleString('en-US');
+// A random id for this device, so each player keeps one row that replays can improve.
+const playerId = () => { let id = store.get('playerId', null); if (!id) { id = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => (b % 36).toString(36)).join(''); store.set('playerId', id); } return id; };
 const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export class Scores extends Phaser.Scene {
@@ -114,7 +116,7 @@ export class Scores extends Phaser.Scene {
     const initials = this.letters.map(i => A[i]).join('');
     setTxt(this.hint, 'POSTING...');
     try {
-      const r = await fetch('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ initials, hero: progress.hero, bests: progress.bests() }) });
+      const r = await fetch('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ initials, hero: progress.hero, bests: progress.bests(), player: playerId() }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || r.status);
       store.set('initials', initials); store.set('postedScore', progress.totalScore());

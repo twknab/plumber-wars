@@ -20,5 +20,7 @@ export function validateEntry(body) {
   if (score <= 0) return { error: 'finish a job first' };
   const cleared = bests.filter(n => n > 0).length;
   const hero = HEROES.includes(body.hero) ? body.hero : '';
-  return { initials, score, cleared, hero };
+  // one row per player: a random id the game keeps in local storage (replays update your row, not add rows)
+  const player = typeof body.player === 'string' && /^[a-z0-9]{12,40}$/.test(body.player) ? body.player : null;
+  return { initials, score, cleared, hero, player };
 }

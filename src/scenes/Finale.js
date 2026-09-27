@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { W, H, txt, button, wipeTo, wipeIn, bubble } from '../core/ui.js';
 import { audio } from '../core/audio.js';
-import { progress } from '../core/save.js';
+import { progress, store } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { HEROES, RIVALS } from '../data/content.js';
 import { portrait, body } from '../art/people.js';
@@ -35,8 +35,9 @@ export class Finale extends Phaser.Scene {
       this.tweens.add({ targets: b, y: gy + 30, yoyo: true, repeat: -1, duration: 260 + i * 40 });
     });
     // Northwest's sad exit
-    const tr = this.add.sprite(W + 100, H - 64, 'sideTruck').setOrigin(0.5, 1).setFlipX(true);
-    this.tweens.add({ targets: tr, x: -120, duration: 6000, delay: 1500, repeat: -1, repeatDelay: 3000 });
+    // (drives off to the right: flipping the sprite would mirror the NORTHWEST lettering)
+    const tr = this.add.sprite(-120, H - 64, 'sideTruck').setOrigin(0.5, 1);
+    this.tweens.add({ targets: tr, x: W + 120, duration: 6000, delay: 1500, repeat: -1, repeatDelay: 3000 });
     this.add.image(40, H - 110, portrait(this, 'randy', RIVALS.randy.look, 'worried')).setScale(0.8);
     this.time.delayedCall(2200, () => bubble(this, 70, H - 136, 'FINE! WE\'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!', { dur: 3500, maxW: 170 }));
     this.time.delayedCall(2600, () => audio.say("FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!"));
@@ -44,6 +45,8 @@ export class Finale extends Phaser.Scene {
     // champions go on the board
     const post = button(this, W / 2, H - 62, 190, 28, 'POST YOUR SCORE!', () => wipeTo(this, 'Scores', { enter: true, from: 'Finale' }), { color: 'btnGold', key: 'ENTER' });
     this.tweens.add({ targets: post, scale: 1.06, yoyo: true, repeat: -1, duration: 450 });
+    // once the credits roll off, take a new champion straight to the initials screen (first time only)
+    if (!store.get('finalePosted', false) && progress.totalScore() > store.get('postedScore', 0)) this.time.delayedCall(11500, () => { if (this.sys.isActive()) { store.set('finalePosted', true); wipeTo(this, 'Scores', { enter: true, from: 'Finale' }); } });
     button(this, W / 2, H - 26, 170, 24, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'M' });
     // credits crawl
     const cr = txt(this, W / 2, H + 10, "G'S PLUMBING PRESENTS\nPLUMBER WARS\n\nSTARRING\nDALTON - MILAN - JARED\n\nAND BIG RANDY AS HIMSELF\n\nNO TOILETS WERE HARMED\n(SOME WERE HARMED)", { ox: 0.5, align: 1, color: C.silver, depth: 5 });

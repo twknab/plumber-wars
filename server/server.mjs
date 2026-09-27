@@ -23,8 +23,9 @@ async function token() {
   const r = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', { headers: { 'Metadata-Flavor': 'Google' } });
   const j = await r.json(); tok = { v: j.access_token, exp: Date.now() + j.expires_in * 1000 }; return tok.v;
 }
-async function fs(pathPart, body) {
-  const r = await fetch(FS + pathPart, { method: 'POST', headers: { Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+async function fs(pathPart, body, method = 'POST') {
+  const r = await fetch(FS + pathPart, { method, headers: { Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (method === 'GET' && r.status === 404) return null;
   if (!r.ok) throw new Error('firestore ' + r.status + ' ' + (await r.text()).slice(0, 200));
   return r.json();
 }
@@ -41,8 +42,16 @@ async function rankOf(score) {
   const r = await fs(':runAggregationQuery', { structuredAggregationQuery: { structuredQuery: { from: [{ collectionId: 'scores' }], where: { fieldFilter: { field: { fieldPath: 'score' }, op: 'GREATER_THAN', value: { integerValue: String(score) } } } }, aggregations: [{ alias: 'n', count: {} }] } });
   return +(r[0]?.result?.aggregateFields?.n?.integerValue || 0) + 1;
 }
+// Upsert the player's single row, keeping their best total (a lower re-post never overwrites a higher one).
 async function addScore(e) {
-  await fs('/scores', { fields: { initials: { stringValue: e.initials }, score: { integerValue: String(e.score) }, hero: { stringValue: e.hero }, cleared: { integerValue: String(e.cleared) }, at: { timestampValue: new Date().toISOString() } } });
+  const fields = { initials: { stringValue: e.initials }, score: { integerValue: String(e.score) }, hero: { stringValue: e.hero }, cleared: { integerValue: String(e.cleared) }, at: { timestampValue: new Date().toISOString() } };
+  if (!e.player) return fs('/scores', { fields });
+  const doc = await fs('/scores/' + e.player, undefined, 'GET');
+  if (doc && +doc.fields.score.integerValue >= e.score) {
+    if (doc.fields.initials.stringValue !== e.initials) await fs('/scores/' + e.player + '?updateMask.fieldPaths=initials', { fields: { initials: fields.initials } }, 'PATCH');
+    return;
+  }
+  return fs('/scores/' + e.player, { fields }, 'PATCH');
 }
 
 // --- API ---------------------------------------------------------------------------------------
