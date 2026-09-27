@@ -2,6 +2,10 @@ import { defineConfig } from 'vite';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { artHash } from './art-hash.js';
+import { execSync } from 'node:child_process';
+
+const sha = (() => { try { return execSync('git rev-parse --short HEAD').toString().trim(); } catch { return 'dev'; } })();
+const BUILD = `${new Date().toISOString().slice(0, 10)} ${sha}`;
 
 // Dev-only endpoint used by src/dev/og.js and src/dev/docs.js to write generated images
 // (share card, README logo/screenshots/sprite sheet) into the repo.
@@ -24,4 +28,4 @@ const saveImages = {
   },
 };
 
-export default defineConfig({ plugins: [saveImages] });
+export default defineConfig({ plugins: [saveImages], define: { __BUILD__: JSON.stringify(BUILD) } });

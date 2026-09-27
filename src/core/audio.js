@@ -1,7 +1,7 @@
 // Chiptune synth: pulse/triangle/noise channels, a lookahead tracker for music, procedural SFX,
 // an engine drone, and (optional) speech-synth yelling for the Northwest crew.
 import { store } from './save.js';
-import { voiceKey, speakable } from './voicekey.js';
+import { voiceKey } from './voicekey.js';
 
 const NOTE = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
 const freq = n => { const m = /^([A-G]#?)(\d)$/.exec(n); return 440 * Math.pow(2, (NOTE[m[1]] + (+m[2] + 1) * 12 - 69) / 12); };
@@ -239,17 +239,9 @@ class Chip {
     };
     playNext(0);
   }
-  speakFallback(text, { pitch = 0.9, rate = 1.0 } = {}, done) {
-    if (!window.speechSynthesis) { this.sfx('grunt'); done && done(); return; }
-    try {
-      const u = new SpeechSynthesisUtterance(speakable(text)); u.pitch = Math.max(0.8, pitch); u.rate = rate; u.volume = 1;
-      const all = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
-      const pick = ['Google US English', 'Samantha', 'Daniel', 'Microsoft Guy', 'Microsoft Aria'].map(n => all.find(v => v.name.includes(n))).find(Boolean) || all.find(v => v.localService) || all[0];
-      if (pick) u.voice = pick;
-      this.duck(true); u.onend = u.onerror = () => { this.duck(false); done && done(); };
-      speechSynthesis.speak(u);
-    } catch (e) { this.sfx('grunt'); done && done(); }
-  }
+  // No browser speech at all any more: it sounded like 1985 and was often silent on phones. A line with
+  // no playable recording gets a grunt instead.
+  speakFallback(text, opts, done) { this.sfx('grunt'); done && done(); }
   hush(keepToken) { if (!keepToken) this.sayToken = (this.sayToken || 0) + 1; if (this.voiceSrc) { try { this.voiceSrc.onended = null; this.voiceSrc.stop(); } catch (e) { /* done */ } this.voiceSrc = null; } if (window.speechSynthesis) speechSynthesis.cancel(); this.duck(false); }
 }
 export const audio = new Chip();

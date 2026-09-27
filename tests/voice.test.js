@@ -50,3 +50,13 @@ test('a line spoken before the voice list arrives plays the recording, not brows
   assert.equal(started.length, 1, 'the recorded clip played');
   assert.deepEqual(spokenByBrowser, [], 'no robot-voice fallback');
 });
+
+test('a line with no recording never uses browser speech', async () => {
+  const started = [];
+  audio.ctx = fakeAudioContext(started);
+  const grunts = []; audio.sfx = name => grunts.push(name);
+  audio.say('THIS LINE WAS NEVER RECORDED');
+  await new Promise(r => setTimeout(r, 30));
+  assert.deepEqual(spokenByBrowser, [], 'robot voice is gone for good');
+  assert.deepEqual(grunts, ['grunt']);
+});
