@@ -12,6 +12,7 @@ import { houseTextures } from '../art/houses.js';
 export class Brief extends Phaser.Scene {
   constructor() { super('Brief'); }
   async create({ job: ji = 0 }) {
+    this.left = false; // scenes are reused between jobs
     wipeIn(this);
     audio.stopMusic();
     const job = JOBS[ji], D = DISTRICTS[job.district], hero = HEROES.find(h => h.id === progress.hero) || HEROES[0];

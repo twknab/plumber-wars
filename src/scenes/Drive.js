@@ -55,6 +55,7 @@ export class Drive extends Phaser.Scene {
     this.maxSpeed = TOP_SPEED * (this.dalton ? 1.06 : 1);
     this.hp = this.maxHp = this.dalton ? 5 : 4; this.coffee = 1; this.cash = 0;
     this.px = LANES[2]; this.vx = 0; this.targetX = this.px; this.inv = 0; this.boost = 0; this.slide = 0; this.spin = 0; this.splat = 0;
+    this.leaving = false; this.paused = false; this.clashCd = 0; this.commsTimer = null; this.result = null; // scenes are reused between jobs
     this.state = 'countdown'; this.objs = []; this.decor = []; this.nextSpawn = 380; this.nextDecorL = 0; this.nextDecorR = 40; this.hornCd = 0; this.assistUsed = false;
     this.t = 0;
     // road

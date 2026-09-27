@@ -114,6 +114,7 @@ export function floatText(scene, x, y, s, color = C.white, depth = 70) {
 // Block-wipe transitions (16px squares, diagonal sweep).
 export function wipeTo(scene, key, data) {
   if (scene._wiping) return; scene._wiping = true;
+  scene.events.once('shutdown', () => { scene._wiping = false; });
   const g = []; const s = 18;
   for (let y = 0; y < H + s; y += s) for (let x = 0; x < W + s; x += s) {
     const r = scene.add.rectangle(x + s / 2, y + s / 2, s, s, hex(C.ink)).setScale(0).setDepth(1000).setScrollFactor(0);

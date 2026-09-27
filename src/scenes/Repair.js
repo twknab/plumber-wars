@@ -26,6 +26,9 @@ export class Repair extends Phaser.Scene {
     this.milan = this.hero.id === 'milan';
     this.win = this.df.window * (this.milan ? 1.35 : 1);
     this.si = 0; this.mistakes = 0; this.phase = 'idle'; this.tool = null; this.over = false;
+    // scenes are reused between jobs: clear everything left over from the last one
+    this.used = {}; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
+    this.act = null; this.ring = null; this.cursor = null; this.gauge = null; this.monitor = null; this.spots = []; this.dragging = false; this.lastTick = null; this.need = 0;
   }
   create() {
     wipeIn(this); audio.music('repair');
