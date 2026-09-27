@@ -230,8 +230,8 @@ export class Drive extends Phaser.Scene {
     }
     if (R() < 0.18 + df.t * 0.2) add(this.mkObj('cyclist', 3, ahead + 140, { kind: 'cyclist', vd: 80, w: 8, h: 16, xo: 12, anim: true }));
     if (R() < 0.08 + df.t * 0.08) { const o = add(this.mkObj('raccoon', 0, ahead + 180, { kind: 'raccoon', vd: 0, w: 12, h: 8, anim: true })); o.x = ROAD_L - 10; o.vx = 55; }
-    // the double yellow isn't a free lane
-    if (R() < 0.22 + df.t * 0.3) this.spawnCenter(ahead + 220 + R() * 120);
+    // the double yellow is a fair ride most of the time; now and then something sits on it
+    if (R() < 0.07 + df.t * 0.08) this.spawnCenter(ahead + 220 + R() * 120);
     // pickups
     if (R() < 0.22) { const lane = lanePick([0, 1, 2, 3]); if (lane != null) { const k = R() < 0.5 ? 'coffee' : R() < 0.65 ? 'kit' : 'cash'; add(this.mkObj(k, lane, ahead + 60, { kind: k, pickup: true, vd: 0, w: 12, h: 12 })); } }
     this.nextSpawn = this.dist + (150 + R() * 130) / df.traffic;
@@ -241,7 +241,7 @@ export class Drive extends Phaser.Scene {
     const R = Math.random, CX = 135, xo = CX - LANES[1];
     const roll = R();
     if (roll < 0.35) { // a run of median cones
-      const n = 3 + Math.floor(R() * 3);
+      const n = 2 + Math.floor(R() * 2);
       for (let i = 0; i < n; i++) this.objs.push(this.mkObj('cone', 1, d + i * 30, { kind: 'cone', vd: 0, w: 8, h: 8, xo }));
     } else if (roll < 0.55) { // road work right on the line
       this.objs.push(this.mkObj('barrier', 1, d, { kind: 'barrier', vd: 0, w: 40, h: 8, xo }));
@@ -302,9 +302,9 @@ export class Drive extends Phaser.Scene {
     if (this.px <= ROAD_L + 8 || this.px >= ROAD_R - 8) { if (this.speed > 150 && Math.random() < 0.1) { audio.sfx('skid'); } this.speed *= 1 - 1.5 * dt; }
     // spawn
     if (this.dist > this.nextSpawn && this.dist < this.L - 500) this.spawnRow();
-    // anti-camping: sit on the centre line for ~2s and something appears ahead of you
+    // gentle anti-camping: ride the centre line for ~6s straight and something eventually shows up on it
     this.centerT = Math.abs(this.px - 135) < 16 ? this.centerT + dt : Math.max(0, this.centerT - dt);
-    if (this.centerT > 2 && this.dist > this.nextCenter && this.dist < this.L - 600) { this.spawnCenter(this.dist + H * 0.9); this.centerT = 0; this.nextCenter = this.dist + 500; }
+    if (this.centerT > 6 && this.dist > this.nextCenter && this.dist < this.L - 600) { this.spawnCenter(this.dist + H * 0.9); this.centerT = 0; this.nextCenter = this.dist + 2200; }
     if (this.dist > this.nextDecorL) this.nextDecorL = this.dist + this.spawnDecor(-1);
     if (this.dist > this.nextDecorR) this.nextDecorR = this.dist + this.spawnDecor(1);
     // objects

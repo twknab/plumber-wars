@@ -4,8 +4,9 @@ import { audio } from '../core/audio.js';
 import { C, hex } from '../core/palette.js';
 import { TRASH, pick } from '../data/content.js';
 
-// "Press start" gate. Browsers block all audio (and speech) until the player taps or presses a key,
-// so the very first interaction happens here - and the music + a Northwest insult fire right on it.
+// "Press start" gate. Browsers block all audio until the player taps or presses a key, so the very
+// first interaction happens here - and the music + a Northwest insult fire right on it.
+// Start on pointerUP: phone browsers only unlock sound on touch-end, never on touch-start.
 export class Splash extends Phaser.Scene {
   constructor() { super('Splash'); }
   create() {
@@ -26,7 +27,7 @@ export class Splash extends Phaser.Scene {
       this.cameras.main.flash(120, 254, 174, 52);
       this.time.delayedCall(180, () => this.scene.start('Title'));
     };
-    this.input.once('pointerdown', start);
+    this.input.once('pointerup', start);
     this.input.keyboard.once('keydown', start);
   }
 }

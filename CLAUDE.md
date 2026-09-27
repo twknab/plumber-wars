@@ -30,7 +30,8 @@ art or deploy — update these in the same change:
 `npm test` enforces this (`tests/docs-sync.test.js`): it fails if the README/About job counts or job table drift
 from `JOBS`, if art/character sources changed since `docs/sprites.png` was last generated, or if any spoken line
 has no recorded clip. `tests/voice.test.js` guards that voices play on the very first tap (no browser-speech
-fallback while the voice list is still loading).
+fallback while the voice list is still loading), that audio unlocks on pointerup (phones ignore touch-start),
+and that a line spoken while audio is locked is dropped rather than played late. Never unlock on pointerdown.
 
 ## Other conventions
 

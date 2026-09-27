@@ -15,6 +15,12 @@ class Chip {
     this.track = null; this.timer = null; this.engine = null;
     this.clips = new Map(); this.raw = new Map();
     this.voiceReady = this.loadVoices();
+    // Unlock on the first real gesture anywhere, straight from the browser event (not via Phaser), and
+    // keep listening: iOS suspends audio after a call or app switch, and the next tap must revive it.
+    // Only these events count as a gesture on phones - touchstart/pointerdown do NOT.
+    if (typeof document !== 'undefined') for (const ev of ['pointerup', 'touchend', 'mousedown', 'keydown', 'click']) document.addEventListener(ev, () => this.unlock(), { capture: true, passive: true });
+    // iPhone: let game audio play even with the ring/silent switch on (Safari 17+).
+    try { if (typeof navigator !== 'undefined' && navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* older Safari */ }
   }
   unlock() {
     if (!this.ctx) {
@@ -34,7 +40,7 @@ class Chip {
         this.pulse[duty] = this.ctx.createPeriodicWave(re, im);
       }
     }
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx.state !== 'running' && this.ctx.state !== 'closed') this.ctx.resume().catch(() => {});
   }
   get now() { return this.ctx ? this.ctx.currentTime : 0; }
   setSound(on) { this.enabled = on; store.set('sound', on); if (this.master) this.master.gain.setTargetAtTime(on ? 0.55 : 0, this.now, 0.02); }
@@ -182,6 +188,10 @@ class Chip {
       if (this.ctx && this.voiceMan && this.voiceMan[key]) {
         const buf = await this.clip(key);
         if (token !== this.sayToken) return;
+        if (buf && this.ctx.state !== 'running') await Promise.race([this.ctx.resume().catch(() => {}), new Promise(r => setTimeout(r, 400))]);
+        if (token !== this.sayToken) return;
+        // still locked (no real gesture yet): drop the line instead of letting it blurt out minutes later
+        if (buf && this.ctx.state !== 'running') { this.duck(false); return; }
         if (buf) {
           const src = this.ctx.createBufferSource(); src.buffer = buf; src.connect(this.voiceBus);
           this.duck(true); src.onended = () => playNext(i + 1); src.start(); this.voiceSrc = src; return;

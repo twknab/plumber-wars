@@ -87,7 +87,8 @@ Everything is generated in code at boot — there are no image or audio asset fi
 - **Voices** — every spoken line is pre-recorded with Google Cloud Text-to-Speech (Chirp 3 HD voices: Big Randy,
   Skeeter and each Homie get their own) into `public/voice/`. Render new/changed lines with
   `node scripts/voices.mjs twk-experiments`; the browser's built-in speech is only a fallback.
-  (Browsers never allow sound before the first tap, so the game opens on a TAP TO START screen.)
+  (Browsers never allow sound before the first tap, so the game opens on a TAP TO START screen. It fires on
+  finger-up, the only touch phones count as a gesture, and on iPhone the game plays even with the silent switch on.)
 
 ### District intros
 

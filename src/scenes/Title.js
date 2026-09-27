@@ -90,7 +90,7 @@ export class Title extends Phaser.Scene {
     txt(this, W / 2, H - 10, 'NSFW: PLUMBERS SWEAR. A LOT.', { ox: 0.5, color: C.silver });
     // build stamp, so a stale phone tab is easy to spot
     txt(this, W - 4, H - 10, typeof __BUILD__ !== 'undefined' ? __BUILD__ : '', { ox: 1, color: C.slate, outline: false });
-    this.input.once('pointerdown', () => { audio.unlock(); audio.music('title'); });
+    this.input.once('pointerup', () => { audio.unlock(); audio.music('title'); });
     if (audio.ctx) audio.music('title');
   }
   confirmNew() {

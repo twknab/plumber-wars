@@ -60,3 +60,26 @@ test('a line with no recording never uses browser speech', async () => {
   assert.deepEqual(spokenByBrowser, [], 'robot voice is gone for good');
   assert.deepEqual(grunts, ['grunt']);
 });
+
+// Guards "voices never play on my phone": phones only unlock sound on touch-END, so the start tap
+// must be a pointerup, and a line spoken while audio is still locked must not blurt out later.
+test('the start tap unlocks on pointerup (phones ignore touch-start)', async () => {
+  const { readFile } = await import('node:fs/promises');
+  for (const f of ['Splash', 'Title']) {
+    const src = await readFile(new URL(`../src/scenes/${f}.js`, import.meta.url), 'utf8');
+    assert.ok(!/input\.once\('pointerdown'/.test(src), `${f} must not unlock audio on pointerdown`);
+  }
+  const splash = await readFile(new URL('../src/scenes/Splash.js', import.meta.url), 'utf8');
+  assert.match(splash, /input\.once\('pointerup', start\)/);
+});
+
+test('a line spoken while audio is still locked is dropped, not played late', async () => {
+  const started = [];
+  audio.ctx = { ...fakeAudioContext(started), state: 'suspended', resume: () => new Promise(() => {}) };
+  audio.say('WELCOME TO PLUMBER WARS!');
+  await new Promise(r => setTimeout(r, 500));
+  assert.equal(started.length, 0);
+  audio.ctx.state = 'running';
+  await new Promise(r => setTimeout(r, 50));
+  assert.equal(started.length, 0, 'nothing queued up to surprise the player later');
+});
