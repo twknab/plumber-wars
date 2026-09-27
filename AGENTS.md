@@ -45,3 +45,5 @@ and that a line spoken while audio is locked is dropped rather than played late.
   wigs, weaves, extensions, dreads, afros or hair texture, or anything that reads as racial. Drain clogs are fine.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
 - Deploy: `bash deploy/deploy.sh twk-experiments us-west1` (Cloud Run, public, scale-to-zero).
+- Leaderboard: `server/server.mjs` (static + `/api/scores`, Firestore over REST, no npm deps in the runtime
+  image). Validation rules live in `server/scores.mjs` and are tested; the Vite dev server mocks the API.

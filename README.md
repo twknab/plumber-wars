@@ -26,6 +26,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
 - **Something to find in every room.** A lava lamp in Fremont, husky fur in the shower, a cat poster in the
   basement, garden gnomes and banana slugs in Queen Anne, glowing raccoon eyes in the crawlspace.
+- **High scores.** Your total is your best score on every job, added up. Post it with arcade initials from
+  **HIGH SCORES** on the title (or the finale); champions who beat all 16 jobs get a crown.
 - **About pages.** Meet the crew (what each homie brings: brains, back, bedside manner) and flip through all six
   neighborhoods with their pixel art, a bit of real history and the plumbing you'll find there.
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
@@ -153,8 +155,13 @@ gcloud auth login
 bash deploy/deploy.sh twk-experiments us-west1
 ```
 
-Builds the nginx container with Cloud Build, deploys a public, scale-to-zero Cloud Run service, prints the URL
+Builds the container with Cloud Build, deploys a public, scale-to-zero Cloud Run service, prints the URL
 and writes a QR code to `deploy/plumber-wars-qr.png`. A Terraform alternative lives in `infra/`.
+
+The container runs `server/server.mjs`, a zero-dependency Node server: it serves the built game and the
+leaderboard API (`GET/POST /api/scores`), which stores entries in **Firestore** (`(default)` database, us-west1)
+using the Cloud Run service account. Entries are validated in `server/scores.mjs` (three-letter initials, a
+blocklist for slurs, 16 per-job bests each capped). `npm run dev` swaps in an in-memory stand-in.
 
 ## Credits & license
 
