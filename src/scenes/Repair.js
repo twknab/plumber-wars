@@ -7,6 +7,7 @@ import { HEROES, difficulty, pick } from '../data/content.js';
 import { JOBS, TOOL_INFO, trayFor } from '../data/jobs.js';
 import { portrait } from '../art/people.js';
 import { buildFixture, SH } from '../art/fixtures.js';
+import { showProCard } from './proCard.js';
 
 const SY = 32; // scene box top
 const DRAG_SHOWS = { cartridge: 'cartNew', flapper: 'flapperNew', waxring: 'waxNew', supply: 'lineNew', coupling: 'coupling', foam: 'foam', ballvalve: 'ballvalve', gauge: 'gauge', hose: 'hose', bucket: 'bucket', plugIn: 'plug', pumpIn: 'pump' };
@@ -230,7 +231,7 @@ export class Repair extends Phaser.Scene {
     c.add(this.add.rectangle(0, 0, W, H, hex(C.ink), 0.92).setOrigin(0).setInteractive().on('pointerup', () => this.toggleLegend()));
     c.add(txt(this, W / 2, 10, "WHAT'S IN THE TRAY", { ox: 0.5, size: 2, color: C.gold }));
     c.add(txt(this, W / 2, 28, 'CLOCK PAUSED  -  TAP ANYWHERE TO GO BACK', { ox: 0.5, color: C.lime }));
-    const rowH = Math.min(38, Math.floor((H - 60) / this.slots.length));
+    const rowH = Math.min(38, Math.floor((H - 96) / this.slots.length));
     this.slots.forEach((sl, i) => {
       const info = TOOL_INFO[sl.k] || { name: sl.k, desc: '' }; const y = 44 + i * rowH;
       c.add(this.add.rectangle(10, y, W - 20, rowH - 4, hex(C.night)).setOrigin(0).setStrokeStyle(1, hex(C.storm)));
@@ -239,6 +240,8 @@ export class Repair extends Phaser.Scene {
       c.add(txt(this, 52, y + 5, info.name, { color: info.decoy ? C.pink : info.part ? C.cyan : C.white }));
       c.add(txt(this, 52, y + 17, info.decoy ? 'NOT A REAL FIX. DON\'T.' : info.desc, { color: C.silver, maxW: W - 70 }));
     });
+    // the real-world standard behind this job (clock stays paused while reading)
+    c.add(button(this, W / 2, H - 28, 190, 26, 'HOW PROS DO IT >', () => showProCard(this, this.ji), { color: 'btnGold', depth: 301 }));
   }
 
   // ------------------------------------------------------------------ interactions

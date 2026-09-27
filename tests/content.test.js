@@ -78,3 +78,9 @@ test('every homie has plenty of ways to answer the call', async () => {
     for (const l of lines) assert.ok(!/\{(?!WHO\}|HOOD\})/.test(l), `unknown placeholder in "${l}"`);
   }
 });
+
+test('every job has a "how pros do it" card', async () => {
+  const { STANDARDS } = await import('../src/data/standards.js');
+  assert.equal(STANDARDS.length, JOBS.length);
+  STANDARDS.forEach((lines, i) => assert.ok(lines.length >= 3 && lines.every(l => l.length <= 130), `job ${i} card`));
+});

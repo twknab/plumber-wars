@@ -10,6 +10,7 @@ import { skyTex } from './Arrival.js';
 import { houseTextures } from '../art/houses.js';
 import { pickReview, pickBuzz } from '../data/reviews.js';
 import { goToJob } from './District.js';
+import { showProCard } from './proCard.js';
 
 
 export class Result extends Phaser.Scene {
@@ -61,8 +62,9 @@ export class Result extends Phaser.Scene {
     const by = H - 70;
     if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
     else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => goToJob(this, nextJob(ji)), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
-    button(this, W / 2 - 50, by + 38, 90, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
-    button(this, W / 2 + 50, by + 38, 90, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });
+    button(this, 42, by + 38, 70, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
+    button(this, W / 2, by + 38, 104, 26, 'HOW PROS DO IT', () => showProCard(this, ji), { color: 'btnGold', key: 'P' });
+    button(this, W - 42, by + 38, 70, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });
     this.time.delayedCall(700, () => bubble(this, W / 2, 110, pick(hero.barks), { dur: 1800, color: C.forest }));
   }
   lose(ji, job, hero) {

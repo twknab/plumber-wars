@@ -1,7 +1,7 @@
 <p align="center"><img src="docs/logo.png" alt="Plumber Wars - G's Plumbing" width="420"></p>
 
 <p align="center"><b>A mobile-first 16-bit arcade game about Seattle's finest plumbers and their filthy-mouthed rivals.</b><br>
-<a href="https://plumber-wars-980128349276.us-west1.run.app">Play it in your browser</a> · built with Phaser 3 · every pixel and chiptune generated in code</p>
+<a href="https://plumber-wars-980128349276.us-west1.run.app">Play it in your browser</a> · built with Phaser 3 · every pixel and beat generated in code</p>
 
 <p align="center">
   <img src="docs/shot-title.png" width="200" alt="Title screen: pixel Seattle skyline at sunset with the Space Needle, Mt. Rainier and the G's van">
@@ -33,9 +33,12 @@ then fix real plumbing problems before the customer loses it and calls the compe
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).
   Progress **saves automatically** after every finished job (lead homie, unlocked jobs, stars) in your browser;
   hit **CONTINUE** to pick up where you left off.
-- **Dispatch.** The customer calls, Northwest cuts in on the CB radio to claim the job.
+- **A real Seattle.** The dispatch map is drawn from real coordinates (Ship Canal, Lake Union, Lake Washington,
+  Elliott Bay, West Seattle), each pin with its own landmark icon.
+- **Dispatch.** The customer calls, a homie picks up (they take turns), then Northwest cuts in on the CB radio
+  to claim the job.
 - **The race** (top-down, Spy Hunter style). Beat the Northwest box truck to the house. They ram you (watch for the
-  red flash), throw turds / TP / plungers / wrenches, and yell obscenities over the radio (speech synth; the music
+  red flash), throw turds / TP / plungers / wrenches, and yell obscenities over the radio (recorded voices; the music
   ducks so you hear every word). Shove them into curbs and traffic, grab espresso for BOOST, honk to clear your lane.
   Oncoming traffic from Fremont on; potholes, puddles, oil, cyclists, raccoons, road work. You pull up to the
   actual house at the end.
@@ -43,7 +46,11 @@ then fix real plumbing problems before the customer loses it and calls the compe
   tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm, hold for torque,
   drag parts, pull, scrub, tap leaks, sweep a sewer camera). Wrong tools and wrong order cost time and make the customer madder. Rack up mistakes (or dents in the race)
   and your homies' help buttons light up.
-  A pro tip explains each real step.
+  A pro tip explains each real step, and the clock pauses while you read it.
+- **How pros do it.** Every job has a card with the real-world standard behind the fix (drain slope, trap seals,
+  80 psi max house pressure, T&P valves, backflow protection, who owns a Seattle side sewer...). Open it from
+  **TOOLS?** mid-repair (clock paused) or from the results screen. Based on the Uniform Plumbing Code Washington
+  uses plus common trade practice; `src/data/standards.js`.
 - **16 jobs** across 6 neighborhoods: Ballard, Fremont, Capitol Hill, West Seattle, then **Alki Beach** (Timmy's
   clogged tub, required) before the Queen Anne showdown. Rising difficulty: longer, faster races; a meaner,
   faster rival; tighter repair clocks and timing windows; tool hints only in Ballard; from Capitol Hill on you
@@ -59,6 +66,18 @@ then fix real plumbing problems before the customer loses it and calls the compe
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
 | Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus one squirrel acorn), rag + plunge |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
+
+## Under the hood
+
+- **Game:** Phaser 3 + Vite, a 270px-wide pixel canvas, mobile-first. Every sprite, room, house, map and font is
+  drawn procedurally in code (no image editor involved).
+- **Sound:** a WebAudio synth engine for the SFX and an EDM soundtrack; Big Randy, Skeeter and the crew are voiced
+  with Google Cloud Text-to-Speech (Chirp 3 HD), pre-rendered to MP3 so they play instantly on phones.
+- **Real places:** openly licensed Wikimedia Commons photos, converted to the game palette with ordered dithering.
+- **Server:** a zero-dependency Node server on Cloud Run (scale-to-zero) serving the game plus a Firestore-backed
+  leaderboard.
+- **Quality:** a `node:test` suite (content integrity, docs sync, voice regressions, leaderboard rules) and dev
+  bots that auto-play every repair (`/?smoke=1`) and race every level (`/?racebot=1`).
 
 ## Controls (touch or keyboard)
 
