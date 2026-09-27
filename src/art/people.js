@@ -8,7 +8,7 @@ const SKIN = {
 };
 const HAIR = {
   brown: [C.umber, C.brown, C.clay], black: [C.ink, C.night, C.storm], blond: [C.flame, C.gold, C.yellow], ginger: [C.brown, C.rust, C.orange],
-  white: [C.steel, C.silver, C.white], grey: [C.slate, C.steel, C.silver], purple: [C.plum, C.mauve, C.pink], pink: [C.crimson, C.hot, C.pink],
+  white: [C.steel, C.silver, C.white], grey: [C.slate, C.steel, C.silver], salt: [C.storm, C.steel, C.silver], purple: [C.plum, C.mauve, C.pink], pink: [C.crimson, C.hot, C.pink],
 };
 const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16); const f = c => Math.max(0, Math.min(255, Math.round(c * k))); return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, '0')).join(''); };
 
@@ -31,14 +31,29 @@ export function drawPortrait(look, mood = 'happy') {
   if (look.jacked) { // huge delts + tank top
     p.poly([[0, 48], [2, 36], [10, 30], [20, 31], [28, 31], [38, 30], [46, 36], [48, 48]], sk[1]);
     p.blob(8, 38, 8, 8, sk); p.blob(40, 38, 8, 8, sk); p.shade(0, 42, 48, 6, sk[0], 0.4);
-    p.poly([[14, 48], [16, 34], [20, 32], [28, 32], [32, 34], [34, 48]], look.shirt); p.rect(16, 30, 3, 6, look.shirt); p.rect(29, 30, 3, 6, look.shirt);
-    p.line(19, 40, 29, 40, sh[1]); p.vline(24, 40, 8, sh[1]);
+    if (look.shirtless) { // pecs, chest hair, and a fir-tree tattoo on the arm
+      p.hline(16, 43, 7, sk[0]); p.hline(26, 43, 7, sk[0]); p.px(15, 42, sk[0]); p.px(33, 42, sk[0]); p.vline(24, 38, 6, sk[0]);
+      for (let i = 0; i < 22; i++) { const h = Math.sin(i * 12.9898) * 43758.5453, r1 = h - Math.floor(h), h2 = Math.sin(i * 78.233) * 12543.21, r2 = h2 - Math.floor(h2); p.px(18 + Math.floor(r1 * 13), 37 + Math.floor(r2 * 10), i % 3 ? sk[0] : hr[0]); }
+      p.px(16, 44, sk[0]); p.px(32, 44, sk[0]);
+      p.px(42, 37, C.forest); p.hline(41, 38, 3, C.forest); p.hline(40, 39, 5, C.deep); p.hline(41, 40, 3, C.forest); p.hline(40, 41, 5, C.deep); p.px(42, 42, C.brown);
+    } else {
+      p.poly([[14, 48], [16, 34], [20, 32], [28, 32], [32, 34], [34, 48]], look.shirt); p.rect(16, 30, 3, 6, look.shirt); p.rect(29, 30, 3, 6, look.shirt);
+      p.line(19, 40, 29, 40, sh[1]); p.vline(24, 40, 8, sh[1]);
+    }
   } else {
   p.poly([[4, 48], [9, 36], [18, 32], [30, 32], [39, 36], [44, 48]], sh[2]);
   p.poly([[4, 48], [9, 36], [14, 34], [12, 48]], sh[1]); p.poly([[44, 48], [39, 36], [36, 35], [37, 48]], sh[1]);
   p.hline(18, 32, 12, sh[3]);
   if (look.vest) { p.poly([[9, 48], [12, 36], [19, 33], [20, 48]], C.storm); p.poly([[39, 48], [36, 36], [29, 33], [28, 48]], C.storm); }
   if (look.camo) { for (let i = 0; i < 18; i++) p.ellipse(6 + (i * 13) % 36, 36 + (i * 7) % 11, 2, 1.5, i % 2 ? C.forest : C.brown); }
+  }
+  if (style === 'wavy') { // long wavy salt-and-pepper hair past the shoulders
+    for (const side of [-1, 1]) {
+      const x0 = side < 0 ? 9 : 31;
+      const xin = side < 0 ? 16 : 32; // inner edge hugs the jaw
+      for (let y = 12; y < 44; y++) { const wave = Math.round(Math.sin(y / 2.6 + (side < 0 ? 0 : 1.3)) * 1.5); const outer = side < 0 ? 9 + wave : 39 + wave; const a = Math.min(outer, xin), b = Math.max(outer, xin); p.hline(a, y, b - a, hr[1]); }
+      for (let k = 0; k < 3; k++) { let x = (side < 0 ? 11 : 34) + k * 2; for (let y = 13; y < 43; y++) { x += Math.sin(y / 3 + k) * 0.4; p.px(x, y, (k + y) % 6 === 0 ? hr[0] : k === 1 ? C.tan : hr[2]); } }
+    }
   }
   // neck
   p.rect(20, 28, 8, 6, sk[1]); p.hline(20, 33, 8, sk[0]);
@@ -80,6 +95,11 @@ export function drawPortrait(look, mood = 'happy') {
   // beard
   const bd = look.beard;
   if (bd === 'stubble') p.dither(16, 26, 17, 8, hr[0], 0.3);
+  if (bd === 'scruff') { // grey scruff + mustache
+    for (let i = 0; i < 46; i++) { const h = Math.sin(i * 91.7) * 43758.5453, r1 = h - Math.floor(h), h2 = Math.sin(i * 17.3) * 24634.6345, r2 = h2 - Math.floor(h2); const x = 16 + Math.floor(r1 * 17), y = 27 + Math.floor(r2 * 7); if (Math.abs(x - 24.5) > 3 || y > 30) p.px(x, y, i % 3 ? hr[1] : hr[2]); }
+    p.hline(20, 27, 9, hr[1]); p.px(19, 28, hr[1]); p.px(29, 28, hr[1]); p.hline(21, 26, 7, hr[2]);
+    p.hline(23, 32, 3, hr[1]); p.px(24, 33, hr[1]);
+  }
   if (bd === 'full' || bd === 'lumber' || bd === 'viking') {
     const len = bd === 'viking' ? 12 : bd === 'lumber' ? 9 : 6;
     p.poly([[14, 22], [16, 30], [20, 34 + len * 0.3], [24, 34 + len * 0.6], [28, 34 + len * 0.3], [32, 30], [34, 22], [32, 27], [28, 28], [20, 28], [16, 27]], hr[1]);
@@ -106,6 +126,8 @@ export function drawPortrait(look, mood = 'happy') {
     case 'bun': H([[13, 19], [14, 11], [20, 8], [29, 8], [34, 11], [35, 19], [31, 13], [17, 13]], hr[1]); p.blob(24, 6, 5, 4, hr); p.dither(16, 9, 16, 4, hr[2], 0.4); break;
     case 'perm': for (let i = 0; i < 7; i++) p.blob(15 + i * 3, 11 - (i % 2), 2.6, 2.6, hr); break;
     case 'updo': H([[13, 19], [14, 11], [20, 7], [29, 7], [34, 11], [35, 19], [31, 12], [17, 12]], hr[1]); p.blob(24, 4, 7, 4, hr); p.dither(16, 8, 16, 4, hr[2], 0.4); break;
+    case 'wavy': H([[12, 22], [13, 10], [18, 5], [26, 4], [33, 6], [37, 12], [36, 24], [33, 15], [27, 10], [20, 11], [15, 16]], hr[1]);
+      p.line(17, 8, 30, 6, hr[2]); p.line(15, 11, 23, 8, hr[2]); p.line(26, 9, 34, 13, hr[0]); p.px(21, 6, C.white); p.px(29, 5, C.tan); p.dither(13, 5, 24, 8, C.tan, 0.12); break;
     case 'long': H([[12, 24], [13, 10], [20, 6], [30, 6], [35, 10], [36, 24], [33, 14], [24, 12], [15, 14]], hr[1]); p.dither(14, 7, 20, 6, hr[2], 0.35); break;
     case 'mullet': H([[13, 18], [14, 9], [22, 6], [30, 7], [35, 11], [35, 18], [30, 12], [17, 12]], hr[1]); p.dither(15, 7, 18, 5, hr[2], 0.4); break;
     case 'bighair': H([[12, 20], [13, 9], [20, 5], [30, 5], [36, 10], [37, 20], [33, 13], [26, 11], [18, 12]], hr[1]); p.dither(15, 5, 20, 6, hr[2], 0.4); p.px(20, 7, C.white); break;
@@ -138,7 +160,7 @@ export function portrait(scene, id, look, mood = 'happy') {
 export function body(scene, id, look) {
   if (scene.textures.exists(`photo_body_${id}`)) return `photo_body_${id}`;
   const key = `body_${id}`; if (scene.textures.exists(key)) return key;
-  const sk = SKIN[look.skin] || SKIN.light, hr = HAIR[look.hair] || HAIR.brown, sh = look.shirt || C.blue;
+  const sk = SKIN[look.skin] || SKIN.light, hr = HAIR[look.hair] || HAIR.brown, sh = look.shirtless ? sk[2] : (look.shirt || C.blue);
   const p = new PX(32, 30);
   for (let f = 0; f < 2; f++) {
     const q = new PX(16, 30);
@@ -152,9 +174,10 @@ export function body(scene, id, look) {
     else if (s === 'beanie') { q.rect(4, 0, 9, 4, sh); q.hline(4, 3, 9, shade(sh, 0.6)); }
     else if (s === 'bald') { q.px(5, 5, hr[1]); q.px(12, 5, hr[1]); }
     else if (s === 'chef') { q.rect(4, -1, 9, 4, C.white); }
-    else { q.rect(4, 1, 9, 3, hr[1]); if (['long', 'bighair', 'afro', 'perm', 'bob'].includes(s)) { q.rect(3, 2, 2, 8, hr[1]); q.rect(12, 2, 2, 8, hr[1]); } }
+    else { q.rect(4, 1, 9, 3, hr[1]); if (['long', 'bighair', 'afro', 'perm', 'bob', 'wavy'].includes(s)) { const len = s === 'wavy' ? 11 : 8; q.rect(3, 2, 2, len, hr[1]); q.rect(12, 2, 2, len, hr[1]); if (s === 'wavy') { q.px(3, 6, hr[2]); q.px(13, 8, hr[2]); } } }
     if (['full', 'lumber', 'viking'].includes(look.beard)) q.rect(6, 8, 5, 3, hr[1]);
-    if (look.beard === 'stache') q.hline(7, 8, 4, hr[1]);
+    if (look.beard === 'stache' || look.beard === 'scruff') q.hline(7, 8, 4, hr[1]);
+    if (look.beard === 'scruff') q.hline(7, 9, 3, hr[2]);
     q.outline(C.ink); p.stamp(q, f * 16, 0);
   }
   p.toTexture(scene, key, 16, 30);
