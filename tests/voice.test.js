@@ -83,3 +83,9 @@ test('a line spoken while audio is still locked is dropped, not played late', as
   await new Promise(r => setTimeout(r, 50));
   assert.equal(started.length, 0, 'nothing queued up to surprise the player later');
 });
+
+test('local pronunciations: Alki is AL-KYE, pissants is two words', async () => {
+  const { speakable } = await import('../src/core/voicekey.js');
+  assert.match(speakable('WELCOME TO ALKI BEACH.'), /al-kye beach/i);
+  assert.match(speakable('YOU PIPE-LICKING PISSANTS!'), /piss ants/i);
+});
