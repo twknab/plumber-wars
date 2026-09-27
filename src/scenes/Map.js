@@ -104,8 +104,8 @@ export class MapScene extends Phaser.Scene {
       }
     }
     if (firstOpen != null) this.enterJob = firstOpen; else this.enterJob = null;
-    this.list.add(button(this, 50, H - 18, 76, 18, 'CREW', () => wipeTo(this, 'Crew'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
-    this.list.add(button(this, W - 50, H - 18, 76, 18, 'TITLE', () => wipeTo(this, 'Title'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
+    this.list.add(button(this, 52, H - 18, 84, 22, 'CHANGE LEAD', () => wipeTo(this, 'Crew'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
+    this.list.add(button(this, W - 52, H - 18, 84, 22, 'MAIN MENU', () => wipeTo(this, 'Title'), { color: 'btnGrey', textColor: C.white, depth: 60 }));
   }
   play(i) { audio.sfx('go'); wipeTo(this, 'Brief', { job: i }); }
 }

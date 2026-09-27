@@ -31,6 +31,9 @@ fallback while the voice list is still loading).
 
 ## Other conventions
 
+- **Phaser reuses scene instances.** Any per-visit flag (`left`, `leaving`, `used`, timers, object refs) must be
+  reset in `init()`/`create()`, or the second visit silently breaks (dead buttons, frozen transitions).
+
 - Keyboard *and* touch for every action; key hints only on non-touch devices (`isTouch`).
 - Trash talk is deliberately NSFW (crude, profane, plumbing/bathroom humor) — no slurs or hate.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
