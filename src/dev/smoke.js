@@ -18,6 +18,7 @@ async function playJob(g, i) {
   for (let guard = 0; guard < 300 && !r.over; guard++) {
     await sleep(30);
     if (r.phase === 'choose') { r.choose(r.step.t, false); continue; }
+    if (r.phase === 'tip' && r.tipNext) { r.tipNext(); continue; }
     if (r.phase !== 'tool') continue;
     const s = r.step; const slot = r.slots.find(x => x.k === s.tool);
     if (!slot) { log.push('NO SLOT ' + s.tool); break; }

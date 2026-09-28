@@ -28,7 +28,7 @@ export class Repair extends Phaser.Scene {
     this.win = this.df.window * (this.milan ? 1.35 : 1);
     this.si = 0; this.mistakes = 0; this.phase = 'idle'; this.tool = null; this.over = false;
     // scenes are reused between jobs: clear everything left over from the last one
-    this.legend = null; this.used = {}; this.showMe = 0; this.choiceBtns = null; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.leakEv = null; this.sprayEv = null;
+    this.legend = null; this.used = {}; this.showMe = 0; this.choiceBtns = null; this.choice = null; this.choiceKeys = null; this.psiTxt = null; this.tipTimer = null; this.tipNext = null; this.leakEv = null; this.sprayEv = null;
     this.act = null; this.ring = null; this.cursor = null; this.gauge = null; this.monitor = null; this.spots = []; this.dragging = false; this.lastTick = null; this.need = 0;
   }
   create() {
@@ -192,31 +192,33 @@ export class Repair extends Phaser.Scene {
     if (this.job.leak && this.job.leak.until === this.si) this.stopLeak();
     this.left = Math.min(this.total, this.left + 1.5);
     floatText(this, W / 2, SY + 40, auto ? 'MILAN GOT IT!' : pick(['NICE!', 'CLEAN!', 'PRO MOVE!', 'SMOOTH!', 'HOMIE-GRADE!']), C.lime, 160);
-    // pro tip: stays up long enough to actually read (the repair clock is paused meanwhile); tap to move on
+    // pro tip: waits for the player (the repair clock is paused). Only a FRESH tap counts: the finger that just
+    // finished the step lifts right after the tip appears, and that lift must not dismiss it.
     const tip = this.add.container(0, 0).setDepth(160);
     const body = txt(this, 12, 0, s.tip, { maxW: W - 24 });
-    const th = body.height + 34, ty = SY + SH - th - 4;
-    tip.add(this.add.rectangle(W / 2, ty + th / 2, W - 12, th, hex(C.forest), 0.96).setStrokeStyle(1, hex(C.lime)));
+    const th = body.height + 44, ty = SY + SH - th - 4;
+    tip.add(this.add.rectangle(W / 2, ty + th / 2, W - 12, th, hex(C.forest), 0.97).setStrokeStyle(1, hex(C.lime)));
     tip.add(txt(this, 12, ty + 6, 'PRO TIP:', { color: C.yellow }));
-    tip.add(txt(this, W - 12, ty + 6, isTouch ? 'CLOCK PAUSED - TAP TO CONTINUE' : 'CLOCK PAUSED - [SPACE] TO CONTINUE', { ox: 1, color: C.lime }));
+    tip.add(txt(this, W - 12, ty + 6, 'CLOCK PAUSED', { ox: 1, color: C.lime }));
     body.setPosition(12, ty + 17); tip.add(body);
-    const readMs = Phaser.Math.Clamp(1800 + s.tip.length * 55, 4000, 10000);
-    const bar = this.add.rectangle(8, ty + th - 4, W - 16, 2, hex(C.lime)).setOrigin(0, 0.5); tip.add(bar);
-    this.tweens.add({ targets: bar, scaleX: 0, duration: readMs });
     this.phase = 'tip';
-    let done = false;
+    let done = false, armed = false, pressed = false;
+    const ok = button(this, W - 44, ty + th - 13, 72, 18, isTouch ? 'GOT IT >' : 'GOT IT [SPC]', () => next(), { color: 'btnGreen', textColor: C.white, depth: 162, sound: 'blip' });
+    this.tweens.add({ targets: ok, alpha: 0.55, yoyo: true, repeat: -1, duration: 600, delay: 600 });
     const skip = this.add.zone(0, SY, W, SH).setOrigin(0).setInteractive().setDepth(161);
+    skip.on('pointerdown', () => { if (armed) pressed = true; });
+    skip.on('pointerup', () => { if (armed && pressed) next(); });
+    this.time.delayedCall(350, () => { armed = true; });
     const keys = ['keydown-SPACE', 'keydown-ENTER'];
+    const onKey = () => { if (armed) next(); };
     const next = () => {
-      if (done) return; done = true;
-      if (this.tipTimer) this.tipTimer.remove();
-      keys.forEach(k => this.input.keyboard.off(k, next)); if (skip.active) skip.destroy();
+      if (done) return; done = true; this.tipNext = null;
+      keys.forEach(k => this.input.keyboard.off(k, onKey)); if (skip.active) skip.destroy(); if (ok.active) ok.destroy();
       if (tip.active) tip.destroy(); this.si++; if (this.si >= this.job.steps.length) this.success(); else this.beginStep();
     };
-    this.tipTimer = this.time.delayedCall(readMs, next);
-    skip.once('pointerup', next);
-    keys.forEach(k => this.input.keyboard.on(k, next));
-    this.events.once('shutdown', () => { done = true; keys.forEach(k => this.input.keyboard && this.input.keyboard.off(k, next)); }); // scene is reused
+    this.tipNext = next; // (the dev smoke bot acknowledges tips through this)
+    keys.forEach(k => this.input.keyboard.on(k, onKey));
+    this.events.once('shutdown', () => { done = true; this.tipNext = null; keys.forEach(k => this.input.keyboard && this.input.keyboard.off(k, onKey)); }); // scene is reused
   }
   useAssist(who) {
     if (this.over || (this.used || {})[who]) return;

@@ -255,11 +255,11 @@ export const JOBS = [
   { title: 'CLOGGED BATHTUB', scene: 'tub', variant: 'alki', address: '2600 ALKI AVE SW, APT 3',
     who: 'TIMMY', look: { skin: 'fair', hair: 'beach', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
     house: { style: 'townhouse', body: '#feae34', trim: '#ffffff', roof: '#124e89', door: '#0099db', extra: 'alki' },
-    call: "BRO. MY TUB WON'T DRAIN. I'M STANDING IN A FOOT OF MY OWN KAYAK WATER. ALSO BOY - MY SQUIRREL - MIGHT'VE STASHED AN ACORN IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
+    call: "BRO. MY TUB WON'T DRAIN. I'M STANDING IN A FOOT OF MY OWN KAYAK WATER. ALSO MY NEIGHBOR'S SQUIRREL MIGHT'VE STUFFED A NUT IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
     steps: [
       { t: 'UNSCREW THE TUB STOPPER', tool: 'hand', type: 'turn', target: 'stopper', dir: -1, turns: 1.5, tip: 'LIFT-AND-TURN STOPPER: HOLD THE BODY, TWIST THE KNOB COUNTER-CLOCKWISE AND IT SPINS OFF THE DRAIN.', fx: ['away:stopper'] },
       { t: 'REMOVE THE OVERFLOW PLATE', tool: 'driver', type: 'turn', target: 'overflow', dir: -1, turns: 1.5, tip: 'TWO SCREWS ON THE ROUND PLATE UNDER THE SPOUT. IT LETS AIR IN SO THE DRAIN CAN BREATHE.', early: 'YOU PLUNGED WITH THE OVERFLOW OPEN. THE WATER SHOT OUT THE PLATE AND HIT TIMMY IN THE ABS.', fx: ['away:overflow'] },
-      { t: 'ZIP-IT: HAIR + ONE ACORN', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 64, pre: ['show:hair'], tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (BOY WANTS HIS ACORN BACK.)", fx: ['show:grime'] },
+      { t: 'ZIP-IT: HAIR + ONE NUT', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 64, pre: ['show:hair'], tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (THE NEIGHBOR'S SQUIRREL WANTS HIS NUT BACK.)", fx: ['show:grime'] },
       { t: 'STUFF A WET RAG IN THE OVERFLOW', tool: 'hand', type: 'tap', target: 'overflow', tip: 'PLUG THE OVERFLOW OR THE PLUNGER JUST PUSHES AIR OUT OF IT INSTEAD OF MOVING THE CLOG.', fx: ['show:rag'] },
       { t: 'PLUNGE THE TUB DRAIN', tool: 'cupplunger', type: 'rhythm', target: 'drain', hits: 4, tip: 'FLAT CUP PLUNGER, A FEW INCHES OF WATER OVER IT, SHARP STRAIGHT STROKES.', fx: ['fade:pool'] },
       { t: 'SCRUB THE DRAIN FLANGE', tool: 'brush', type: 'scrub', target: 'grime', amount: 0.9, tip: 'SOAP SCUM + SUNSCREEN + SAND. ALKI GETS IN EVERYTHING.' , fx: ['hide:grime'] },

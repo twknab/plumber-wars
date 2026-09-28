@@ -48,7 +48,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
   tray, then do the gesture (circle to turn valves — righty-tighty matters — plunge in rhythm, hold for torque,
   drag parts, pull, scrub, tap leaks, sweep a sewer camera). Wrong tools and wrong order cost time and make the customer madder. Rack up mistakes (or dents in the race)
   and your homies' help buttons light up.
-  A pro tip explains each real step, and the clock pauses while you read it.
+  A pro tip explains each real step and waits until you tap GOT IT (the clock pauses while you read).
 - **How pros do it.** Every job has a card with the real-world standard behind the fix (drain slope, trap seals,
   80 psi max house pressure, T&P valves, backflow protection, who owns a Seattle side sewer...). Open it from
   **TOOLS?** mid-repair (clock paused) or from the results screen. Based on the Uniform Plumbing Code Washington
@@ -66,7 +66,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
 | Fremont | Running toilet (flapper) · Grease-clogged kitchen sink (P-trap) · Jammed disposal |
 | Capitol Hill | Low water pressure (PRV) · Leaky supply line · Rocking toilet / wax ring |
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
-| Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus one squirrel acorn), rag + plunge |
+| Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus the neighbor squirrel's nut), rag + plunge |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
 
 ## Under the hood

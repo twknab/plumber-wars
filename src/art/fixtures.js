@@ -22,7 +22,7 @@ function blocks(p, x, y, w, h) { concrete(p, x, y, w, h); for (let j = y; j < y 
 
 
 // ------------------------------------------------------------------ FUN PROPS
-// Little background jokes per room (like Timmy's kayak and Boy the squirrel). Pure decoration: kept clear of
+// Little background jokes per room (like Timmy's kayak and the neighbor's squirrel). Pure decoration: kept clear of
 // every anchor the repair steps use and of the customer portrait (top right).
 const PROP = {
   tp(bg, x, y) { bg.rect(x, y, 18, 3, C.silver); bg.rect(x + 1, y + 3, 16, 12, C.white); bg.rect(x + 1, y + 3, 16, 2, C.silver); bg.vline(x + 9, y + 3, 12, C.silver); bg.rect(x + 12, y + 15, 5, 10, C.white); },
@@ -236,7 +236,7 @@ function sink(scene, v) {
   };
   return { bg: 'fx_sink_' + v, parts, anchors };
 }
-// Timmy's Alki apartment wall: kayak on the wall, an electric guitar, an amanita, and Boy the squirrel.
+// Timmy's Alki apartment wall: kayak on the wall, an electric guitar, an amanita, and the neighbor's squirrel.
 function alkiWall(bg) {
   bg.rect(0, 0, SW, 64, C.cyan); bg.dither(0, 0, SW, 64, C.blue, 0.12); for (let i = 0; i < SW; i += 30) bg.vline(i, 0, 64, C.blue);
   // kayak on wall hooks
@@ -253,7 +253,7 @@ function alkiWall(bg) {
   // amanita mushroom terrarium on the counter
   bg.rect(26, 48, 20, 16, '#c0cbdc60'); bg.box(26, 48, 20, 16, C.silver); bg.rect(27, 60, 18, 3, C.brown);
   bg.rect(34, 54, 4, 6, C.white); bg.ellipse(36, 53, 7, 4, C.red); bg.px(33, 51, C.white); bg.px(38, 52, C.white); bg.px(36, 50, C.white);
-  // Boy the squirrel on the counter, guarding an acorn
+  // the neighbor's squirrel on the counter, guarding a nut
   const sq = 178;
   bg.ellipse(sq, 57, 5, 5, C.clay); bg.ellipse(sq - 6, 52, 5, 8, C.brown); bg.ellipse(sq + 3, 51, 3.5, 3, C.clay);
   bg.px(sq + 4, 50, C.ink); bg.px(sq, 48, C.clay); bg.px(sq + 5, 53, C.brown); bg.rect(sq - 1, 60, 3, 2, C.umber); bg.ellipse(sq + 8, 60, 2, 2, C.brown); bg.px(sq + 8, 58, C.umber);
