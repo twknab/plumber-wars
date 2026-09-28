@@ -8,6 +8,7 @@ dist/
 terraform.tfvars
 *.auto.tfvars
 .env*
+!.env.example
 deploy/plumber-wars-qr.png
 .build-id
 preview/

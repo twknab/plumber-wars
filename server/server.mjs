@@ -11,8 +11,14 @@ import { validateEntry, TOP_N } from './scores.mjs';
 
 const PORT = +process.env.PORT || 8080;
 const ROOT = path.resolve(process.env.STATIC_DIR || 'dist');
-const PROJECT = process.env.GOOGLE_CLOUD_PROJECT || 'twk-experiments';
-const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+// The project id is never hard-coded: Cloud Run's metadata server knows which project we're running in.
+let FS = null;
+async function fsBase() {
+  if (FS) return FS;
+  let project = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT;
+  if (!project) project = await (await fetch('http://metadata.google.internal/computeMetadata/v1/project/project-id', { headers: { 'Metadata-Flavor': 'Google' } })).text();
+  return (FS = `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents`);
+}
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.mp3': 'audio/mpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.txt': 'text/plain', '.webmanifest': 'application/manifest+json' };
 const ZIP = new Set(['.html', '.js', '.css', '.json', '.svg', '.txt']);
 
@@ -24,7 +30,7 @@ async function token() {
   const j = await r.json(); tok = { v: j.access_token, exp: Date.now() + j.expires_in * 1000 }; return tok.v;
 }
 async function fs(pathPart, body, method = 'POST') {
-  const r = await fetch(FS + pathPart, { method, headers: { Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const r = await fetch(await fsBase() + pathPart, { method, headers: { Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   if (method === 'GET' && r.status === 404) return null;
   if (!r.ok) throw new Error('firestore ' + r.status + ' ' + (await r.text()).slice(0, 200));
   return r.json();

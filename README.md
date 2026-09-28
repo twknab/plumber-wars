@@ -116,7 +116,7 @@ Everything is generated in code at boot — there are no image or audio asset fi
   wrong tools), engine drone, recorded voices.
 - **Voices** — every spoken line is pre-recorded with Google Cloud Text-to-Speech (Chirp 3 HD voices: Big Randy,
   Skeeter and each Homie get their own) into `public/voice/`. Render new/changed lines with
-  `node scripts/voices.mjs twk-experiments`; the browser's built-in speech is only a fallback.
+  `node scripts/voices.mjs`; the browser's built-in speech is only a fallback.
   (Browsers never allow sound before the first tap, so the game opens on a TAP TO START screen. It fires on
   finger-up, the only touch phones count as a gesture, and on iPhone the game plays even with the silent switch on.)
 
@@ -173,7 +173,8 @@ Dev helpers (dev server only):
 
 ```bash
 gcloud auth login
-bash deploy/deploy.sh twk-experiments us-west1
+cp .env.example .env   # then set GCP_PROJECT (kept out of git)
+bash deploy/deploy.sh
 ```
 
 Builds the container with Cloud Build, deploys a public, scale-to-zero Cloud Run service, prints the URL

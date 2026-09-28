@@ -41,5 +41,5 @@ test('every spoken line has a recorded voice clip', async () => {
   const man = JSON.parse(readFileSync('public/voice/manifest.json', 'utf8'));
   const lines = [...Object.values(TRASH).flat(), ...HEROES.flatMap(h => h.barks), ...Object.values(VOICE_EXTRA).flat()];
   const missing = lines.filter(t => !man[voiceKey(t)] || !existsSync('public/voice/' + man[voiceKey(t)].f));
-  assert.deepEqual(missing, [], 'Record new lines with: node scripts/voices.mjs twk-experiments');
+  assert.deepEqual(missing, [], 'Record new lines with: node scripts/voices.mjs (project from .env)');
 });

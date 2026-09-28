@@ -21,7 +21,7 @@ art or deploy — update these in the same change:
    New characters/sprites must also be added to the sprite sheet in `src/dev/docs.js`.
 
 4. **Voices**: any new or edited spoken line (`TRASH`, hero `barks`, `VOICE_EXTRA` in `src/data/content.js`) must be
-   recorded: `node scripts/voices.mjs twk-experiments` (Google Cloud TTS, Chirp 3 HD; only renders missing lines).
+   recorded: `node scripts/voices.mjs` (Google Cloud TTS, Chirp 3 HD; only renders missing lines).
 5. **Cast assets**: `/?assets=1` re-exports every character/house to `docs/assets/` (used by the cast review page).
 6. **How to Play** (`src/scenes/HowTo.js`): update it when controls, mechanics or saving change.
 8. **District art**: new/changed district photos go through `scripts/districts.mjs` + `/?districts=1`; keep the
@@ -44,6 +44,6 @@ and that a line spoken while audio is locked is dropped rather than played late.
 - Roast behaviors and archetypes (tech bros, frat bros, preppers, Northwest), never identity. No jokes about
   wigs, weaves, extensions, dreads, afros or hair texture, or anything that reads as racial. Drain clogs are fine.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
-- Deploy: `bash deploy/deploy.sh twk-experiments us-west1` (Cloud Run, public, scale-to-zero).
+- Deploy: `bash deploy/deploy.sh` (Cloud Run, public, scale-to-zero).
 - Leaderboard: `server/server.mjs` (static + `/api/scores`, Firestore over REST, no npm deps in the runtime
   image). Validation rules live in `server/scores.mjs` and are tested; the Vite dev server mocks the API.

@@ -1,11 +1,14 @@
 // Pre-renders every spoken line with Google Cloud Text-to-Speech (Chirp 3 HD voices) into public/voice/.
-// Usage: node scripts/voices.mjs [PROJECT_ID]   (needs `gcloud auth login`; only renders lines that are missing)
+// Usage: node scripts/voices.mjs [PROJECT_ID]   (defaults to GCP_PROJECT from .env)   (needs `gcloud auth login`; only renders lines that are missing)
 import { execSync } from 'node:child_process';
 import { writeFileSync, existsSync, readFileSync, mkdirSync } from 'node:fs';
 import { TRASH, HEROES, VOICE_EXTRA } from '../src/data/content.js';
 import { voiceKey, speakable } from '../src/core/voicekey.js';
 
-const project = process.argv[2] || 'twk-experiments';
+// Project comes from the command line or GCP_PROJECT in .env (gitignored), never from the repo.
+const dotenv = existsSync('.env') ? Object.fromEntries(readFileSync('.env', 'utf8').split('\n').map(l => l.match(/^\s*([A-Z_]+)\s*=\s*(.*)\s*$/)).filter(Boolean).map(m => [m[1], m[2]])) : {};
+const project = process.argv[2] || process.env.GCP_PROJECT || dotenv.GCP_PROJECT;
+if (!project) { console.error('Set GCP_PROJECT in .env (see .env.example) or pass the project id.'); process.exit(1); }
 const VOICES = { randy: 'en-US-Chirp3-HD-Algenib', skeeter: 'en-US-Chirp3-HD-Puck', dalton: 'en-US-Chirp3-HD-Orus', milan: 'en-US-Chirp3-HD-Charon', jared: 'en-US-Chirp3-HD-Achird' };
 
 const lines = [];

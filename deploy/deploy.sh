@@ -2,9 +2,10 @@
 # One-command deploy to Cloud Run (builds the container with Cloud Build, no local Docker needed).
 # Usage: bash deploy/deploy.sh [PROJECT_ID] [REGION]
 set -euo pipefail
-project="${1:-twk-experiments}"
-region="${2:-us-west1}"
 cd "$(dirname "$0")/.."
+[ -f .env ] && set -a && . ./.env && set +a   # GCP_PROJECT / GCP_REGION live in .env (gitignored)
+project="${1:-${GCP_PROJECT:?set GCP_PROJECT in .env (see .env.example) or pass it as the first argument}}"
+region="${2:-${GCP_REGION:-us-west1}}"
 npm test
 git rev-parse --short HEAD > .build-id   # stamped on the title screen (Cloud Build has no .git)
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com --project "$project"
