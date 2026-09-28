@@ -7,8 +7,9 @@ import { validateEntry, TOP_N } from './server/scores.mjs';
 
 import { readFileSync as readIfAny } from 'node:fs';
 // Cloud Build has no .git, so deploy.sh writes the commit to .build-id first.
-const sha = (() => { try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { try { return readIfAny('.build-id', 'utf8').trim(); } catch { return 'dev'; } } })();
-const BUILD = `${new Date().toISOString().slice(0, 10)} ${sha}`;
+// .build-id holds just the commit (older deploys also wrote a date, so only its last word is used).
+const sha = (() => { try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { try { return readIfAny('.build-id', 'utf8').trim().split(/\s+/).pop(); } catch { return 'dev'; } } })();
+const BUILD = `${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC ${sha}`; // e.g. 2026-09-28 06:58 UTC 01a15fe
 
 // Dev-only endpoint used by src/dev/og.js and src/dev/docs.js to write generated images
 // (share card, README logo/screenshots/sprite sheet) into the repo.

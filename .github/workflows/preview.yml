@@ -32,7 +32,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
       - name: Deploy tagged preview (no traffic)
         run: |
-          echo "$(date -u +%F) $(git rev-parse --short HEAD)" > .build-id
+          git rev-parse --short HEAD > .build-id   # the build adds the UTC time itself
           TAG=$(echo "${GITHUB_REF_NAME}" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9]/-/g' -e 's/--*/-/g' -e 's/^-//' | cut -c1-40 | sed -e 's/-$//')
           [ -n "$TAG" ] && [ "$TAG" != "main" ] || TAG="preview"
           gcloud run deploy "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --source . \
