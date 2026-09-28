@@ -4,6 +4,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Phaser 4 is a rewrite (bitmap fonts render as garbage with our pixel font); migrate on purpose, not via bump.
+      - dependency-name: phaser
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
