@@ -54,19 +54,20 @@ export class About extends Phaser.Scene {
     this.add2(txt(this, 18, y0 + 10, "G'S PLUMBING - THE HOMIES", { color: C.lime }));
     this.add2(txt(this, 18, y0 + 24, "A LOVE LETTER TO SEATTLE'S HARDEST-WORKING (AND FUNNIEST) PLUMBING CREW. RACE NORTHWEST ACROSS TOWN, THEN FIX 16 REAL PUGET SOUND PLUMBING JOBS THE WAY A PRO WOULD - RIGHT TOOL, RIGHT ORDER, RIGHTY-TIGHTY. 6 NEIGHBORHOODS, INCLUDING TIMMY'S TUB ON ALKI BEACH.", { maxW: W - 36 }));
     this.add2(txt(this, 18, y0 + 108, 'NORTHWEST IS FICTIONAL. THEIR MOUTHS ARE FILTHY.', { color: C.pink, maxW: W - 36 }));
-    const cy = y0 + 142;
+    // the homies are the stars of this page
+    const cy = y0 + 150;
+    this.add2(txt(this, W / 2, cy, 'THE HOMIES', { ox: 0.5, size: 2, color: C.gold }));
     HEROES.forEach((h, i) => {
-      const x = W / 2 + (i - 1) * 84;
-      this.add2(this.add.rectangle(x, cy + 26, 52, 52, hex(C.storm)).setStrokeStyle(2, hex(h.color)));
-      this.add2(this.add.image(x, cy + 26, portrait(this, h.id, h.look, 'happy')));
-      this.add2(txt(this, x, cy + 56, h.name, { ox: 0.5, color: h.color }));
+      const x = W / 2 + (i - 1) * 86, by = cy + 60;
+      this.add2(this.add.rectangle(x, by, 78, 78, hex(C.storm)).setStrokeStyle(3, hex(h.color)));
+      this.add2(this.add.image(x, by, portrait(this, h.id, h.look, 'happy')).setScale(1.5));
+      this.add2(txt(this, x, by + 46, h.name, { ox: 0.5, size: 2, color: h.color }));
+      this.add2(txt(this, x, by + 64, h.role, { ox: 0.5, color: C.silver, maxW: 84, align: 1 }));
     });
-    const ay = cy + 76;
-    this.add2(txt(this, W / 2, ay, 'GAME BY', { ox: 0.5, color: C.silver }));
-    this.add2(txt(this, W / 2, ay + 12, 'TIM KNAB', { ox: 0.5, size: 2, color: C.white }));
-    this.add2(button(this, W / 2, ay + 44, 170, 28, isTouch ? 'TIMKNAB.DEV  >' : 'TIMKNAB.DEV [T]', () => this.openSite(), { color: 'btnBlue', textColor: C.white, sound: null }));
-    this.add2(txt(this, W / 2, ay + 66, 'PIXELS, BANGERS & TRASH TALK ALL MADE IN CODE WITH PHASER.', { ox: 0.5, color: C.steel, maxW: W - 30, align: 1 }));
-    this.add2(txt(this, W / 2, ay + 92, 'NEXT: MEET THE CREW + THE NEIGHBORHOODS >', { ox: 0.5, color: C.lime, maxW: W - 30, align: 1 }));
+    const ay = cy + 166;
+    this.add2(txt(this, W / 2, ay, 'NEXT: MEET THE CREW + THE NEIGHBORHOODS >', { ox: 0.5, color: C.lime, maxW: W - 30, align: 1 }));
+    // small credit
+    this.add2(button(this, W / 2, ay + 30, 150, 20, isTouch ? 'GAME BY TIM KNAB >' : 'GAME BY TIM KNAB [T]', () => this.openSite(), { color: 'btnGrey', textColor: C.white, sound: null }));
   }
 
   homiesPage() {
