@@ -1,0 +1,50 @@
+# Auto-deploy: when CI passes on main, ship main to Cloud Run (100% of traffic) and smoke-test it.
+# Auth is keyless: GitHub's OIDC token is exchanged for the deployer service account via Workload
+# Identity Federation (locked to this repo). Project details live in repo secrets, not in the code.
+name: Deploy
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+env:
+  REGION: us-west1
+  SERVICE: plumber-wars
+  PUBLIC_URL: https://plumberwars.timknab.dev
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Stamp the build (shown on the title screen)
+        run: echo "$(date -u +%F) $(git rev-parse --short HEAD)" > .build-id
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --source . \
+            --allow-unauthenticated --port 8080 --cpu 1 --memory 256Mi --min-instances 0 --max-instances 3 --concurrency 80 --quiet
+          gcloud run services update-traffic "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --to-latest --quiet
+      - name: Smoke test
+        run: |
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS "$PUBLIC_URL/health" >/dev/null && curl -fsS "$PUBLIC_URL/api/scores" >/dev/null; then echo "live: $PUBLIC_URL"; exit 0; fi
+            sleep 10
+          done
+          echo "smoke test failed" >&2; exit 1
+      - name: Summary
+        run: echo "Deployed \`$(git rev-parse --short HEAD)\` to $PUBLIC_URL" >> "$GITHUB_STEP_SUMMARY"
