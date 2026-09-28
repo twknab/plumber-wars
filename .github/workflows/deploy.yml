@@ -33,7 +33,7 @@ jobs:
           service_account: ${{ secrets.GCP_DEPLOY_SA }}
       - uses: google-github-actions/setup-gcloud@v2
       - name: Stamp the build (shown on the title screen)
-        run: echo "$(date -u +%F) $(git rev-parse --short HEAD)" > .build-id
+        run: git rev-parse --short HEAD > .build-id   # the build adds the UTC time itself
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --source . \
