@@ -11,6 +11,7 @@ import { houseTextures } from '../art/houses.js';
 import { pickReview, pickBuzz } from '../data/reviews.js';
 import { goToJob } from './District.js';
 import { showProCard } from './proCard.js';
+import { shareScore } from '../core/share.js';
 
 
 export class Result extends Phaser.Scene {
@@ -60,8 +61,10 @@ export class Result extends Phaser.Scene {
     }
     const last = nextJob(ji) == null;
     const by = H - 70;
-    if (last) button(this, W / 2, by, 190, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
-    else button(this, W / 2, by, 190, 30, 'NEXT CALL >>', () => goToJob(this, nextJob(ji)), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    if (last) button(this, W / 2 - 36, by, 150, 30, 'FINALE!', () => wipeTo(this, 'Finale'), { color: 'btnGold', key: 'ENTER' });
+    else button(this, W / 2 - 36, by, 150, 30, 'NEXT CALL >>', () => goToJob(this, nextJob(ji)), { color: 'btnGreen', textColor: C.white, key: 'ENTER' });
+    const brag = `Just fixed a ${job.title.toLowerCase()} for ${job.who.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ')} in Plumber Wars: ${score.toLocaleString('en-US')} points, ${stars}/3 stars. Think you can beat the homies?`;
+    button(this, W / 2 + 80, by, 66, 30, 'SHARE', () => shareScore(this, brag), { color: 'btnBlue', textColor: C.white, key: 'S' });
     button(this, 42, by + 38, 70, 26, 'MAP', () => wipeTo(this, 'Map'), { color: 'btnGrey', textColor: C.white, key: 'M' });
     button(this, W / 2, by + 38, 104, 26, 'HOW PROS DO IT', () => showProCard(this, ji), { color: 'btnGold', key: 'P' });
     button(this, W - 42, by + 38, 70, 26, 'REPLAY', () => wipeTo(this, 'Brief', { job: ji }), { color: 'btnGrey', textColor: C.white, key: 'R' });

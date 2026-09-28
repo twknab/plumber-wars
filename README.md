@@ -28,6 +28,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
 - **Something to find in every room.** A lava lamp in Fremont, husky fur in the shower, a cat poster in the
   basement, garden gnomes and banana slugs in Queen Anne, glowing raccoon eyes in the crawlspace.
+- **Share your score.** A **SHARE** button on the results screen and the finale opens the phone's share sheet
+  (or copies the brag + link on desktop).
 - **High scores.** Your total is your best score on every job, added up. Post it with arcade initials from
   **HIGH SCORES** on the title (or the finale); champions who beat all 16 jobs get a crown.
 - **About pages.** Meet the crew (what each homie brings: brains, back, bedside manner) and flip through all six
