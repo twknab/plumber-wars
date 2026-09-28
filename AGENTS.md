@@ -41,7 +41,8 @@ and that a line spoken while audio is locked is dropped rather than played late.
 
 - Keyboard *and* touch for every action; key hints only on non-touch devices (`isTouch`).
 - Trash talk is deliberately NSFW (crude, profane, plumbing/bathroom humor) — no slurs or hate.
-- Roast behaviors and archetypes (tech bros, frat bros, preppers, Northwest), never identity. No jokes about
+- Roast behaviors and archetypes (tech bros, frat bros, preppers, Northwest), never identity. No broken-English or
+  accent humor: every customer speaks in their own fluent voice. No jokes about
   wigs, weaves, extensions, dreads, afros or hair texture, or anything that reads as racial. Drain clogs are fine.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
 - Deploy: merging to `main` auto-deploys once CI passes (`.github/workflows/deploy.yml`); share a branch with the

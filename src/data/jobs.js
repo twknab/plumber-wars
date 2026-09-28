@@ -177,7 +177,7 @@ export const JOBS = [
   { title: 'NO HOT WATER', scene: 'heater', variant: 'gas', address: '4520 CALIFORNIA AVE SW',
     who: 'GRANDMA NGUYEN', look: { skin: 'tan', hair: 'grey', style: 'perm', beard: 'none', shirt: '#a22633', glasses: true },
     house: { style: 'rambler', body: '#ead4aa', trim: '#a22633', roof: '#3e2731', door: '#a22633', extra: 'garden' },
-    call: 'NO HOT WATER! HOW I MAKE PHO FOR 30 GRANDKIDS WITH COLD WATER? YOU FIX. NOW. PLEASE.', decoys: ['hammer', 'wd40'],
+    call: 'THE DOG ROLLED IN SOMETHING AT LINCOLN PARK. I CANNOT DESCRIBE IT. I NEED HOT WATER AND A PRIEST.', decoys: ['hammer', 'wd40'],
     steps: [
       { t: 'GAS CONTROL TO PILOT', tool: 'hand', type: 'turn', target: 'gas', dir: 1, turns: 0.5, tip: 'TURN THE GAS CONTROL KNOB TO "PILOT" BEFORE ANY WORK.', early: 'YOU OPENED THE DRAIN WITH THE BURNER RUNNING. THE TANK SCREAMS. GRANDMA SCREAMS LOUDER.' },
       { t: 'CLOSE THE COLD INLET', tool: 'hand', type: 'turn', target: 'cold', dir: 1, turns: 1.25, tip: 'THE VALVE ON THE COLD PIPE ON TOP. STOPS THE TANK REFILLING WHILE YOU FLUSH.' },
