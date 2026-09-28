@@ -1,0 +1,43 @@
+# Share a branch: Actions tab -> "Deploy preview" -> Run workflow -> pick the branch. It ships that branch to
+# a tagged, zero-traffic Cloud Run URL (https://<branch>---plumber-wars-....run.app) and prints the link.
+# The live site is untouched.
+name: Deploy preview
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: preview-${{ github.ref_name }}
+  cancel-in-progress: true
+env:
+  REGION: us-west1
+  SERVICE: plumber-wars
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tests
+        run: npm test
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy tagged preview (no traffic)
+        run: |
+          echo "$(date -u +%F) $(git rev-parse --short HEAD)" > .build-id
+          TAG=$(echo "${GITHUB_REF_NAME}" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9]/-/g' -e 's/--*/-/g' -e 's/^-//' | cut -c1-40 | sed -e 's/-$//')
+          [ -n "$TAG" ] && [ "$TAG" != "main" ] || TAG="preview"
+          gcloud run deploy "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --source . \
+            --allow-unauthenticated --port 8080 --cpu 1 --memory 256Mi --min-instances 0 --max-instances 3 --concurrency 80 \
+            --tag "$TAG" --no-traffic --quiet
+          URL=$(gcloud run services describe "$SERVICE" --project "${{ secrets.GCP_PROJECT }}" --region "$REGION" --format=json \
+            | jq -r --arg t "$TAG" '.status.traffic[] | select(.tag==$t) | .url')
+          echo "Preview for \`${GITHUB_REF_NAME}\`: $URL" | tee -a "$GITHUB_STEP_SUMMARY"

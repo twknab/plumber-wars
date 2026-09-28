@@ -191,9 +191,12 @@ blocklist for slurs, 16 per-job bests each capped). `npm run dev` swaps in an in
   syntax check, `npm audit` (high/critical) and GitHub's dependency review on PRs.
 - **Security:** CodeQL static analysis on pushes, PRs and weekly (`codeql.yml`); Dependabot keeps npm packages
   and Actions current.
-- **Next (planned):** auto-deploy `main` to Cloud Run after the gates pass, using Workload Identity Federation
-  (no service-account keys in GitHub), and a manual "deploy preview" workflow button that ships any branch to a
-  tagged, zero-traffic Cloud Run URL for sharing (`gcloud run deploy --tag <branch> --no-traffic`).
+- **Auto-deploy** (`deploy.yml`): when CI passes on `main`, GitHub ships it to Cloud Run (100% of traffic) and
+  smoke-tests `/health` and the leaderboard on the live domain. Auth is keyless: GitHub's OIDC token is exchanged
+  for a deploy-only service account via Workload Identity Federation, locked to this repo. The project id and
+  identity settings live in repo secrets (`GCP_PROJECT`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SA`), never in code.
+- **Share a branch** (`preview.yml`): Actions → **Deploy preview** → Run workflow → pick a branch. It runs the
+  tests, then deploys that branch to a tagged, zero-traffic Cloud Run URL and prints the link. Live is untouched.
 
 ## Credits & license
 

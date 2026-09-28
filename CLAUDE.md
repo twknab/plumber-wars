@@ -44,6 +44,7 @@ and that a line spoken while audio is locked is dropped rather than played late.
 - Roast behaviors and archetypes (tech bros, frat bros, preppers, Northwest), never identity. No jokes about
   wigs, weaves, extensions, dreads, afros or hair texture, or anything that reads as racial. Drain clogs are fine.
 - Real-crew photo sprites drop into `public/crew/` (see its README); don't hardcode around them.
-- Deploy: `bash deploy/deploy.sh` (Cloud Run, public, scale-to-zero).
+- Deploy: merging to `main` auto-deploys once CI passes (`.github/workflows/deploy.yml`); share a branch with the
+  **Deploy preview** workflow. `bash deploy/deploy.sh` (project from `.env`) still works for manual deploys.
 - Leaderboard: `server/server.mjs` (static + `/api/scores`, Firestore over REST, no npm deps in the runtime
   image). Validation rules live in `server/scores.mjs` and are tested; the Vite dev server mocks the API.
