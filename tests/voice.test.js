@@ -89,3 +89,8 @@ test('local pronunciations: Alki is AL-KYE, pissants is two words', async () => 
   assert.match(speakable('WELCOME TO ALKI BEACH.'), /al-kye beach/i);
   assert.match(speakable('YOU PIPE-LICKING PISSANTS!'), /piss ants/i);
 });
+
+test('no pause before the punchline: "wipe backwards" reads straight through', async () => {
+  const { speakable } = await import('../src/core/voicekey.js');
+  assert.equal(speakable('YOU DRIVE LIKE YOU WIPE: BACKWARDS!'), 'You drive like you wipe backwards!');
+});

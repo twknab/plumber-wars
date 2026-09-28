@@ -15,7 +15,8 @@ export function speakable(text) {
     .replace(/P-TRAP/g, 'P TRAP')
     // local pronunciations: Alki is "AL-kye" (rhymes with rye); pissants is two words, "piss ants"
     .replace(/\bALKI\b/g, 'AL-KYE')
-    .replace(/\bPISSANTS?\b/g, w => (w.endsWith('S') ? 'PISS ANTS' : 'PISS ANT'));
+    .replace(/\bPISSANTS?\b/g, w => (w.endsWith('S') ? 'PISS ANTS' : 'PISS ANT'))
+    .replace(/WIPE: BACKWARDS/g, 'WIPE BACKWARDS'); // the colon made the voice pause before the punchline
   s = s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (m, a, c) => a + c.toUpperCase());
   return s.replace(/\bi\b/g, 'I').replace(/\bi'/g, "I'").replace(/\b(randy|skeeter|northwest|tacoma|seattle|mariners|dalton|milan|jared|jimmy)\b/g, w => w[0].toUpperCase() + w.slice(1));
 }
