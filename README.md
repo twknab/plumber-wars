@@ -1,7 +1,7 @@
 <p align="center"><img src="docs/logo.png" alt="Plumber Wars - G's Plumbing" width="420"></p>
 
 <p align="center"><b>A mobile-first 16-bit arcade game about Seattle's finest plumbers and their filthy-mouthed rivals.</b><br>
-<a href="https://plumber-wars-980128349276.us-west1.run.app">Play it in your browser</a> · built with Phaser 3 · every pixel and beat generated in code</p>
+<a href="https://plumberwars.timknab.dev">Play it in your browser</a> · built with Phaser 3 · every pixel and beat generated in code</p>
 
 <p align="center">
   <img src="docs/shot-title.png" width="200" alt="Title screen: pixel Seattle skyline at sunset with the Space Needle, Mt. Rainier and the G's van">

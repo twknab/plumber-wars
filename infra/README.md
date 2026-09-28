@@ -1,6 +1,6 @@
 # Host Plumber Wars on Google Cloud Run
 
-This serves the built Phaser game at a public HTTPS `run.app` URL. There is no database: game saves stay in each visitor's browser. Defaults are Oregon (`us-west1`), zero minimum instances, three maximum instances, 1 CPU and 256 MiB RAM per instance. Registry storage and Cloud Run usage can incur charges; the instance limit is not a billing cap.
+This serves the built Phaser game at a public HTTPS `run.app` URL (the live game also answers at a custom domain via a Cloud Run domain mapping). Game saves stay in each visitor's browser; the only server-side data is the leaderboard in Firestore (`(default)` database), which this Terraform does not create. Defaults are Oregon (`us-west1`), zero minimum instances, three maximum instances, 1 CPU and 256 MiB RAM per instance. Registry storage and Cloud Run usage can incur charges; the instance limit is not a billing cap.
 
 ## First deployment
 
