@@ -63,7 +63,7 @@ export const JOBS = [
   { title: 'CLOGGED TOILET', scene: 'toilet', variant: 'clog', address: '1422 NW 65TH ST',
     who: 'SVEN LINDQVIST', look: { skin: 'fair', hair: 'white', style: 'bald', beard: 'viking', shirt: '#124e89', glasses: false },
     house: { style: 'craftsman', body: '#124e89', trim: '#ead4aa', roof: '#3a4466', door: '#e43b44', extra: 'flag' },
-    call: "UFF DA! I ATE THE WHOLE LUTEFISK PLATTER AND THE TOILET SURRENDERED. IT'S RISING!", decoys: ['drano', 'hammer'],
+    call: "UFF DA. I ATE A POUND OF LUTEFISK ON A DARE AND NOW THE TOILET IS FILING FOR DIVORCE. IT'S RISING. BRING A SNORKEL.", decoys: ['drano', 'hammer'],
     steps: [
       { t: 'SHUT OFF THE TOILET SUPPLY', tool: 'hand', type: 'turn', target: 'valve', dir: 1, turns: 1.25, tip: 'STOP THE TANK REFILLING SO THE BOWL CAN\'T OVERFLOW. RIGHTY-TIGHTY.', early: 'THE TANK REFILLS AND THE BOWL OVERFLOWS ONTO YOUR BOOTS!' },
       { t: 'PLUNGE: FLANGE PLUNGER', tool: 'plunger', type: 'rhythm', target: 'bowl', hits: 4, tip: 'SEAL THE FLANGE IN THE HOLE, PUSH-PULL STEADY. THE PULL DOES THE WORK.', early: 'YOU PLUNGED A FULL BOWL. EVERYONE IS WEARING LUTEFISK NOW.' },
@@ -74,7 +74,7 @@ export const JOBS = [
   { title: 'DRIPPING FAUCET', scene: 'sink', variant: 'kitchen', leak: { x: 166, y: 30, until: 0, kind: 'drip' }, address: '6019 24TH AVE NW',
     who: 'CAPTAIN MARGE', look: { skin: 'light', hair: 'grey', style: 'bun', beard: 'none', shirt: '#f77622', glasses: true },
     house: { style: 'bungalow', body: '#ead4aa', trim: '#124e89', roof: '#733e39', door: '#124e89', extra: 'anchor' },
-    call: 'DRIP. DRIP. DRIP. FORTY YEARS ON A CRAB BOAT AND THIS IS WHAT BREAKS ME.', decoys: ['ducttape', 'hammer'],
+    call: "FORTY YEARS ON THE BERING SEA. FIFTY-FOOT WAVES. AND THIS LITTLE DRIP IS WHAT FINALLY KILLS ME. IF IT DOES, I WILL HAUNT YOU.", decoys: ['ducttape', 'hammer'],
     steps: [
       { t: 'SHUT OFF BOTH ANGLE STOPS', tool: 'hand', type: 'turn', target: 'stopC', dir: 1, turns: 1, tip: 'THE LITTLE OVAL VALVES UNDER THE SINK. CLOCKWISE TO CLOSE.', early: 'YOU PULLED THE CARTRIDGE WITH THE WATER ON. GEYSER! MARGE IS SOAKED.' },
       { t: 'PLUG THE SINK DRAIN', tool: 'hand', type: 'tap', target: 'drain', tip: 'PLUG THE DRAIN SO TINY SCREWS DON\'T VANISH FOREVER.' , fx: ['show:stopper'] },
@@ -87,7 +87,7 @@ export const JOBS = [
   { title: 'SLOW SHOWER DRAIN', scene: 'shower', variant: 'hair', address: '5518 BARNES AVE NW',
     who: 'TYLER & BRI', look: { skin: 'tan', hair: 'brown', style: 'manbun', beard: 'lumber', shirt: '#3e8948', glasses: false },
     house: { style: 'modern', body: '#3e8948', trim: '#ffffff', roof: '#262b44', door: '#feae34', extra: 'bikes' },
-    call: "TYLER'S BEARD TRIMMINGS + OUR HUSKY'S SHEDDING SEASON = ANKLE-DEEP SHOWERS. WE BATHE IN A PUDDLE. HELP.", decoys: ['drano', 'gum'],
+    call: "WE SHOWER IN ANKLE-DEEP WATER THAT IS 40% HUSKY, 40% TYLER'S BEARD AND 20% REGRET. WE MIGHT BREAK UP OVER THIS.", decoys: ['drano', 'gum'],
     steps: [
       { t: 'UNSCREW THE DRAIN COVER', tool: 'driver', type: 'turn', target: 'cover', dir: -1, turns: 1.5, tip: 'MOST SHOWER GRATES HAVE ONE OR TWO SCREWS. KEEP THEM OUT OF THE DRAIN!' , fx: ['away:cover'] },
       { t: 'FISH OUT THE HAIR MONSTER', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 70, tip: 'BARBED ZIP-IT STICKS GRAB HAIR. PULL SLOW AND STEADY, DON\'T LET IT SNAP.' , fx: ['show:grime'] },
@@ -100,7 +100,7 @@ export const JOBS = [
   { title: 'RUNNING TOILET', scene: 'toilet', variant: 'tank', leak: { x: 135, y: 112, until: 0, kind: 'bubble' }, address: '3510 FREMONT AVE N',
     who: 'MOONBEAM', look: { skin: 'light', hair: 'purple', style: 'long', beard: 'none', shirt: '#b55088', glasses: true },
     house: { style: 'funky', body: '#b55088', trim: '#fee761', roof: '#265c42', door: '#2ce8f5', extra: 'art' },
-    call: 'MY TOILET HAS BEEN RUNNING FOR THREE DAYS. IT IS WASTING MOTHER GAIA\'S TEARS, MAN.', decoys: ['ducttape', 'beer'],
+    call: "MY TOILET HAS BEEN RUNNING FOR THREE DAYS, MAN. I TRIED SAGE, CRYSTALS AND A SOUND BATH. IT DID NOT CARE. I NEED A MAN WITH A WRENCH.", decoys: ['ducttape', 'beer'],
     steps: [
       { t: 'SHUT OFF THE SUPPLY VALVE', tool: 'hand', type: 'turn', target: 'valve', dir: 1, turns: 1.25, tip: 'ALWAYS FIRST. RIGHTY-TIGHTY.', early: 'THE TANK KEEPS REFILLING WHILE YOU WORK. WET SLEEVES!' },
       { t: 'FLUSH TO DRAIN THE TANK', tool: 'hand', type: 'hold', target: 'handle', zone: [0.8, 1.0], label: 'DRAIN', tip: 'HOLD THE HANDLE DOWN SO THE TANK EMPTIES. MORE WATER OUT = LESS MESS.' , fx: ['lower:tankwater'] },
@@ -112,7 +112,7 @@ export const JOBS = [
   { title: 'GREASE-CLOGGED SINK', scene: 'sink', variant: 'kitchen', address: '4409 PHINNEY AVE N',
     who: 'CHEF DMITRI', look: { skin: 'light', hair: 'black', style: 'chef', beard: 'stache', shirt: '#ffffff', glasses: false },
     house: { style: 'victorian', body: '#e43b44', trim: '#ead4aa', roof: '#262b44', door: '#193c3e', extra: 'lights' },
-    call: 'SUPPER CLUB IN ONE HOUR. SOMEONE POURED BACON GREASE DOWN MY SINK. IT WAS ME. I POURED IT.', decoys: ['drano', 'plunger'],
+    call: "TWELVE FOOD CRITICS AT SEVEN AND I POURED A WHOLE JAR OF COCONUT OIL DOWN THE SINK. IT WENT SOLID. MY DRAIN IS NOW A LIP BALM. I AM A GENIUS AND AN IDIOT.", decoys: ['drano', 'plunger'],
     steps: [
       { t: 'BUCKET UNDER THE P-TRAP', tool: 'bucket', type: 'drag', to: 'under', tip: 'THE TRAP IS FULL OF NASTY WATER. ALWAYS BUCKET FIRST.', early: 'NO BUCKET. GREASE SLUDGE ALL OVER THE CABINET FLOOR. DMITRI WEEPS.' },
       { t: 'LOOSEN THE SLIP NUTS', tool: 'pliers', type: 'turn', target: 'slip', dir: -1, turns: 1.25, tip: 'CHANNEL LOCKS ON THE BIG PLASTIC NUTS. LEFTY-LOOSEY.' },
@@ -124,7 +124,7 @@ export const JOBS = [
   { title: 'JAMMED DISPOSAL', scene: 'sink', variant: 'disposal', address: '720 N 34TH ST',
     who: 'KEVIN (TECH BRO)', look: { skin: 'fair', hair: 'blond', style: 'swoop', beard: 'none', shirt: '#262b44', glasses: true, vest: true },
     house: { style: 'townhouse', body: '#5a6988', trim: '#262b44', roof: '#181425', door: '#f77622', extra: 'cyber' },
-    call: 'SO I PUT A WHOLE PINEAPPLE AND MY SMARTWATCH IN THE DISPOSAL. IT\'S HUMMING. IS THAT BAD?', decoys: ['hammer', 'wd40'],
+    call: "QUICK Q: IS THE DISPOSAL SUPPOSED TO SCREAM? I PUT IN A PINEAPPLE, MY SMARTWATCH AND OUR SERIES A PITCH DECK. PLEASE CIRCLE BACK ASAP.", decoys: ['hammer', 'wd40'],
     steps: [
       { t: 'UNPLUG THE DISPOSAL', tool: 'hand', type: 'pull', target: 'plug', dir: [-1, 0], dist: 34, tip: 'NEVER PUT HANDS OR TOOLS NEAR A LIVE DISPOSAL. KILL THE POWER FIRST.', early: 'YOU REACHED IN WITH THE POWER ON. KEVIN SCREAMS. YOU SCREAM. EVERYONE SCREAMS.' },
       { t: 'WORK THE FLYWHEEL FREE', tool: 'hexkey', type: 'scrub', target: 'hex', amount: 0.8, tip: 'A 1/4" HEX KEY IN THE BOTTOM SOCKET. WORK IT BACK AND FORTH TILL IT SPINS.' },
@@ -137,7 +137,7 @@ export const JOBS = [
   { title: 'LOW WATER PRESSURE', scene: 'basement', variant: 'prv', address: '1531 BELMONT AVE E',
     who: 'MISS ROSALIND', look: { skin: 'dark', hair: 'pink', style: 'bighair', beard: 'none', shirt: '#ff0044', glasses: false, lipstick: true },
     house: { style: 'victorian', body: '#68386c', trim: '#f6757a', roof: '#181425', door: '#fee761', extra: 'pride' },
-    call: 'DARLING, I REHEARSE MY CABARET IN THE SHOWER AND IT HAS THE PRESSURE OF A SAD SIGH. I CANNOT HIT A HIGH C IN A DRIZZLE!', decoys: ['hammer', 'drano'],
+    call: "DARLING, MY WATER PRESSURE IS SO WEAK IT APOLOGIZES BEFORE IT COMES OUT. I AM A STAR. STARS DO NOT BATHE IN MIST.", decoys: ['hammer', 'drano'],
     steps: [
       { t: 'THREAD THE GAUGE ON THE BIB', tool: 'gauge', type: 'drag', to: 'bibg', tip: 'A $10 GAUGE ON ANY HOSE BIB TELLS YOU HOUSE PRESSURE. MEASURE FIRST.' },
       { t: 'OPEN THE BIB & READ IT', tool: 'hand', type: 'turn', target: 'bibg', dir: -1, turns: 1, tip: '25 PSI. YIKES. THE PRESSURE-REDUCING VALVE IS SET WAY TOO LOW.' , fx: ['show:needle'] },
@@ -148,7 +148,7 @@ export const JOBS = [
   { title: 'LEAKY SUPPLY LINE', scene: 'sink', variant: 'vanity', leak: { x: 206, y: 142, until: 0, kind: 'spray' }, address: '412 E ROY ST',
     who: 'PROF. AKANA', look: { skin: 'brown', hair: 'black', style: 'bob', beard: 'none', shirt: '#5a6988', glasses: true, cat: true },
     house: { style: 'foursquare', body: '#3e8948', trim: '#ead4aa', roof: '#733e39', door: '#a22633', extra: 'cats' },
-    call: 'THE OLD PLASTIC LINE UNDER MY BATHROOM SINK POPPED. FOURTEEN CATS ARE NOW WATER-ADJACENT.', decoys: ['ducttape', 'gum'],
+    call: "I HAVE THREE DEGREES AND FOURTEEN CATS, AND ALL FOURTEEN ARE STANDING IN A PUDDLE JUDGING ME. COME BEFORE THEY UNIONIZE.", decoys: ['ducttape', 'gum'],
     steps: [
       { t: 'SHUT OFF THE ANGLE STOP', tool: 'hand', type: 'turn', target: 'stopC', dir: 1, turns: 1, tip: 'STOP THE LEAK AT THE SOURCE.', early: 'YOU UNSCREWED A PRESSURIZED LINE. FOURTEEN VERY WET, VERY ANGRY CATS.' },
       { t: 'OPEN THE FAUCET TO RELIEVE', tool: 'hand', type: 'tap', target: 'fhandle', tip: 'BLEEDS OFF PRESSURE SO THE LINE COMES OFF DRY-ISH.' , fx: ['splashsfx'] },
@@ -161,7 +161,7 @@ export const JOBS = [
   { title: 'ROCKING TOILET / WAX RING', scene: 'toilet', variant: 'base', address: '1822 10TH AVE E',
     who: 'BRAD & CHAD', look: { skin: 'light', hair: 'blond', style: 'backcap', beard: 'none', shirt: '#e43b44', glasses: false, sunnies: true },
     house: { style: 'foursquare', body: '#c0cbdc', trim: '#e43b44', roof: '#3a4466', door: '#262b44', extra: 'couch' },
-    call: 'BRO. THE FLOOR AROUND THE TOILET GOES *SQUISH*. AND IT SMELLS LIKE... BRO.', decoys: ['ducttape', 'beer'],
+    call: "BRO WE DID A KEG STAND ON THE TOILET AND NOW IT RIDES LIKE A MECHANICAL BULL. THE FLOOR IS SOFT. BRO. BRO. SEND HELP, BRO.", decoys: ['ducttape', 'beer'],
     steps: [
       { t: 'SHUT OFF THE SUPPLY', tool: 'hand', type: 'turn', target: 'valve', dir: 1, turns: 1.25, tip: 'SHUT OFF, THEN FLUSH AND SPONGE THE TANK & BOWL DRY.', early: 'YOU DISCONNECTED A LIVE LINE. BRAD CALLS IT "A SICK WATER SLIDE".' },
       { t: 'DISCONNECT THE SUPPLY LINE', tool: 'wrench', type: 'turn', target: 'supplyNut', dir: -1, turns: 1, tip: 'THE COUPLING NUT UNDER THE TANK. A TOWEL CATCHES THE DRIBBLE.' , fx: ['away:supplyLine'] },
@@ -189,7 +189,7 @@ export const JOBS = [
   { title: 'SUMP PUMP DEAD', scene: 'sump', variant: 'storm', rising: 'sumpwater', address: '3257 BEACH DR SW',
     who: 'THE OKAFORS', look: { skin: 'dark', hair: 'black', style: 'afro', beard: 'full', shirt: '#feae34', glasses: false },
     house: { style: 'rambler', body: '#265c42', trim: '#fee761', roof: '#262b44', door: '#feae34', extra: 'drums' },
-    call: 'ATMOSPHERIC RIVER! THE BASEMENT IS FLOODING AND OUR DRUM KIT IS FLOATING. WE HAVE A GIG TONIGHT!', decoys: ['ducttape', 'drano'],
+    call: "ATMOSPHERIC RIVER, AGAIN. THE BASEMENT IS A LAKE, THE DRUM KIT IS DOING THE BACKSTROKE, AND OUR BASSIST CAN'T SWIM. GIG'S AT NINE.", decoys: ['ducttape', 'drano'],
     steps: [
       { t: 'UNPLUG THE PUMP', tool: 'hand', type: 'pull', target: 'plug', dir: [1, 0], dist: 30, tip: 'WATER + ELECTRICITY. UNPLUG BEFORE YOU TOUCH ANYTHING IN THE PIT.', early: 'YOU STUCK YOUR HAND IN A LIVE SUMP PIT. BZZT. YOU CAN NOW TASTE COLORS.' },
       { t: 'LIFT THE PUMP OUT', tool: 'hand', type: 'pull', target: 'pump', dir: [0, -1], dist: 100, tip: 'LIFT BY THE DISCHARGE PIPE OR HANDLE - NEVER BY THE CORD.' , keep: true, fx: ['show:screen'] },
@@ -201,7 +201,7 @@ export const JOBS = [
   { title: 'BURST PIPE (FREEZE)', scene: 'crawl', variant: 'burst', leak: { x: 160, y: 146, until: 0, kind: 'spray' }, address: '5906 44TH AVE SW',
     who: 'PREPPER DEREK', look: { skin: 'light', hair: 'brown', style: 'buzz', beard: 'full', shirt: '#3e8948', glasses: false, camo: true },
     house: { style: 'rambler', body: '#3a4466', trim: '#8b9bb4', roof: '#181425', door: '#3e8948', extra: 'bunker' },
-    call: "FIVE-YEAR FOOD SUPPLY IN THE CRAWLSPACE AND THE COLD SNAP SPLIT A PIPE. MY BEANS ARE DROWNING!", decoys: ['ducttape', 'gum'],
+    call: "I PREPPED FOR THE COLLAPSE OF SOCIETY. I DID NOT PREP FOR ONE COLD NIGHT. A PIPE BURST AND MY FIVE-YEAR BEAN SUPPLY IS NOW SOUP.", decoys: ['ducttape', 'gum'],
     steps: [
       { t: 'KILL THE MAIN SHUTOFF', tool: 'hand', type: 'turn', target: 'main', dir: 1, turns: 2, tip: 'KNOW WHERE YOUR MAIN IS BEFORE THE FREEZE. CLOCKWISE TILL IT STOPS.', early: 'YOU CUT A LIVE PIPE. FIRE HOSE TO THE FACE. DEREK SALUTES YOUR SACRIFICE.' },
       { t: 'CUT OUT THE SPLIT SECTION', tool: 'cutter', type: 'turn', target: 'split', dir: 1, turns: 2.5, tip: 'A TUBING CUTTER GIVES A SQUARE CUT. TIGHTEN A LITTLE EACH SPIN.' , fx: ['hide:split'] },
@@ -215,7 +215,7 @@ export const JOBS = [
   { title: 'ROOTS IN THE SEWER', scene: 'yard', variant: 'roots', address: '2310 QUEEN ANNE AVE N',
     who: 'MRS. WORTHINGTON', look: { skin: 'fair', hair: 'white', style: 'updo', beard: 'none', shirt: '#68386c', glasses: true, pearls: true },
     house: { style: 'mansion', body: '#ead4aa', trim: '#265c42', roof: '#193c3e', door: '#265c42', extra: 'cedar' },
-    call: 'EVERY DRAIN IN THE HOUSE GURGLES. THE BASEMENT SMELLS OF... POOR PEOPLE. KINDLY REMEDY THIS.', decoys: ['drano', 'hammer'],
+    call: "EVERY DRAIN GURGLES LIKE A COMMONER. THE BASEMENT SMELLS OF... TACOMA. KINDLY REMEDY THIS BEFORE THE GALA.", decoys: ['drano', 'hammer'],
     steps: [
       { t: 'OPEN THE CLEANOUT CAP', tool: 'wrench', type: 'turn', target: 'cap', dir: -1, turns: 1.5, tip: 'CAREFUL - A BACKED-UP LINE WILL BURP WHEN THE CAP COMES OFF. STAND TO THE SIDE.' , fx: ['away:cap'] },
       { t: 'CAMERA: FIND THE ROOTS', tool: 'camera', type: 'scan', target: 'screen', count: 4, tip: 'OLD CLAY PIPE + 100-YEAR-OLD CEDARS = ROOTS IN EVERY JOINT. SWEEP THE CAMERA AND SPOT THEM ALL.' },
@@ -226,7 +226,7 @@ export const JOBS = [
   { title: 'LEAKY HOSE BIB', scene: 'bib', variant: 'frostfree', leak: { x: 178, y: 176, until: 0, kind: 'drip' }, address: '810 W HIGHLAND DR',
     who: 'JUDGE HARLAN', look: { skin: 'dark', hair: 'white', style: 'bald', beard: 'stache', shirt: '#181425', glasses: true, bowtie: true },
     house: { style: 'tudor', body: '#ead4aa', trim: '#3e2731', roof: '#3e2731', door: '#3e2731', extra: 'hedge' },
-    call: 'MY OUTDOOR SPIGOT DRIPS INCESSANTLY. THE GARDEN CLUB ARRIVES IN AN HOUR. THIS COURT DEMANDS SWIFT JUSTICE.', decoys: ['ducttape', 'wd40'],
+    call: "THIS HOSE BIB HAS BEEN IN CONTEMPT OF COURT FOR THREE WEEKS. ONE MORE DRIP AND I'M HOLDING IT WITHOUT BAIL.", decoys: ['ducttape', 'wd40'],
     steps: [
       { t: 'SHUT THE INSIDE VALVE', tool: 'hand', type: 'turn', target: 'inside', dir: 1, turns: 1.5, tip: 'FROST-FREE BIBS HAVE A LONG STEM - THE SHUTOFF IS INSIDE THE HOUSE.', early: 'YOU OPENED A LIVE BIB. THE JUDGE HOLDS YOU IN CONTEMPT (AND IN A PUDDLE).' },
       { t: 'REMOVE THE HANDLE SCREW', tool: 'driver', type: 'turn', target: 'bibhandle', dir: -1, turns: 1, tip: 'THE HANDLE COMES OFF TO EXPOSE THE PACKING NUT.' , fx: ['away:bibhandle'] },
@@ -239,7 +239,7 @@ export const JOBS = [
   { title: 'SEIZED MAIN SHUTOFF', scene: 'basement', variant: 'main', address: '1 KERRY PARK PL (THE GALA)',
     who: 'THE GALA HOST', look: { skin: 'brown', hair: 'black', style: 'slick', beard: 'goatee', shirt: '#181425', glasses: false, bowtie: true },
     house: { style: 'mansion', body: '#ffffff', trim: '#124e89', roof: '#262b44', door: '#feae34', extra: 'gala' },
-    call: 'NORTHWEST SNAPPED MY MAIN VALVE HANDLE OFF AND LEFT. 300 GUESTS. ONE HOUR. SAVE US, HOMIES!', decoys: ['ducttape', 'hammer', 'beer'],
+    call: "300 GUESTS, A CITY COUNCIL MEMBER AND NO WAY TO SHUT OFF THE WATER. NORTHWEST DID THIS. I WILL RUIN THEM SOCIALLY. BUT FIRST: SAVE US, HOMIES!", decoys: ['ducttape', 'hammer', 'beer'],
     steps: [
       { t: 'STREET SHUTOFF: METER KEY', tool: 'meterkey', type: 'turn', target: 'curb', dir: 1, turns: 0.5, tip: 'THE CURB STOP IN THE METER BOX. A QUARTER TO HALF TURN, NO MUSCLE NEEDED.', early: 'YOU CUT A LIVE MAIN. THE GALA NOW HAS AN INDOOR FOUNTAIN.' },
       { t: 'DRAIN THE LINES', tool: 'hand', type: 'tap', target: 'lowtap', tip: 'OPEN THE LOWEST FAUCET IN THE HOUSE TO DRAIN THE PIPES.' },
@@ -255,11 +255,11 @@ export const JOBS = [
   { title: 'CLOGGED BATHTUB', scene: 'tub', variant: 'alki', address: '2600 ALKI AVE SW, APT 3',
     who: 'TIMMY', look: { skin: 'fair', hair: 'beach', style: 'wavy', beard: 'scruff', shirt: '#e43b44', jacked: true, shirtless: true },
     house: { style: 'townhouse', body: '#feae34', trim: '#ffffff', roof: '#124e89', door: '#0099db', extra: 'alki' },
-    call: "BRO. MY TUB WON'T DRAIN. I'M STANDING IN A FOOT OF MY OWN KAYAK WATER. ALSO MY NEIGHBOR'S SQUIRREL MIGHT'VE STUFFED A NUT IN THERE. HE DOES THAT.", decoys: ['drano', 'beer', 'gum'],
+    call: "BRO. MY TUB IS A SALTWATER ESTUARY. THERE'S SAND, THERE'S KELP, AND THE SQUIRREL THAT LIVES NEXT TO ME PUT AN ACORN IN THERE OUT OF SPITE. HE'S WATCHING ME.", decoys: ['drano', 'beer', 'gum'],
     steps: [
       { t: 'UNSCREW THE TUB STOPPER', tool: 'hand', type: 'turn', target: 'stopper', dir: -1, turns: 1.5, tip: 'LIFT-AND-TURN STOPPER: HOLD THE BODY, TWIST THE KNOB COUNTER-CLOCKWISE AND IT SPINS OFF THE DRAIN.', fx: ['away:stopper'] },
       { t: 'REMOVE THE OVERFLOW PLATE', tool: 'driver', type: 'turn', target: 'overflow', dir: -1, turns: 1.5, tip: 'TWO SCREWS ON THE ROUND PLATE UNDER THE SPOUT. IT LETS AIR IN SO THE DRAIN CAN BREATHE.', early: 'YOU PLUNGED WITH THE OVERFLOW OPEN. THE WATER SHOT OUT THE PLATE AND HIT TIMMY IN THE ABS.', fx: ['away:overflow'] },
-      { t: 'ZIP-IT: HAIR + ONE NUT', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 64, pre: ['show:hair'], tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (THE NEIGHBOR'S SQUIRREL WANTS HIS NUT BACK.)", fx: ['show:grime'] },
+      { t: 'ZIP-IT: HAIR + ONE ACORN', tool: 'zipit', type: 'pull', target: 'hair', dir: [0, -1], dist: 64, pre: ['show:hair'], tip: "LONG HAIR MAKES ROPE IN THE DRAIN. A ZIP-IT PULLS IT OUT. (THE SQUIRREL NEXT DOOR WANTS HIS ACORN BACK.)", fx: ['show:grime'] },
       { t: 'STUFF A WET RAG IN THE OVERFLOW', tool: 'hand', type: 'tap', target: 'overflow', tip: 'PLUG THE OVERFLOW OR THE PLUNGER JUST PUSHES AIR OUT OF IT INSTEAD OF MOVING THE CLOG.', fx: ['show:rag'] },
       { t: 'PLUNGE THE TUB DRAIN', tool: 'cupplunger', type: 'rhythm', target: 'drain', hits: 4, tip: 'FLAT CUP PLUNGER, A FEW INCHES OF WATER OVER IT, SHARP STRAIGHT STROKES.', fx: ['fade:pool'] },
       { t: 'SCRUB THE DRAIN FLANGE', tool: 'brush', type: 'scrub', target: 'grime', amount: 0.9, tip: 'SOAP SCUM + SUNSCREEN + SAND. ALKI GETS IN EVERYTHING.' , fx: ['hide:grime'] },
