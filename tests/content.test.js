@@ -84,3 +84,12 @@ test('every job has a "how pros do it" card', async () => {
   assert.equal(STANDARDS.length, JOBS.length);
   STANDARDS.forEach((lines, i) => assert.ok(lines.length >= 3 && lines.every(l => l.length <= 130), `job ${i} card`));
 });
+
+test('a finished job always counts on the leaderboard, even with a rough score', async () => {
+  const { progress, store, MIN_JOB_SCORE } = await import('../src/core/save.js');
+  progress.reset();
+  store.set('stars', { 0: 1, 1: 2 }); store.set('best', { 1: 2400 });   // job 0 finished, but its score never recorded
+  assert.equal(progress.jobsCleared(), 2);
+  assert.equal(progress.totalScore(), 2400 + MIN_JOB_SCORE);
+  progress.reset();
+});

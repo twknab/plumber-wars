@@ -12,6 +12,10 @@ export const store = {
 };
 
 // Campaign progress: which job is unlocked, stars earned per job, chosen hero.
+// A finished job is always worth something, even a rough one (a score <= 0 used to go unrecorded, so the
+// leaderboard counted that job as not cleared while the game counted it as done).
+export const MIN_JOB_SCORE = 100;
+
 export const progress = {
   get hero() { return store.get('hero', null); },
   set hero(v) { store.set('hero', v); },
@@ -33,7 +37,7 @@ export const progress = {
   },
   best(i) { return (store.get('best', {}))[i] || 0; },
   // Leaderboard total: your best score on every job, added up (replay a job to raise it).
-  bests() { return ORDER.map((_, i) => this.best(i)); },
+  bests() { return ORDER.map((_, i) => Math.max(this.best(i), this.stars(i) > 0 ? MIN_JOB_SCORE : 0)); }, // starred = cleared
   totalScore() { return this.bests().reduce((a, b) => a + b, 0); },
   jobsCleared() { return this.bests().filter(n => n > 0).length; },
   setBest(i, score) { const b = { ...store.get('best', {}) }; if (score > (b[i] || 0)) { b[i] = score; store.set('best', b); return true; } return false; },
