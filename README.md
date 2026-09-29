@@ -68,7 +68,7 @@ then fix real plumbing problems before the customer loses it and calls the compe
 | Fremont | Running toilet (flapper) · Grease-clogged kitchen sink (P-trap) · Jammed disposal |
 | Capitol Hill | Low water pressure (PRV) · Leaky supply line · Rocking toilet / wax ring |
 | West Seattle | No hot water (flush + relight) · Sump pump dead in a storm · Burst pipe from a freeze |
-| Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus the neighbor squirrel's nut), rag + plunge |
+| Alki Beach | Clogged bathtub at Timmy's: stopper, overflow plate, zip-it (plus the acorn the squirrel next door stashed), rag + plunge |
 | Queen Anne | Roots in the sewer line · Leaky frost-free hose bib · Seized main shutoff (finale) |
 
 ## Under the hood
