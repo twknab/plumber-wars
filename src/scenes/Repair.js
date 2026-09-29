@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { W, H, txt, setTxt, button, wipeTo, wipeIn, bubble, banner, floatText, panel, hitZone, isTouch, nudgeHelp } from '../core/ui.js';
 import { audio } from '../core/audio.js';
-import { progress } from '../core/save.js';
+import { progress, MIN_JOB_SCORE } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { HEROES, difficulty, pick } from '../data/content.js';
 import { JOBS, TOOL_INFO, trayFor } from '../data/jobs.js';
@@ -561,7 +561,7 @@ export class Repair extends Phaser.Scene {
     banner(this, 'FIXED!', { color: C.lime, size: 4, y: SY + SH / 2 });
     const ratio = Math.max(0, this.left / this.total);
     const stars = 1 + (ratio > 0.3 ? 1 : 0) + (ratio > 0.5 && this.mistakes <= 1 && this.drive.hp >= this.drive.maxHp - 1 ? 1 : 0);
-    const score = Math.round(1000 + ratio * 2000 - this.mistakes * 150 + this.drive.hp * 100 + (this.drive.cash || 0));
+    const score = Math.max(MIN_JOB_SCORE, Math.round(1000 + ratio * 2000 - this.mistakes * 150 + this.drive.hp * 100 + (this.drive.cash || 0)));
     this.time.delayedCall(1600, () => wipeTo(this, 'Result', { job: this.ji, ok: true, stars, score, secsLeft: Math.ceil(this.left), mistakes: this.mistakes }));
   }
   fail() {
