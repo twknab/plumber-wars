@@ -31,7 +31,8 @@ then fix real plumbing problems before the customer loses it and calls the compe
 - **Share your score.** A **SHARE** button on the results screen and the finale opens the phone's share sheet
   (or copies the brag + link on desktop).
 - **High scores.** Your total is your best score on every job, added up. Post it with arcade initials from
-  **HIGH SCORES** on the title (or the finale); champions who beat all 16 jobs get a crown.
+  **HIGH SCORES** on the title (or the finale); #1 is **THE CHAMP** (a glowing card with a crown, sparkles and the homies cheering them on);
+  everyone else who beats all 16 jobs is marked BEAT IT.
 - **About pages.** Meet the crew (what each homie brings: brains, back, bedside manner) and flip through all six
   neighborhoods with their pixel art, a bit of real history and the plumbing you'll find there.
 - **New here?** Tap **HOW TO PLAY** on the title screen (first-time players see it automatically).

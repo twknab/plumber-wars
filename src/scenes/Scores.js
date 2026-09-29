@@ -47,20 +47,59 @@ export class Scores extends Phaser.Scene {
   }
   show(top) {
     if (!this.list.active) return;
+    this.tweens.killTweensOf(this.list.list); if (this.champFx) { this.champFx.remove(); this.champFx = null; } if (this.glowTween) { this.glowTween.remove(); this.glowTween = null; }
     this.list.removeAll(true);
     setTxt(this.status, top.length ? '' : 'NOBODY YET. BE THE FIRST!');
-    const y0 = 76, rowH = Math.min(20, Math.floor((H - 140 - y0) / 10));
-    top.forEach((e, i) => {
-      const y = y0 + i * rowH, me = this.mine && e.initials === this.mine.initials && e.score === this.mine.score;
-      if (me) this.list.add(this.add.rectangle(8, y - 2, W - 16, rowH - 2, hex(C.forest)).setOrigin(0));
-      const col = i === 0 ? C.gold : i < 3 ? C.yellow : C.white;
+    const isMe = e => this.mine && e.initials === this.mine.initials && e.score === this.mine.score;
+    let y0 = 72;
+    if (top.length) y0 = this.champCard(top[0], isMe(top[0])) + 8;
+    const rest = top.slice(1), rowH = Math.min(20, Math.floor((H - 140 - y0) / Math.max(1, rest.length)));
+    rest.forEach((e, k) => {
+      const i = k + 1, y = y0 + k * rowH;
+      if (isMe(e)) this.list.add(this.add.rectangle(8, y - 2, W - 16, rowH - 2, hex(C.forest)).setOrigin(0));
+      const col = i < 3 ? C.yellow : C.white;
       this.list.add(txt(this, 26, y + 2, `${i + 1}.`, { ox: 1, color: col }));
       const h = HEROES.find(x => x.id === e.hero);
       if (h) this.list.add(this.add.image(40, y + 6, portrait(this, h.id, h.look, 'happy')).setScale(0.3));
       this.list.add(txt(this, 54, y, e.initials, { size: 2, color: col }));
-      this.list.add(txt(this, 106, y + 3, e.cleared >= ORDER.length ? '` CHAMP' : `${e.cleared || 0}/${ORDER.length} JOBS`, { color: e.cleared >= ORDER.length ? C.gold : C.slate }));
+      const beat = e.cleared >= ORDER.length;
+      this.list.add(txt(this, 106, y + 3, beat ? 'BEAT IT' : `${e.cleared || 0}/${ORDER.length} JOBS`, { color: beat ? C.silver : C.slate }));
       this.list.add(txt(this, W - 16, y + 2, fmt(e.score), { ox: 1, color: col }));
     });
+  }
+  // #1 gets the showpiece: a color-cycling card, a crown, sparkles, and the homies cheering them on.
+  champCard(e, me) {
+    const x0 = 8, y0 = 72, w = W - 16, hgt = 78, L = this.list;
+    const card = this.add.rectangle(x0, y0, w, hgt, hex(me ? C.forest : C.night)).setOrigin(0).setStrokeStyle(3, hex(C.gold));
+    L.add(card);
+    const glow = { t: 0 };
+    this.glowTween = this.tweens.add({ targets: glow, t: 1, duration: 2400, repeat: -1, onUpdate: () => { if (card.active) card.setStrokeStyle(3, Phaser.Display.Color.HSVToRGB(glow.t, 0.75, 1).color); } });
+    // crown + title
+    const crown = this.add.graphics(); crown.fillStyle(hex(C.gold)).fillRect(-9, 2, 18, 5).fillTriangle(-9, 2, -9, -6, -4, 2).fillTriangle(-3, 2, 0, -8, 3, 2).fillTriangle(4, 2, 9, -6, 9, 2);
+    crown.fillStyle(hex(C.red)).fillRect(-1, 3, 2, 2); crown.setPosition(x0 + 20, y0 + 16); L.add(crown);
+    this.tweens.add({ targets: crown, angle: { from: -8, to: 8 }, yoyo: true, repeat: -1, duration: 700, ease: 'Sine.inOut' });
+    L.add(txt(this, x0 + 34, y0 + 8, 'THE CHAMP', { color: C.gold }));
+    L.add(txt(this, x0 + 14, y0 + 26, e.initials, { size: 3, color: C.white }));
+    L.add(txt(this, x0 + w - 10, y0 + 10, fmt(e.score), { ox: 1, size: 2, color: C.gold }));
+    const lead = HEROES.find(h => h.id === e.hero);
+    L.add(txt(this, x0 + w - 10, y0 + 30, (lead ? 'LED BY ' + lead.name + ' - ' : '') + `${e.cleared || 0}/${ORDER.length} JOBS`, { ox: 1, color: C.silver }));
+    // the homies rally around the champ
+    HEROES.forEach((h, k) => {
+      const px = x0 + w - 76 + k * 28, py = y0 + hgt - 14;
+      const p = this.add.image(px, py, portrait(this, h.id, h.look, 'happy')).setScale(0.42);
+      L.add(p);
+      this.tweens.add({ targets: p, y: py - 4, yoyo: true, repeat: -1, duration: 260 + k * 70, ease: 'Sine.inOut', delay: k * 90 });
+    });
+    L.add(txt(this, x0 + 14, y0 + hgt - 14, 'THE HOMIES SALUTE YOU', { color: C.lime }));
+    // sparkles drifting up out of the card
+    const cols = [C.gold, C.yellow, C.lime, C.cyan, C.pink];
+    this.champFx = this.time.addEvent({ delay: 220, loop: true, callback: () => {
+      if (!L.active) return;
+      const sx = x0 + 6 + Math.random() * (w - 12), sy = y0 + hgt - 4;
+      const sp = this.add.rectangle(sx, sy, 2, 2, hex(cols[(Math.random() * cols.length) | 0])); L.add(sp);
+      this.tweens.add({ targets: sp, y: sy - 30 - Math.random() * 30, alpha: 0, duration: 900, onComplete: () => sp.destroy() });
+    } });
+    return y0 + hgt;
   }
 
   // --- arcade initials --------------------------------------------------------------------------
