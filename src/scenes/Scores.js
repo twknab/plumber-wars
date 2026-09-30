@@ -5,6 +5,7 @@ import { progress, store } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { HEROES, ORDER } from '../data/content.js';
 import { portrait } from '../art/people.js';
+import { shareScore } from '../core/share.js';
 
 // Leaderboard. Anyone can post their running total (best score per job, added up); beating the game
 // earns a crown. Arcade-style three-letter initials. Scores live in Firestore via /api/scores.
@@ -15,7 +16,7 @@ const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export class Scores extends Phaser.Scene {
   constructor() { super('Scores'); }
-  init({ enter = false, from = 'Title' } = {}) { this.enterMode = enter; this.from = from; this.mine = null; this.busy = false; this.slot = 0; }
+  init({ enter = false, from = 'Title' } = {}) { this.enterMode = enter; this.from = from; this.mine = null; this.busy = false; this.slot = 0; this.myRank = null; this.myScore = 0; }
   create() {
     wipeIn(this);
     this.add.rectangle(0, 0, W, H, hex(C.ink)).setOrigin(0);
@@ -33,11 +34,20 @@ export class Scores extends Phaser.Scene {
     txt(this, W - 18, yy + 7, fmt(total), { ox: 1, size: 2, color: C.white });
     txt(this, 18, yy + 22, `${cleared}/${ORDER.length} JOBS CLEARED` + (progress.isDone(14) ? '  ` GAME BEATEN' : ''), { color: C.silver });
     const canPost = total > 0 && total > store.get('postedScore', 0);
-    this.postBtn = button(this, W / 2, yy + 46, 170, 22, total <= 0 ? 'FINISH A JOB TO GET ON THE BOARD' : canPost ? 'POST MY SCORE' : 'POSTED! BEAT IT TO POST AGAIN', () => this.openEntry(), { color: canPost ? 'btnGold' : 'btnGrey', textColor: canPost ? C.ink : C.white });
+    // post + share side by side (share only once there's a score to brag about)
+    const pw = total > 0 ? 124 : 210, px = total > 0 ? W / 2 - 38 : W / 2;
+    this.postBtn = button(this, px, yy + 46, pw, 22, total <= 0 ? 'FINISH A JOB TO GET ON THE BOARD' : canPost ? 'POST MY SCORE' : 'POSTED!', () => this.openEntry(), { color: canPost ? 'btnGold' : 'btnGrey', textColor: canPost ? C.ink : C.white });
     this.postBtn.setEnabled(canPost);
+    if (total > 0) button(this, W / 2 + 70, yy + 46, 70, 22, isTouch ? 'SHARE' : 'SHARE [S]', () => shareScore(this, this.brag()), { color: 'btnBlue', textColor: C.white, key: 'S' });
     button(this, W / 2, H - 22, 150, 26, isTouch ? '< BACK' : '< BACK [ESC]', () => this.leave(), { color: 'btnGrey', textColor: C.white, key: ['ESC'] });
     this.fetchTop();
     if (this.enterMode && canPost) this.time.delayedCall(350, () => this.openEntry());
+  }
+  // The share text: your rank if you're on the board, otherwise your running total.
+  brag() {
+    const total = progress.totalScore(), cleared = progress.jobsCleared(), jobs = `${cleared}/${ORDER.length} jobs`;
+    if (this.myRank) return `I'm #${this.myRank} on the Plumber Wars leaderboard with ${fmt(this.myScore)} points (${jobs})${this.myRank === 1 ? ' and I am THE CHAMP' : ''}. Think you can beat the homies?`;
+    return `I've racked up ${fmt(total)} points in Plumber Wars (${jobs}). Think you can beat the homies?`;
   }
   leave() { if (this.entry) return this.closeEntry(); audio.sfx('select'); wipeTo(this, this.from); }
 
@@ -47,6 +57,10 @@ export class Scores extends Phaser.Scene {
   }
   show(top) {
     if (!this.list.active) return;
+    // find my row (by the initials + score I last posted) so SHARE can brag about my rank
+    const mine = this.mine || { initials: store.get('initials', ''), score: store.get('postedScore', 0) };
+    const at = top.findIndex(e => e.initials === mine.initials && e.score === mine.score);
+    if (at >= 0) { this.myRank = at + 1; this.myScore = mine.score; }
     this.tweens.killTweensOf(this.list.list); if (this.champFx) { this.champFx.remove(); this.champFx = null; } if (this.glowTween) { this.glowTween.remove(); this.glowTween = null; }
     this.list.removeAll(true);
     setTxt(this.status, top.length ? '' : 'NOBODY YET. BE THE FIRST!');
@@ -161,6 +175,7 @@ export class Scores extends Phaser.Scene {
       store.set('initials', initials); store.set('postedScore', progress.totalScore());
       this.mine = { initials, score: progress.totalScore() };
       audio.sfx('star'); this.closeEntry(); this.show(j.top);
+      this.myRank = j.rank; this.myScore = progress.totalScore();
       this.postBtn.setEnabled(false); setTxt(this.postBtn.label, `YOU'RE #${j.rank}!`);
     } catch (e) {
       if (this.hint.active) setTxt(this.hint, String(e.message || 'OFFLINE').toUpperCase().slice(0, 36));
