@@ -79,19 +79,20 @@ export class Scores extends Phaser.Scene {
     if (this.entry) return this.closeEntry(); audio.sfx('select'); wipeTo(this, this.from); }
 
   async fetchTop() {
-    try { const r = await fetch('/api/scores'); if (!r.ok) throw new Error(r.status); this.show((await r.json()).top); }
+    try { const r = await fetch('/api/scores?me=' + encodeURIComponent(playerId())); if (!r.ok) throw new Error(r.status); this.show((await r.json()).top); }
     catch (e) { if (this.status.active) setTxt(this.status, 'LEADERBOARD OFFLINE. TRY AGAIN LATER.'); }
   }
   show(top) {
     if (!this.list.active) return;
     // find my row (by the initials + score I last posted) so SHARE can brag about my rank
+    // my row: flagged by the server (by this device's player id), or matched by what I last posted here
     const mine = this.mine || { initials: store.get('initials', ''), score: store.get('postedScore', 0) };
-    const at = top.findIndex(e => e.initials === mine.initials && e.score === mine.score);
-    if (at >= 0) { this.myRank = at + 1; this.myScore = mine.score; }
+    const at = top.findIndex(e => e.you || (e.initials === mine.initials && e.score === mine.score));
+    if (at >= 0) { this.myRank = at + 1; this.myScore = top[at].score; top[at].you = true; }
     this.tweens.killTweensOf(this.list.list); if (this.champFx) { this.champFx.remove(); this.champFx = null; } if (this.glowTween) { this.glowTween.remove(); this.glowTween = null; }
     this.list.removeAll(true);
     setTxt(this.status, top.length ? '' : 'NOBODY YET. BE THE FIRST!');
-    const isMe = e => this.mine && e.initials === this.mine.initials && e.score === this.mine.score;
+    const isMe = e => !!e.you;
     let y0 = 72;
     if (top.length) y0 = this.champCard(top[0], isMe(top[0])) + 8;
     const rest = top.slice(1), rowH = Math.min(20, Math.floor((H - 140 - y0) / Math.max(1, rest.length)));
@@ -103,10 +104,18 @@ export class Scores extends Phaser.Scene {
       const h = HEROES.find(x => x.id === e.hero);
       if (h) this.list.add(this.add.image(40, y + 6, portrait(this, h.id, h.look, 'happy')).setScale(0.3));
       this.list.add(txt(this, 54, y, e.initials, { size: 2, color: col }));
+      if (isMe(e)) this.youBadge(96, y + 1);
       const beat = e.cleared >= ORDER.length;
-      this.list.add(txt(this, 106, y + 3, beat ? 'BEAT IT' : `${e.cleared || 0}/${ORDER.length} JOBS`, { color: beat ? C.silver : C.slate }));
+      this.list.add(txt(this, isMe(e) ? 130 : 106, y + 3, beat ? 'BEAT IT' : `${e.cleared || 0}/${ORDER.length} JOBS`, { color: beat ? C.silver : C.slate }));
       this.list.add(txt(this, W - 16, y + 2, fmt(e.score), { ox: 1, color: col }));
     });
+  }
+  // a little 'YOU' chip so players can spot their own row
+  youBadge(x, y, label = 'YOU') {
+    const w = label.length * 6 + 8;
+    const chip = this.add.rectangle(x, y, w, 12, hex(C.red)).setOrigin(0).setStrokeStyle(1, hex(C.white));
+    this.list.add(chip); this.list.add(txt(this, x + w / 2, y + 2, label, { ox: 0.5, color: C.white, outline: false }));
+    this.tweens.add({ targets: chip, alpha: 0.55, yoyo: true, repeat: -1, duration: 600 });
   }
   // #1 gets the showpiece: a color-cycling card, a crown, sparkles, and the homies cheering them on.
   champCard(e, me) {
@@ -121,6 +130,7 @@ export class Scores extends Phaser.Scene {
     this.tweens.add({ targets: crown, angle: { from: -8, to: 8 }, yoyo: true, repeat: -1, duration: 700, ease: 'Sine.inOut' });
     L.add(txt(this, x0 + 34, y0 + 8, 'THE CHAMP', { color: C.gold }));
     L.add(txt(this, x0 + 14, y0 + 26, e.initials, { size: 3, color: C.white }));
+    if (me) this.youBadge(x0 + 34 + 60, y0 + 7, "THAT'S YOU!");
     L.add(txt(this, x0 + w - 10, y0 + 10, fmt(e.score), { ox: 1, size: 2, color: C.gold }));
     const lead = HEROES.find(h => h.id === e.hero);
     L.add(txt(this, x0 + w - 10, y0 + 30, (lead ? 'LED BY ' + lead.name + ' - ' : '') + `${e.cleared || 0}/${ORDER.length} JOBS`, { ox: 1, color: C.silver }));
