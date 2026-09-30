@@ -5,7 +5,8 @@ import { progress, store } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { HEROES, ORDER } from '../data/content.js';
 import { portrait } from '../art/people.js';
-import { shareScore } from '../core/share.js';
+import { shareCard } from '../core/share.js';
+import { makeScoreCard, CARD_W, CARD_H, CARD_TAUNT } from '../core/scorecard.js';
 
 // Leaderboard. Anyone can post their running total (best score per job, added up); beating the game
 // earns a crown. Arcade-style three-letter initials. Scores live in Firestore via /api/scores.
@@ -16,7 +17,7 @@ const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export class Scores extends Phaser.Scene {
   constructor() { super('Scores'); }
-  init({ enter = false, from = 'Title' } = {}) { this.enterMode = enter; this.from = from; this.mine = null; this.busy = false; this.slot = 0; this.myRank = null; this.myScore = 0; }
+  init({ enter = false, from = 'Title' } = {}) { this.enterMode = enter; this.from = from; this.mine = null; this.busy = false; this.slot = 0; this.myRank = null; this.myScore = 0; this.cardView = null; this.cardBtns = null; }
   create() {
     wipeIn(this);
     this.add.rectangle(0, 0, W, H, hex(C.ink)).setOrigin(0);
@@ -38,7 +39,7 @@ export class Scores extends Phaser.Scene {
     const pw = total > 0 ? 124 : 210, px = total > 0 ? W / 2 - 38 : W / 2;
     this.postBtn = button(this, px, yy + 46, pw, 22, total <= 0 ? 'FINISH A JOB TO GET ON THE BOARD' : canPost ? 'POST MY SCORE' : 'POSTED!', () => this.openEntry(), { color: canPost ? 'btnGold' : 'btnGrey', textColor: canPost ? C.ink : C.white });
     this.postBtn.setEnabled(canPost);
-    if (total > 0) button(this, W / 2 + 70, yy + 46, 70, 22, isTouch ? 'SHARE' : 'SHARE [S]', () => shareScore(this, this.brag()), { color: 'btnBlue', textColor: C.white, key: 'S' });
+    if (total > 0) button(this, W / 2 + 70, yy + 46, 70, 22, isTouch ? 'SHARE' : 'SHARE [S]', () => this.openCard(), { color: 'btnBlue', textColor: C.white, key: 'S' });
     button(this, W / 2, H - 22, 150, 26, isTouch ? '< BACK' : '< BACK [ESC]', () => this.leave(), { color: 'btnGrey', textColor: C.white, key: ['ESC'] });
     this.fetchTop();
     if (this.enterMode && canPost) this.time.delayedCall(350, () => this.openEntry());
@@ -49,7 +50,33 @@ export class Scores extends Phaser.Scene {
     if (this.myRank) return `I'm #${this.myRank} on the Plumber Wars leaderboard with ${fmt(this.myScore)} points (${jobs})${this.myRank === 1 ? ' and I am THE CHAMP' : ''}. Think you can beat the homies?`;
     return `I've racked up ${fmt(total)} points in Plumber Wars (${jobs}). Think you can beat the homies?`;
   }
-  leave() { if (this.entry) return this.closeEntry(); audio.sfx('select'); wipeTo(this, this.from); }
+  // Score card preview: the picture that gets shared, Randy's dare, and the share button.
+  openCard() {
+    if (this.cardView || this.entry) return;
+    const total = progress.totalScore();
+    const canvas = makeScoreCard(this, { initials: store.get('initials', 'YOU'), score: this.myRank ? this.myScore : total, rank: this.myRank, cleared: progress.jobsCleared(), hero: progress.hero });
+    if (this.textures.exists('scorecard')) this.textures.remove('scorecard');
+    this.textures.addCanvas('scorecard', canvas);
+    const c = this.cardView = this.add.container(0, 0).setDepth(200);
+    c.add(this.add.rectangle(0, 0, W, H, hex(C.ink), 0.94).setOrigin(0).setInteractive());
+    const k = Math.min((W - 24) / CARD_W, (H - 96) / CARD_H);
+    const img = this.add.image(W / 2, 12, 'scorecard').setOrigin(0.5, 0).setScale(k * 0.9); c.add(img);
+    this.tweens.add({ targets: img, scale: k, duration: 220, ease: 'Back.out' });
+    audio.say(CARD_TAUNT);
+    const by = 12 + CARD_H * k + 24;
+    this.cardBtns = [
+      button(this, W / 2 + 46, by, 120, 26, isTouch ? 'SEND IT >' : 'SAVE + COPY LINK', () => shareCard(this, canvas, this.brag()), { color: 'btnGold', depth: 201 }),
+      button(this, W / 2 - 70, by, 80, 26, 'CLOSE', () => this.closeCard(), { color: 'btnGrey', textColor: C.white, depth: 201 }),
+    ];
+  }
+  closeCard() {
+    if (!this.cardView) return;
+    this.cardBtns.forEach(b => b.destroy()); this.cardBtns = null;
+    this.cardView.destroy(); this.cardView = null;
+  }
+  leave() {
+    if (this.cardView) return this.closeCard();
+    if (this.entry) return this.closeEntry(); audio.sfx('select'); wipeTo(this, this.from); }
 
   async fetchTop() {
     try { const r = await fetch('/api/scores'); if (!r.ok) throw new Error(r.status); this.show((await r.json()).top); }

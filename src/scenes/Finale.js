@@ -6,7 +6,6 @@ import { C, hex } from '../core/palette.js';
 import { HEROES, RIVALS } from '../data/content.js';
 import { portrait, body } from '../art/people.js';
 import { skyline } from '../art/brand.js';
-import { shareScore } from '../core/share.js';
 
 // Victory: fireworks over the Sound, Northwest goes out of business, credits roll.
 export class Finale extends Phaser.Scene {
@@ -44,11 +43,10 @@ export class Finale extends Phaser.Scene {
     this.time.delayedCall(2600, () => audio.say("FINE! WE'RE MOVING TO TACOMA! YOU WIN, YOU BEAUTIFUL BASTARDS!"));
     txt(this, W / 2, 128, `TOTAL SCORE ${progress.totalScore().toLocaleString('en-US')}   \` ${progress.totalStars()}/48`, { ox: 0.5, color: C.yellow });
     // champions go on the board
-    const post = button(this, W / 2 - 36, H - 62, 150, 28, 'POST YOUR SCORE!', () => wipeTo(this, 'Scores', { enter: true, from: 'Finale' }), { color: 'btnGold', key: 'ENTER' });
+    const post = button(this, W / 2, H - 62, 190, 28, 'POST YOUR SCORE!', () => wipeTo(this, 'Scores', { enter: true, from: 'Finale' }), { color: 'btnGold', key: 'ENTER' });
     this.tweens.add({ targets: post, scale: 1.06, yoyo: true, repeat: -1, duration: 450 });
     // once the credits roll off, take a new champion straight to the initials screen (first time only)
     if (!store.get('finalePosted', false) && progress.totalScore() > store.get('postedScore', 0)) this.time.delayedCall(11500, () => { if (this.sys.isActive()) { store.set('finalePosted', true); wipeTo(this, 'Scores', { enter: true, from: 'Finale' }); } });
-    button(this, W / 2 + 80, H - 62, 66, 28, 'SHARE', () => shareScore(this, `I beat Plumber Wars! All 16 jobs, total score ${progress.totalScore().toLocaleString('en-US')}. Think you can beat the homies?`), { color: 'btnBlue', textColor: C.white, key: 'S' });
     button(this, W / 2, H - 26, 170, 24, 'BACK TO DISPATCH', () => wipeTo(this, 'Map'), { color: 'btnGreen', textColor: C.white, key: 'M' });
     // credits crawl
     const cr = txt(this, W / 2, H + 10, "G'S PLUMBING PRESENTS\nPLUMBER WARS\n\nSTARRING\nDALTON - MILAN - JARED\n\nAND BIG RANDY AS HIMSELF\n\nNO TOILETS WERE HARMED\n(SOME WERE HARMED)", { ox: 0.5, align: 1, color: C.silver, depth: 5 });

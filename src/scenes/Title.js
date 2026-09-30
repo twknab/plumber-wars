@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { W, H, txt, button, wipeTo, wipeIn, soundToggle, bubble, hitZone, isTouch } from '../core/ui.js';
 import { audio } from '../core/audio.js';
+import { shareScore } from '../core/share.js';
 import { progress } from '../core/save.js';
 import { C, hex } from '../core/palette.js';
 import { skyline } from '../art/brand.js';
@@ -82,6 +83,8 @@ export class Title extends Phaser.Scene {
       button(this, W / 2, by + 72, 156, 22, 'HIGH SCORES', () => this.go('Scores'), { color: 'btnGold', key: 'S' });
     }
     soundToggle(this);
+    // invite a friend (no score here; the score card lives on High Scores)
+    button(this, W - 52, 14, 50, 18, 'SHARE', () => shareScore(this, 'Race the foul-mouthed Northwest crew across Seattle and fix real plumbing jobs with the homies. Plumber Wars:'), { color: 'btnBlue', textColor: C.white, sound: 'blip' });
     const vo = txt(this, 10, 10, '', { color: C.white });
     const vlabel = () => vo.setText((audio.voices ? 'VOICES: ON' : 'VOICES: OFF') + (isTouch ? '' : ' [V]'));
     vlabel();
