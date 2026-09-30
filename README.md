@@ -28,8 +28,9 @@ then fix real plumbing problems before the customer loses it and calls the compe
   the Fremont Troll, Capitol Hill's rainbow crosswalk, the West Seattle Junction, the Kerry Park view, Alki Beach).
 - **Something to find in every room.** A lava lamp in Fremont, husky fur in the shower, a cat poster in the
   basement, garden gnomes and banana slugs in Queen Anne, glowing raccoon eyes in the crawlspace.
-- **Share your score.** A **SHARE** button on the results screen and the finale opens the phone's share sheet
-  (or copies the brag + link on desktop).
+- **Share.** An invite on the title screen, and on **HIGH SCORES** a pixel-art **score card** (your initials,
+  score, rank, the homies, Big Randy's dare and a QR code back to the game) shared as an image through the
+  phone's share sheet; desktop saves the card and copies the link.
 - **High scores.** Your total is your best score on every job, added up. Post it with arcade initials from
   **HIGH SCORES** on the title (or the finale); #1 is **THE CHAMP** (a glowing card with a crown, sparkles and the homies cheering them on);
   everyone else who beats all 16 jobs is marked BEAT IT.
