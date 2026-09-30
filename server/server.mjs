@@ -35,7 +35,7 @@ async function fs(pathPart, body, method = 'POST') {
   if (!r.ok) throw new Error('firestore ' + r.status + ' ' + (await r.text()).slice(0, 200));
   return r.json();
 }
-const fromDoc = d => ({ initials: d.fields.initials.stringValue, score: +d.fields.score.integerValue, hero: d.fields.hero?.stringValue || '', cleared: +(d.fields.cleared?.integerValue || 0), at: d.fields.at?.timestampValue || '' });
+const fromDoc = d => ({ id: d.name.split('/').pop(), initials: d.fields.initials.stringValue, score: +d.fields.score.integerValue, hero: d.fields.hero?.stringValue || '', cleared: +(d.fields.cleared?.integerValue || 0), at: d.fields.at?.timestampValue || '' });
 let cache = { at: 0, top: null };
 async function topScores(force) {
   if (!force && cache.top && Date.now() - cache.at < 15000) return cache.top;
@@ -65,7 +65,9 @@ const recent = new Map(); // ip -> last submit time (one entry per 20s per clien
 function json(res, code, obj) { res.writeHead(code, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(obj)); }
 async function api(req, res) {
   try {
-    if (req.method === 'GET') return json(res, 200, { top: await topScores() });
+    // ?me=<player id> marks that player's own row with `you: true` (ids themselves are never sent out)
+    const mine = top => { const me = new URL(req.url, 'http://x').searchParams.get('me'); return top.map(({ id, ...e }) => (me && id === me ? { ...e, you: true } : e)); };
+    if (req.method === 'GET') return json(res, 200, { top: mine(await topScores()) });
     if (req.method !== 'POST') return json(res, 405, { error: 'method' });
     const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
     if (Date.now() - (recent.get(ip) || 0) < 20000) return json(res, 429, { error: 'slow down' });
@@ -75,7 +77,7 @@ async function api(req, res) {
     recent.set(ip, Date.now()); if (recent.size > 5000) recent.clear();
     await addScore(v);
     const top = await topScores(true);
-    return json(res, 200, { rank: await rankOf(v.score), top });
+    return json(res, 200, { rank: await rankOf(v.score), top: top.map(({ id, ...e }) => (v.player && id === v.player ? { ...e, you: true } : e)) });
   } catch (e) { console.error(e); return json(res, 503, { error: 'leaderboard unavailable' }); }
 }
 

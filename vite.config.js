@@ -41,14 +41,15 @@ const devScores = {
     const top = () => [...rows].sort((a, b) => b.score - a.score || a.at.localeCompare(b.at)).slice(0, TOP_N);
     server.middlewares.use('/api/scores', (req, res) => {
       res.setHeader('Content-Type', 'application/json');
-      if (req.method === 'GET') return res.end(JSON.stringify({ top: top() }));
+      const tag = rows2 => { const me = new URL(req.url, 'http://x').searchParams.get('me'); return rows2.map(({ player, ...e }) => (me && player === me ? { ...e, you: true } : e)); };
+      if (req.method === 'GET') return res.end(JSON.stringify({ top: tag(top()) }));
       let raw = ''; req.on('data', c => { raw += c; }); req.on('end', () => {
         let v; try { v = validateEntry(JSON.parse(raw)); } catch { v = { error: 'bad json' }; }
         if (v.error) { res.statusCode = 400; return res.end(JSON.stringify(v)); }
         const old = v.player && rows.find(r => r.player === v.player);
         if (old) { if (v.score > old.score) Object.assign(old, v, { at: new Date().toISOString() }); else old.initials = v.initials; }
         else rows.push({ ...v, at: new Date().toISOString() });
-        res.end(JSON.stringify({ rank: rows.filter(r => r.score > v.score).length + 1, top: top() }));
+        res.end(JSON.stringify({ rank: rows.filter(r => r.score > v.score).length + 1, top: top().map(({ player, ...e }) => (v.player && player === v.player ? { ...e, you: true } : e)) }));
       });
     });
   },
